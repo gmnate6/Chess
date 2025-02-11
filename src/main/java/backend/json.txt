@@ -1,0 +1,35 @@
+// Connection
+{
+}
+
+// Reconnection
+{
+  "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+  "timer": {
+    "whiteTime": 300000,
+    "blackTime": 300000,
+    "increment": 5000,
+    "lastMoveTimestamp": 1707651234567
+  },
+   "game_result": "ongoing"
+}
+
+// After Move
+{
+  "fen": "rnbqkbnr/pppp1ppp/8/4p3/8/8/PPPPPPPP/RNBQKBNR w KQkq e6 0 2",
+  "move": {
+    "from": "e2",
+    "to": "e4",
+    "piece": "P",
+    "capture": false,
+    "promotion": null
+  },
+  "timer": {
+    "whiteTime": 295000,
+    "blackTime": 300000,
+    "increment": 5000,
+    "lastMoveTimestamp": 1707651300000
+  },
+  "game_result": "ongoing"
+}
+

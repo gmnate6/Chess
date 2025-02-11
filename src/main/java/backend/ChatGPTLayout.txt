@@ -1,0 +1,20 @@
+/backend
+ ├── /server
+ │   ├── 📄 ChessServer.java       # WebSocket server handling connections
+ │   ├── 📄 SessionManager.java    # Manages player sessions and connections
+ │   ├── 📄 ClientHandler.java     # Processes individual client messages
+ │   └── 📄 ServerMain.java        # Main class to start the WebSocket server
+ ├── /game
+ │   ├── 📄 GameManager.java       # Manages active chess games
+ │   ├── 📄 MoveProcessor.java     # Validates and processes moves
+ │   ├── 📄 TimeControl.java       # Handles game timers (if needed)
+ │   ├── 📄 Player.java            # Represents a player in the game
+ │   ├── 📄 Matchmaker.java        # Handles pairing players for games
+ │   └── 📄 GameState.java         # Stores game state, used for FEN and move validation
+ ├── /utils
+ │   ├── 📄 JSONUtils.java         # Handles JSON parsing for WebSocket messages
+ │   ├── 📄 ConfigLoader.java      # Loads server configurations (e.g., port settings)
+ │   ├── 📄 Logger.java            # Logging utilities for debugging
+ │   └── 📄 MessageParser.java     # Parses incoming messages for commands
+ └── config
+     ├── 📄 server.properties      # Config file (port, max connections, etc.)
