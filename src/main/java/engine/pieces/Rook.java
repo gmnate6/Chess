@@ -18,7 +18,7 @@ public class Rook extends Piece {
         Position finalPosition = move.getFinalPosition();
 
         // Must be in the same rank or file
-        if (initialPosition.getFile() != finalPosition.getFile() && initialPosition.getRank() != finalPosition.getRank()) { return false; }
+        if (initialPosition.file() != finalPosition.file() && initialPosition.rank() != finalPosition.rank()) { return false; }
 
         // Check if the path is clear
         if (!this.isPathClear(move, board)) { return false; }

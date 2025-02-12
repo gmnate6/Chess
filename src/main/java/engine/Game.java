@@ -30,7 +30,7 @@ public class Game {
         try {
             fenObj = FEN.fromFEN(fen);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid FEN format: " + fen + "\n" + e);
+            throw new IllegalArgumentException("Invalid FEN format: " + fen + "\n", e);
         }
 
         // Update Game
@@ -172,7 +172,12 @@ public class Game {
         Position initialPosition = Position.fromAlgebraic(initialPositionAlgebraNotation);
         Position finalPosition = Position.fromAlgebraic(finalPositionAlgebraNotation);
         Move move = new Move(initialPosition, finalPosition, promotionPiece);
+
+        // Make sure there is a pieceToMove
         Piece pieceToMove = board.getPieceAt(initialPosition);
+        if (pieceToMove == null) {
+            throw new IllegalStateException("No piece at the initial position to move.");
+        }
 
         /// Wrong Color
         if (pieceToMove.getColor() != currentPlayer) {

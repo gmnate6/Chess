@@ -76,7 +76,7 @@ public class Board {
                 }
             }
         }
-        throw new RuntimeException("How tf you have no king??");
+        throw new RuntimeException("Game state is invalid: King of color " + color + " is missing.");
     }
 
     // Get King Piece
@@ -131,12 +131,12 @@ public class Board {
     }
 
     // Getters
-    public Piece getPieceAt(Position position) { return board[position.getFile()][position.getRank()]; }
+    public Piece getPieceAt(Position position) { return board[position.file()][position.rank()]; }
     public Position getEnPassantPosition() { return enPassantPosition; }
     public CastlingRights getCastlingRights() { return castlingRights; }
 
     // Setters
-    public void setPieceAt(Position position, Piece piece) { board[position.getFile()][position.getRank()] = piece; }
+    public void setPieceAt(Position position, Piece piece) { board[position.file()][position.rank()] = piece; }
     public void setEnPassantPosition(Position enPassantPosition) { this.enPassantPosition = enPassantPosition; }
     public void setCastlingRights(CastlingRights castlingRights) { this.castlingRights = castlingRights; }
 
@@ -193,7 +193,7 @@ public class Board {
             }
 
             // Promotion
-            if (finalPosition.getRank() == 0 || finalPosition.getRank() == 7) {
+            if (finalPosition.rank() == 0 || finalPosition.rank() == 7) {
                 pieceToMove = Piece.charToPiece(move.getPromotionPiece(), pieceToMove.getColor());
             }
         } else {

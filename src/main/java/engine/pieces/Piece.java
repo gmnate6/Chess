@@ -6,8 +6,6 @@ import engine.utils.Move;
 import engine.utils.Color;
 
 import java.util.Map;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public abstract class Piece {
@@ -38,7 +36,7 @@ public abstract class Piece {
         Class<? extends Piece> pieceClass = charToPiece.get(Character.toUpperCase(symbol));
         if (pieceClass == null) {
             // Invalid input handling
-            throw new IllegalArgumentException("Invalid character for piece: " + symbol);
+            throw new IllegalArgumentException("Invalid character for piece: " + symbol + ". Valid characters are: K, Q, R, B, N, P.");
         }
         try {
             Color color = Character.isUpperCase(symbol) ? Color.WHITE : Color.BLACK;
@@ -51,7 +49,7 @@ public abstract class Piece {
         Class<? extends Piece> pieceClass = charToPiece.get(Character.toUpperCase(symbol));
         if (pieceClass == null) {
             // Invalid input handling
-            throw new IllegalArgumentException("Invalid character for piece: " + symbol);
+            throw new IllegalArgumentException("Invalid character for piece: " + symbol + ". Valid characters are: K, Q, R, B, N, P.");
         }
         try {
             return pieceClass.getDeclaredConstructor(Color.class).newInstance(color);
@@ -99,8 +97,8 @@ public abstract class Piece {
         Position finalPosition = move.getFinalPosition();
 
         // Def some stuff
-        int fileDirection = Integer.compare(finalPosition.getFile(), initialPosition.getFile());
-        int rankDirection = Integer.compare(finalPosition.getRank(), initialPosition.getRank());
+        int fileDirection = Integer.compare(finalPosition.file(), initialPosition.file());
+        int rankDirection = Integer.compare(finalPosition.rank(), initialPosition.rank());
 
         Position current = initialPosition.move(fileDirection, rankDirection);
         while (!current.equals(finalPosition)) {

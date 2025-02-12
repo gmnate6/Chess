@@ -15,7 +15,7 @@ public final class Move {
         this.initialPosition = initalPosition;
         this.finalPosition = finalPosition;
         if (Character.toUpperCase(promotionPiece) == 'K') {
-            throw new RuntimeException("Illegal Move: Cannot promote to King.");
+            throw new IllegalArgumentException("Illegal Move: Cannot promote to King.");
         }
         this.promotionPiece = Character.toUpperCase(promotionPiece);
     }

@@ -40,10 +40,10 @@ public class Pawn extends Piece {
         int fileDirection = this.getColor() == Color.WHITE ? 1 : -1;
 
         // Must be same file
-        if (finalPosition.getFile() != initialPosition.getFile()) { return false; }
+        if (finalPosition.file() != initialPosition.file()) { return false; }
 
         // Must be 1 rank away
-        if (finalPosition.getRank() - initialPosition.getRank() != fileDirection) { return false; }
+        if (finalPosition.rank() - initialPosition.rank() != fileDirection) { return false; }
 
         // No Piece on Final
         if (board.getPieceAt(finalPosition) != null) { return false; }
@@ -63,13 +63,13 @@ public class Pawn extends Piece {
         int fileDirection = this.getColor() == Color.WHITE ? 1 : -1;
 
         // Initial Rank must be 1 (white) or 6 (black)
-        if (initialPosition.getRank() != (getColor() == Color.WHITE ? 1 : 6)) { return false; }
+        if (initialPosition.rank() != (getColor() == Color.WHITE ? 1 : 6)) { return false; }
 
         // Must be same file
-        if (finalPosition.getFile() != initialPosition.getFile()) { return false; }
+        if (finalPosition.file() != initialPosition.file()) { return false; }
 
         // Must be 2 rank away
-        if (finalPosition.getRank() - initialPosition.getRank() != 2 * fileDirection) { return false; }
+        if (finalPosition.rank() - initialPosition.rank() != 2 * fileDirection) { return false; }
 
         // No Piece on Final
         if (board.getPieceAt(finalPosition) != null) { return false; }
@@ -92,10 +92,10 @@ public class Pawn extends Piece {
         int fileDirection = this.getColor() == Color.WHITE ? 1 : -1;
 
         // Must be 1 file away
-        if (Math.abs(finalPosition.getFile() - initialPosition.getFile()) != 1) { return false; }
+        if (Math.abs(finalPosition.file() - initialPosition.file()) != 1) { return false; }
 
         // Must be 1 rank away
-        if (finalPosition.getRank() - initialPosition.getRank() != fileDirection) { return false; }
+        if (finalPosition.rank() - initialPosition.rank() != fileDirection) { return false; }
 
         // Must have piece to capture
         if (board.getPieceAt(finalPosition) == null) { return false; }
@@ -114,12 +114,12 @@ public class Pawn extends Piece {
         Position finalPosition = move.getFinalPosition();
 
         // Files are 1 away
-        if (Math.abs(finalPosition.getFile() - initialPosition.getFile()) != 1) {
+        if (Math.abs(finalPosition.file() - initialPosition.file()) != 1) {
             return false;
         }
 
         // Ranks are 1 away (sign depends on color)
-        if (finalPosition.getRank() - initialPosition.getRank() != (this.getColor() == Color.WHITE ? 1 : -1)) {
+        if (finalPosition.rank() - initialPosition.rank() != (this.getColor() == Color.WHITE ? 1 : -1)) {
             return false;
         }
 
@@ -129,7 +129,7 @@ public class Pawn extends Piece {
         }
 
         // enPassant Position must be enPassantAble
-        Position enPassantPosition = new Position(finalPosition.getFile(), initialPosition.getRank());
+        Position enPassantPosition = new Position(finalPosition.file(), initialPosition.rank());
         if (!enPassantPosition.equals(board.getEnPassantPosition())) {
             return false;
         }

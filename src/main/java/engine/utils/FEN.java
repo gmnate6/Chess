@@ -31,7 +31,7 @@ public final class FEN {
 
         // Check for Kings
         if (!boardFEN.contains("K") || !boardFEN.contains("k")) {
-            throw new RuntimeException("Illegal FEN: Kings MUST be on board.");
+            throw new RuntimeException("Illegal FEN: Both kings (K and k) MUST be on the board.");
         }
 
         // Loop Through Board

@@ -18,8 +18,8 @@ public class Knight extends Piece {
         Position finalPosition = move.getFinalPosition();
 
         // Distances
-        int deltaFile = Math.abs(finalPosition.getFile() - initialPosition.getFile());
-        int deltaRank = Math.abs(finalPosition.getRank() - initialPosition.getRank());
+        int deltaFile = Math.abs(finalPosition.file() - initialPosition.file());
+        int deltaRank = Math.abs(finalPosition.rank() - initialPosition.rank());
 
         // 2 in one 1 in another
         if ((deltaFile == 2 && deltaRank == 1) || (deltaFile == 1 && deltaRank == 2)) {

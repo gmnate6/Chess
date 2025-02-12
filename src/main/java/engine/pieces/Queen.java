@@ -18,10 +18,10 @@ public class Queen extends Piece {
         Position finalPosition = move.getFinalPosition();
 
         // Conditions for queen's movement
-        boolean isStraightMove = initialPosition.getFile() == finalPosition.getFile() ||
-                initialPosition.getRank() == finalPosition.getRank();
-        boolean isDiagonalMove = Math.abs(initialPosition.getFile() - finalPosition.getFile()) ==
-                Math.abs(initialPosition.getRank() - finalPosition.getRank());
+        boolean isStraightMove = initialPosition.file() == finalPosition.file() ||
+                initialPosition.rank() == finalPosition.rank();
+        boolean isDiagonalMove = Math.abs(initialPosition.file() - finalPosition.file()) ==
+                Math.abs(initialPosition.rank() - finalPosition.rank());
 
         // Must be a straight or diagonal move
         if (!(isStraightMove || isDiagonalMove)) { return false; }

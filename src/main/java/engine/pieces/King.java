@@ -23,8 +23,8 @@ public class King extends Piece {
         Position finalPosition = move.getFinalPosition();
 
         // Distances
-        int deltaFile = Math.abs(finalPosition.getFile() - initialPosition.getFile());
-        int deltaRank = Math.abs(finalPosition.getRank() - initialPosition.getRank());
+        int deltaFile = Math.abs(finalPosition.file() - initialPosition.file());
+        int deltaRank = Math.abs(finalPosition.rank() - initialPosition.rank());
 
         // King can only move 1 space
         if (deltaFile <= 1 && deltaRank <= 1) {
@@ -87,7 +87,7 @@ public class King extends Piece {
         int range = isKingSide ? 2 : 3; // 2 for king-side, 3 for queen-side
 
         // Check for Correct Final Position
-        if (finalPosition.getFile() - initialPosition.getFile() != 2 * direction || finalPosition.getRank() != initialPosition.getRank()) {
+        if (finalPosition.file() - initialPosition.file() != 2 * direction || finalPosition.rank() != initialPosition.rank()) {
             return false;
         }
 

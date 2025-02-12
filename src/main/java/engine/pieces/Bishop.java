@@ -18,7 +18,7 @@ public class Bishop extends Piece {
         Position finalPosition = move.getFinalPosition();
 
         // Must be a diagonal move
-        if (Math.abs(initialPosition.getFile() - finalPosition.getFile()) != Math.abs(initialPosition.getRank() - finalPosition.getRank())) {
+        if (Math.abs(initialPosition.file() - finalPosition.file()) != Math.abs(initialPosition.rank() - finalPosition.rank())) {
             return false;
         }
 

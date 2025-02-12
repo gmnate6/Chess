@@ -1,22 +1,17 @@
 package engine.board;
 
-public class Position {
-    private final int file;
-    private final int rank;
-
+public record Position(int file, int rank) {
     // Constructor
-    public Position(int file, int rank) {
+    public Position {
         if (file < 0 || file > 7 || rank < 0 || rank > 7) {
-            throw new IllegalArgumentException("Invalid Position: " + file + ", " + rank);
+            throw new IllegalArgumentException("Invalid Position: " + file + ", " + rank + ". Valid range for file and rank is 0-7.");
         }
-        this.file = file;
-        this.rank = rank;
     }
 
     // Get Position from Algebraic Notation
     public static Position fromAlgebraic(String notation) {
         if (notation.length() != 2) {
-            throw new IllegalArgumentException("Invalid Position: " + notation);
+            throw new IllegalArgumentException("Invalid Position: Notation must be exactly 2 characters. Received: " + notation);
         }
 
         // Parse
@@ -25,7 +20,7 @@ public class Position {
 
         // Rank must be Digit
         if (!Character.isDigit(rankChar)) {
-            throw new IllegalArgumentException("Invalid Position: " + notation);
+            throw new IllegalArgumentException("Invalid Position: Rank must be a digit (1-8). Received: " + notation);
         }
 
         // Convert to INT
@@ -34,21 +29,18 @@ public class Position {
 
         // Must be in range
         if (file < 0 || file > 7 || rank < 0 || rank > 7) {
-            throw new IllegalArgumentException("Invalid Position: " + notation);
+            throw new IllegalArgumentException("Invalid Position: " + notation + ". File and rank must be between 0 and 7.");
         }
 
         // Return
         return new Position(file, rank);
     }
 
-    // Getters
-    public int getFile() { return file; }
-    public int getRank() { return rank; }
-
     // Convert to algebraic notation
     public String toAlgebraic() {
         return "" + (char) ('a' + file) + (rank + 1);
     }
+
     @Override
     public String toString() {
         return toAlgebraic();
@@ -59,7 +51,7 @@ public class Position {
         int newFile = file + fileDelta;
         int newRank = rank + rankDelta;
         if (newFile < 0 || newFile > 7 || newRank < 0 || newRank > 7) {
-            return null; // Out of bounds
+            throw new IllegalArgumentException("Moved Position is Out of Bounds.");
         }
         return new Position(newFile, newRank);
     }
@@ -71,12 +63,9 @@ public class Position {
         if (!(obj instanceof Position other)) return false;
         return this.file == other.file && this.rank == other.rank;
     }
+
     public boolean equals(String notation) {
         Position pos = Position.fromAlgebraic(notation);
         return this.equals(pos);
-    }
-    @Override
-    public int hashCode() {
-        return 31 * file + rank;
     }
 }
