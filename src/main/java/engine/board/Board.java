@@ -150,7 +150,7 @@ public class Board {
                     sb.append(" ");
                 } else {
                     Piece piece = this.getPieceAt(new Position(file, rank));
-                    sb.append(Piece.pieceToChar(piece));
+                    sb.append(piece.toString());
                 }
             }
             sb.append("\n");
@@ -172,7 +172,7 @@ public class Board {
 
         /// Validate Move Legality
         if (!pieceToMove.moveLegality(move, this)) {
-            throw new IllegalArgumentException("Illegal move for '" + Piece.pieceToChar(pieceToMove) +
+            throw new IllegalArgumentException("Illegal move for '" + pieceToMove.toString() +
                     "' from " + initialPosition +
                     " to " + finalPosition);
         }

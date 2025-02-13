@@ -75,7 +75,7 @@ public class Game {
         for (int file = 0; file < 8; file++) {
             for (int rank = 0; rank < 8; rank++) {
                 Position finalPosition = new Position(file, rank);
-                Move currentMove = new Move(initialPosition, finalPosition, '\0');
+                Move currentMove = new Move(initialPosition, finalPosition, 'q');
                 try {
                     if (currentMove.isMoveSafe(board, getCurrentPlayer())) {
                         positions.add(finalPosition);

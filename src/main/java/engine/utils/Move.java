@@ -3,8 +3,6 @@ package engine.utils;
 import engine.board.Board;
 import engine.board.Position;
 
-import engine.pieces.*;
-
 public final class Move {
     private final Position initialPosition;
     private final Position finalPosition;

@@ -133,7 +133,7 @@ public final class FEN {
                     }
 
                     // Append Piece Representation
-                    fen.append(Piece.pieceToChar(currentPiece));
+                    fen.append(currentPiece.toString());
                 }
             }
 

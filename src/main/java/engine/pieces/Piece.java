@@ -71,6 +71,9 @@ public abstract class Piece {
     @Override
     public String toString() { return String.valueOf(Piece.pieceToChar(this)); }
 
+    // To Char
+    public char toChar() { return Piece.pieceToChar(this); }
+
     // Get Deep Copy
     public Piece getDeepCopy() {
         return Piece.charToPiece(Piece.pieceToChar(this), getColor());
