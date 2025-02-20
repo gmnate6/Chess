@@ -1,10 +1,9 @@
-package frontend.gui.panels;
+package frontend.gui.game;
 
 import engine.board.Board;
 import engine.board.Position;
 import engine.pieces.Piece;
 
-import frontend.gui.components.SquareButton;
 import frontend.Color;
 
 import javax.swing.*;

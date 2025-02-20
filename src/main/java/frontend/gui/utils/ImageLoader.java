@@ -2,6 +2,7 @@ package frontend.gui.utils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,8 +24,7 @@ public class ImageLoader {
             // Return an ImageIcon instead of Image
             return new ImageIcon(ImageIO.read(imageStream));
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -120,4 +120,26 @@ public class ImageLoader {
         return new ImageIcon(combined);
     }
 
+    // Rotates an image by a given angle (in degrees)
+    public ImageIcon getRotatedImageIcon(ImageIcon icon, double angle) {
+        int width = icon.getIconWidth();
+        int height = icon.getIconHeight();
+
+        // Create a buffered image with transparency
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = (Graphics2D) bufferedImage.getGraphics();
+
+        // Perform rotation using AffineTransform
+        AffineTransform transform = new AffineTransform();
+        transform.rotate(Math.toRadians(angle), width / 2.0, height / 2.0);
+        transform.translate((bufferedImage.getWidth() - width) / 2.0, (bufferedImage.getHeight() - height) / 2.0);
+        g2d.setTransform(transform);
+
+        // Draw the original image
+        g2d.drawImage(icon.getImage(), 0, 0, null);
+        g2d.dispose();
+
+        // Return a new rotated ImageIcon
+        return new ImageIcon(bufferedImage);
+    }
 }

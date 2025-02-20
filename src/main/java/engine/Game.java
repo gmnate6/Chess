@@ -71,6 +71,11 @@ public class Game {
             return positions;
         }
 
+        // If Wrong Color
+        if (pieceToMove.getColor() != currentPlayer) {
+            return positions;
+        }
+
         // Loop Through Board
         for (int file = 0; file < 8; file++) {
             for (int rank = 0; rank < 8; rank++) {

@@ -1,4 +1,4 @@
-package frontend.gui.components;
+package frontend.gui.game;
 
 import frontend.gui.utils.ImageLoader;
 import frontend.Color;
@@ -45,12 +45,6 @@ public class SquareButton extends JButton {
         if (isHint) {
             ImageIcon hintIcon = ImageLoader.getImageIcon("board/" + (currentPiece == null ? "move_hint.png": "capture_hint.png"));
             icon = ImageLoader.overlayIcons(icon, hintIcon);
-        }
-
-        // If Null
-        if (icon == null) {
-            setIcon(icon);
-            return;
         }
 
         // Scale Image
