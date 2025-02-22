@@ -1,7 +1,7 @@
 package engine.pieces;
 
-import engine.board.Board;
-import engine.board.Position;
+import engine.game.Board;
+import engine.utils.Position;
 
 import engine.utils.Move;
 import engine.utils.PieceUtils;
@@ -43,12 +43,11 @@ public abstract class Piece{
      * @param board The current state of the chess board.
      * @return `true` if the move passes generic validations; `false` otherwise.
      */
-    protected boolean isMoveGenericValid(Move move, Board board) {
-        Position initial = move.getInitialPosition();
-        Position finalPos = move.getFinalPosition();
+    protected boolean passesGenericRules(Move move, Board board) {
+        Position finalPosition = move.finalPosition();
 
         // Can't capture piece of same color
-        Piece targetPiece = board.getPieceAt(finalPos);
+        Piece targetPiece = board.getPieceAt(finalPosition);
         if (targetPiece != null && targetPiece.getColor() == this.getColor()) {
             return false;
         }
@@ -75,6 +74,6 @@ public abstract class Piece{
      * @return `true` if the move is valid according to all rules; `false` otherwise.
      */
     public boolean isMoveValid(Move move, Board board) {
-        return isMoveGenericValid(move, board) && isPieceSpecificMoveValid(move, board);
+        return passesGenericRules(move, board) && isPieceSpecificMoveValid(move, board);
     }
 }

@@ -1,8 +1,7 @@
 package engine.utils;
 
 import engine.pieces.Piece;
-import engine.board.Board;
-import engine.board.Position;
+import engine.game.Board;
 
 import utils.Color;
 
@@ -55,6 +54,11 @@ public final class FEN {
             throw new RuntimeException("Illegal FEN: Both kings (K and k) MUST be on the board.");
         }
 
+        // Check for 8 ranks
+        if (ranks.length != 8) {
+            throw new RuntimeException("Illegal FEN: Board must be 8 ranks");
+        }
+
         // Loop Through Board
         for (int rank = 0; rank < 8; rank++) {
             int file = 0;
@@ -66,6 +70,13 @@ public final class FEN {
                     Position pos = new Position(file, rank);
                     board.setPieceAt(pos, PieceUtils.charToPiece(c));
 
+                    // No Pawns on edge
+                    if (file != 0 && file != 7) {
+                        if (c == 'P' || c == 'p') {
+                            throw new RuntimeException("Illegal FEN: Pawns cannot be placed on the edge of the board.");
+                        }
+                    }
+
                     // Move to Next File
                     file++;
                 }
@@ -74,7 +85,15 @@ public final class FEN {
 
         // Construct Current Player
         String currentPlayerFEN = fenParts[1];
+        if (!currentPlayerFEN.equalsIgnoreCase("w") && !currentPlayerFEN.equalsIgnoreCase("b")) {
+            throw new RuntimeException("Illegal FEN: Current Player must either be 'w' or 'b'.");
+        }
         Color currentPlayer = currentPlayerFEN.equalsIgnoreCase("w") ? Color.WHITE : Color.BLACK;
+
+        // Cannot be left in check
+        if (board.isKingInCheck(currentPlayer.inverse())) {
+            throw new RuntimeException("Illegal FEN: Other Player cannot be left in check.");
+        }
 
         // Construct Castling Rights
         String castlingRightsFEN = fenParts[2];

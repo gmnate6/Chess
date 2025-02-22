@@ -1,4 +1,4 @@
-package engine.board;
+package engine.utils;
 
 /**
  * Represents a position on a chessboard using file (column) and rank (row) coordinates.

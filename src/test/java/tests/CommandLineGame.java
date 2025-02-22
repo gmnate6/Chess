@@ -1,11 +1,11 @@
 package tests;
 
-import engine.Game;
+import engine.game.Game;
 
-import engine.board.Position;
+import engine.utils.Position;
 
 import engine.utils.Move;
-import engine.utils.Timer;
+import engine.game.Timer;
 
 import java.util.Scanner;
 

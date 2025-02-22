@@ -1,10 +1,10 @@
-package engine.board;
+package engine.game;
 
+import engine.utils.Position;
 import engine.utils.CastlingRights;
-import engine.pieces.*;
-import engine.utils.Move;
 
-import engine.utils.PieceUtils;
+import engine.pieces.*;
+
 import utils.Color;
 
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * Represents the chess board with a 8x8 grid containing pieces.
- * Handles board setup, piece movements, and deep copying for game state management.
+ * Handles board setup and deep copying for game state management.
  */
 public class Board {
     private final Piece[][] board = new Piece[8][8];
@@ -115,24 +115,14 @@ public class Board {
     }
 
     /**
-     * Creates a deep copy of the board, including all pieces.
+     * Returns if the King of a given color is checked.
      *
-     * @return A new `Board` object with a deep copy of the current state.
+     * @param color The color of the King.
+     * @return true if King is in check.
      */
-    public Board getDeepCopy() {
-        Board copy = Board.getEmptyBoard();
-        for (int file = 0; file < 8; file++) {
-            for (int rank = 0; rank < 8; rank++) {
-                Position position = new Position(file, rank);
-                Piece piece = this.getPieceAt(position);
-                if (piece != null) {
-                    copy.setPieceAt(position, piece.getDeepCopy());
-                }
-            }
-        }
-        copy.setEnPassantPosition(this.getEnPassantPosition());
-        copy.setCastlingRights(this.getCastlingRights().getDeepCopy());
-        return copy;
+    public boolean isKingInCheck(Color color) {
+        Position kingPosition = getKingPosition(color);
+        return getKing(color).isChecked(kingPosition, this);
     }
 
     /**
@@ -167,110 +157,6 @@ public class Board {
     public void setPieceAt(Position position, Piece piece) { board[position.file()][position.rank()] = piece; }
     public void setEnPassantPosition(Position enPassantPosition) { this.enPassantPosition = enPassantPosition; }
     public void setCastlingRights(CastlingRights castlingRights) { this.castlingRights = castlingRights; }
-
-    /**
-     * Handles the movement of a piece on the board.
-     * This includes en passant, promotion, and castling logic.
-     *
-     * @param move The move to execute.
-     * @throws IllegalArgumentException If the starting position is empty or the move is invalid.
-     */
-    public void move(Move move) {
-        // Collapse Move Obj
-        Position initialPosition = move.getInitialPosition();
-        Position finalPosition = move.getFinalPosition();
-        Piece pieceToMove = getPieceAt(initialPosition);
-
-        // No Piece To Move
-        if (pieceToMove == null) {
-            throw new IllegalArgumentException("No piece at initial position: " + initialPosition);
-        }
-
-        // Pawn Weirdness
-        if (pieceToMove instanceof Pawn) {
-            // If enPassant
-            if (((Pawn) pieceToMove).isLegalEnPassant(move, this)) {
-                // Remove En Passanted Pawn
-                setPieceAt(getEnPassantPosition(), null);
-            }
-
-            // Update enPassantPosition
-            if (((Pawn) pieceToMove).isLegalDouble(move, this)) {
-                setEnPassantPosition(finalPosition);
-            } else {
-                setEnPassantPosition(null);
-            }
-
-            // Promotion
-            if (finalPosition.rank() == 0 || finalPosition.rank() == 7) {
-                pieceToMove = PieceUtils.charToPiece(move.getPromotionPiece(), pieceToMove.getColor());
-            }
-        } else {
-            setEnPassantPosition(null);
-        }
-
-        // King Weirdness
-        if (pieceToMove instanceof King) {
-            // If Castle King Side
-            if (((King) pieceToMove).isCastleAttempt(move, true)) {
-                Position rookPosition = initialPosition.move(3, 0);
-                Piece rookPiece = getPieceAt(rookPosition);
-
-                // Place Rook
-                setPieceAt(initialPosition.move(1, 0), rookPiece);
-
-                // Remove Old Rook
-                setPieceAt(rookPosition, null);
-            }
-
-            // If Castle Queen Side
-            if (((King) pieceToMove).isCastleAttempt(move, false)) {
-                Position rookPosition = initialPosition.move(-4, 0);
-                Piece rookPiece = getPieceAt(rookPosition);
-
-                // Place Rook
-                setPieceAt(initialPosition.move(-1, 0), rookPiece);
-
-                // Remove Old Rook
-                setPieceAt(rookPosition, null);
-            }
-
-            // Update CastlingRights
-            if (pieceToMove.getColor() == Color.WHITE) {
-                castlingRights.setWhiteKingSide(false);
-                castlingRights.setWhiteQueenSide(false);
-            } else {
-                castlingRights.setBlackKingSide(false);
-                castlingRights.setBlackQueenSide(false);
-            }
-        }
-
-        // Rook Weirdness
-        if (pieceToMove instanceof Rook) {
-            // Update CastlingRights
-            if (pieceToMove.getColor() == Color.WHITE) {
-                // White
-                if (initialPosition.toAlgebraic().equals("a1")) {
-                    castlingRights.setWhiteQueenSide(false);
-                }
-                if (initialPosition.toAlgebraic().equals("h1")) {
-                    castlingRights.setWhiteKingSide(false);
-                }
-            } else {
-                // Black
-                if (initialPosition.toAlgebraic().equals("a8")) {
-                    castlingRights.setBlackQueenSide(false);
-                }
-                if (initialPosition.toAlgebraic().equals("h8")) {
-                    castlingRights.setBlackKingSide(false);
-                }
-            }
-        }
-
-        // Update Board
-        setPieceAt(initialPosition, null);
-        setPieceAt(finalPosition, pieceToMove);
-    }
 
     /**
      * Converts the board to a multi-line string for visualization.

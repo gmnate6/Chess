@@ -1,4 +1,4 @@
-package engine.utils;
+package engine.game;
 
 import utils.Color;
 
@@ -93,7 +93,7 @@ public class Timer {
         }
 
         lastMoveTimestamp = now;
-        currentTurn = (currentTurn == Color.WHITE) ? Color.BLACK : Color.WHITE;
+        currentTurn = currentTurn.inverse();
     }
 
     // Getters

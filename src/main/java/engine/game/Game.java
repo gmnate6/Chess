@@ -1,9 +1,8 @@
-package engine;
+package engine.game;
 
 import engine.utils.*;
 
-import engine.board.Board;
-import engine.board.Position;
+import engine.utils.Position;
 import engine.pieces.*;
 
 import utils.Color;
@@ -140,10 +139,10 @@ public class Game {
      */
     public boolean isMoveSafe(Move move) {
         // Create a copy of the board
-        Board boardCopy = board.getDeepCopy();
+        Board boardCopy = BoardUtils.getDeepCopy(board);
 
         // Apply Move
-        boardCopy.move(move);
+        BoardUtils.executeMove(move, boardCopy);
 
         // Check if the king is in check after the move
         King king = boardCopy.getKing(currentPlayer);
@@ -158,7 +157,7 @@ public class Game {
      * @return `true` if the move is legal according to chess rules; otherwise, `false`.
      */
     public boolean isMoveLegal(Move move) {
-        Piece pieceToMove = board.getPieceAt(move.getInitialPosition());
+        Piece pieceToMove = board.getPieceAt(move.initialPosition());
 
         // Cannot move after game
         if (getGameResult() != GameResult.ON_GOING) {
@@ -265,8 +264,8 @@ public class Game {
      */
     public void move(Move move) {
         // Convert Stuff
-        Position initialPosition = move.getInitialPosition();
-        Position finalPosition = move.getFinalPosition();
+        Position initialPosition = move.initialPosition();
+        Position finalPosition = move.finalPosition();
         Piece pieceToMove = board.getPieceAt(initialPosition);
 
         // If Game is Over
@@ -295,7 +294,7 @@ public class Game {
         }
 
         // Make Move on Board
-        board.move(move);
+        BoardUtils.executeMove(move, board);
 
         // Update Full
         if (this.currentPlayer == Color.BLACK) {
@@ -310,7 +309,7 @@ public class Game {
         }
 
         // Switch Players
-        this.setCurrentPlayer(this.getCurrentPlayer() == Color.WHITE ? Color.BLACK : Color.WHITE);
+        this.setCurrentPlayer(this.getCurrentPlayer().inverse());
         this.timer.switchTurn();
         if (this.currentPlayer != timer.getCurrentTurn()) {
             throw new IllegalStateException("Timer.turn did not equal Game.currentPlayer");

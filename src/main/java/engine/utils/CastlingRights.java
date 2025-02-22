@@ -1,7 +1,6 @@
 package engine.utils;
 
-import engine.board.Board;
-import engine.board.Position;
+import engine.game.Board;
 import engine.pieces.Rook;
 
 import utils.Color;
@@ -62,8 +61,7 @@ public class CastlingRights {
         if (isWhiteKingSide()) return false;
         if (isWhiteQueenSide()) return false;
         if (isBlackKingSide()) return false;
-        if (isBlackQueenSide()) return false;
-        return true;
+        return !isBlackQueenSide();
     }
 
     /**

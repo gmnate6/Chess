@@ -1,7 +1,7 @@
 package engine.pieces;
 
-import engine.board.Board;
-import engine.board.Position;
+import engine.game.Board;
+import engine.utils.Position;
 
 import engine.utils.Move;
 
@@ -44,8 +44,8 @@ public class Pawn extends Piece {
      * @return `true` if the move is a valid single-step forward move; otherwise, `false`.
      */
     private boolean isLegalSingle(Move move, Board board) {
-        Position initial = move.getInitialPosition();
-        Position finalPos = move.getFinalPosition();
+        Position initial = move.initialPosition();
+        Position finalPos = move.finalPosition();
         int direction = (getColor() == Color.WHITE) ? 1 : -1;
 
         // Moving straight forward one square
@@ -62,8 +62,8 @@ public class Pawn extends Piece {
      * @return `true` if the move is a valid two-square forward move; otherwise, `false`.
      */
     public boolean isLegalDouble(Move move, Board board) {
-        Position initial = move.getInitialPosition();
-        Position finalPos = move.getFinalPosition();
+        Position initial = move.initialPosition();
+        Position finalPos = move.finalPosition();
         int direction = (getColor() == Color.WHITE) ? 1 : -1;
 
         return finalPos.file() == initial.file() &&
@@ -81,8 +81,8 @@ public class Pawn extends Piece {
      * @return `true` if the move is a valid capture; otherwise, `false`.
      */
     private boolean isLegalCapture(Move move, Board board) {
-        Position initial = move.getInitialPosition();
-        Position finalPos = move.getFinalPosition();
+        Position initial = move.initialPosition();
+        Position finalPos = move.finalPosition();
         int direction = (getColor() == Color.WHITE) ? 1 : -1;
 
         Piece target = board.getPieceAt(finalPos);
@@ -100,8 +100,8 @@ public class Pawn extends Piece {
      * @return `true` if the move is a valid en passant capture; otherwise, `false`.
      */
     public boolean isLegalEnPassant(Move move, Board board) {
-        Position initial = move.getInitialPosition();
-        Position finalPos = move.getFinalPosition();
+        Position initial = move.initialPosition();
+        Position finalPos = move.finalPosition();
 
         Position enPassantTarget = board.getEnPassantPosition();
         return finalPos.equals(enPassantTarget) && Math.abs(finalPos.file() - initial.file()) == 1;

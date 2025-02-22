@@ -1,7 +1,6 @@
 package engine.utils;
 
-import engine.board.Board;
-import engine.board.Position;
+import engine.game.Board;
 import engine.pieces.*;
 import utils.Color;
 
@@ -132,8 +131,8 @@ public class PieceUtils {
      */
     public static boolean isPathClear(Move move, Board board) {
         // Collapse Move Obj
-        Position initialPosition = move.getInitialPosition();
-        Position finalPosition = move.getFinalPosition();
+        Position initialPosition = move.initialPosition();
+        Position finalPosition = move.finalPosition();
 
         // Def some stuff
         int fileDirection = Integer.compare(finalPosition.file(), initialPosition.file());

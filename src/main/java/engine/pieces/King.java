@@ -1,7 +1,7 @@
 package engine.pieces;
 
-import engine.board.Board;
-import engine.board.Position;
+import engine.game.Board;
+import engine.utils.Position;
 
 import engine.utils.CastlingRights;
 import engine.utils.Move;
@@ -29,8 +29,8 @@ public class King extends Piece {
      */
     @Override
     public boolean isPieceSpecificMoveValid(Move move, Board board) {
-        Position initial = move.getInitialPosition();
-        Position finalPos = move.getFinalPosition();
+        Position initial = move.initialPosition();
+        Position finalPos = move.finalPosition();
 
         int deltaFile = Math.abs(finalPos.file() - initial.file());
         int deltaRank = Math.abs(finalPos.rank() - initial.rank());
@@ -52,8 +52,8 @@ public class King extends Piece {
      * @return `true` if the castling move is valid; otherwise, `false`.
      */
     public boolean isLegalCastle(Move move, Board board) {
-        Position initial = move.getInitialPosition();
-        Position finalPos = move.getFinalPosition();
+        Position initial = move.initialPosition();
+        Position finalPos = move.finalPosition();
 
         // Determine if move is attempting a castle
         int deltaFile = finalPos.file() - initial.file();
@@ -75,8 +75,8 @@ public class King extends Piece {
      * @return `true` if the move appears to be a castling attempt; otherwise, `false`.
      */
     public boolean isCastleAttempt(Move move, boolean kingSide) {
-        Position initialPosition = move.getInitialPosition();
-        Position finalPosition = move.getFinalPosition();
+        Position initialPosition = move.initialPosition();
+        Position finalPosition = move.finalPosition();
 
         // Must be same rank
         if (initialPosition.rank() != finalPosition.rank()) {

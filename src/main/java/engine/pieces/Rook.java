@@ -1,7 +1,7 @@
 package engine.pieces;
 
-import engine.board.Board;
-import engine.board.Position;
+import engine.game.Board;
+import engine.utils.Position;
 
 import engine.utils.Move;
 import engine.utils.PieceUtils;
@@ -31,8 +31,8 @@ public class Rook extends Piece {
     @Override
     public boolean isPieceSpecificMoveValid(Move move, Board board) {
         // Collapse Move Obj
-        Position initialPosition = move.getInitialPosition();
-        Position finalPosition = move.getFinalPosition();
+        Position initialPosition = move.initialPosition();
+        Position finalPosition = move.finalPosition();
 
         // Must be in the same rank or file
         if (initialPosition.file() != finalPosition.file() && initialPosition.rank() != finalPosition.rank()) { return false; }

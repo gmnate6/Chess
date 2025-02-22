@@ -1,8 +1,8 @@
 package tests;
 
-import engine.Game;
-import engine.board.Position;
-import engine.utils.Timer;
+import engine.game.Game;
+import engine.utils.Position;
+import engine.game.Timer;
 
 import java.util.List;
 
