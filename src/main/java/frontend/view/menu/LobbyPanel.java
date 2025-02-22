@@ -1,6 +1,6 @@
-package frontend.gui.main;
+package frontend.view.menu;
 
-import frontend.gui.utils.Styler;
+import frontend.view.utils.Styler;
 
 import javax.swing.*;
         import java.awt.*;
@@ -9,7 +9,7 @@ public class LobbyPanel extends JPanel {
     private final double contentWidthPercent = .8;
     private final double contentHeightPercent = .8;
 
-    public LobbyPanel(MainMenuPanel mainMenuPanel) {
+    public LobbyPanel(MenuPanel mainMenuPanel) {
         setLayout(new GridBagLayout());
         setOpaque(false);
 

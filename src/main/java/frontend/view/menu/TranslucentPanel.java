@@ -1,4 +1,4 @@
-package frontend.gui.main;
+package frontend.view.menu;
 
 import javax.swing.*;
 import java.awt.*;

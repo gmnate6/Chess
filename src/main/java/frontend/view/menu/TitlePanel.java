@@ -1,6 +1,6 @@
-package frontend.gui.main;
+package frontend.view.menu;
 
-import frontend.gui.utils.Styler;
+import frontend.view.utils.Styler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +9,7 @@ public class TitlePanel extends JPanel {
     private final double contentWidthPercent = .4;
     private final double contentHeightPercent = .8;
 
-    public TitlePanel(MainMenuPanel mainMenuPanel) {
+    public TitlePanel(MenuPanel mainMenuPanel) {
         setLayout(new GridBagLayout());
         setOpaque(false);
 

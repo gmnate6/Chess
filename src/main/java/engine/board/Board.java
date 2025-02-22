@@ -1,9 +1,10 @@
 package engine.board;
 
 import engine.utils.CastlingRights;
-import engine.utils.Color;
 import engine.pieces.*;
 import engine.utils.Move;
+
+import utils.Color;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -4,6 +4,8 @@ import engine.board.Board;
 import engine.board.Position;
 import engine.pieces.Rook;
 
+import utils.Color;
+
 public class CastlingRights {
     private boolean whiteKingSide;
     private boolean whiteQueenSide;

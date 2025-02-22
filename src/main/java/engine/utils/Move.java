@@ -3,6 +3,8 @@ package engine.utils;
 import engine.board.Board;
 import engine.board.Position;
 
+import utils.Color;
+
 public final class Move {
     private final Position initialPosition;
     private final Position finalPosition;

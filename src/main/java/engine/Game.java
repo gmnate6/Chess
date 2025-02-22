@@ -6,6 +6,8 @@ import engine.board.Board;
 import engine.board.Position;
 import engine.pieces.*;
 
+import utils.Color;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;

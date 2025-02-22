@@ -1,7 +1,8 @@
-package frontend.gui.game;
+package frontend.view.game;
 
-import frontend.gui.utils.ImageLoader;
-import frontend.utils.Color;
+import frontend.view.utils.ImageLoader;
+
+import utils.Color;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +12,7 @@ public class SquareButton extends JButton {
     private Character currentPiece = null;
     private boolean isActive = false;
     private boolean isHint = false;
-    public static int SIZE = 80;
+    public static int SIZE = 70;
 
     public SquareButton(Color color) {
         this.color = color;

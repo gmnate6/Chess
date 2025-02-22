@@ -1,5 +1,7 @@
 package engine.utils;
 
+import utils.Color;
+
 // TODO: Figure out how reconnecting with FEN will affect the timer
 public class Timer {
     private long whiteTime; // In milliseconds

@@ -4,6 +4,8 @@ import engine.pieces.Piece;
 import engine.board.Board;
 import engine.board.Position;
 
+import utils.Color;
+
 public final class FEN {
     private final Board board;
     private final Color currentPlayer;

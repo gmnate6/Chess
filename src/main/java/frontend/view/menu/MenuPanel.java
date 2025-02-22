@@ -1,11 +1,11 @@
-package frontend.gui.main;
+package frontend.view.menu;
 
-import frontend.gui.utils.ImageLoader;
+import frontend.view.utils.ImageLoader;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class MainMenuPanel extends JLayeredPane {
+public class MenuPanel extends JLayeredPane {
     public int WIDTH = 800;
     public int HEIGHT = 600;
 
@@ -13,7 +13,7 @@ public class MainMenuPanel extends JLayeredPane {
     public final JPanel contentPanel;
     public final CardLayout cardLayout;
 
-    public MainMenuPanel() {
+    public MenuPanel() {
         setBackground(new Color(0xE5E5E5));
         setLayout(null);
 
@@ -67,19 +67,5 @@ public class MainMenuPanel extends JLayeredPane {
         Image woodTexture = ImageLoader.getImageIcon("wood.png").getImage().getScaledInstance(WIDTH, HEIGHT, Image.SCALE_SMOOTH);;
         // Draw the image on the entire background
         g.drawImage(woodTexture, 0, 0, getWidth(), getHeight(), this);
-    }
-
-    // A testing method to run the panel in isolation
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Chess - Main Menu");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(new Dimension(800, 600));
-            frame.setResizable(false);
-
-            // Add the MainMenuPanel to the frame
-            frame.add(new MainMenuPanel());
-            frame.setVisible(true);
-        });
     }
 }
