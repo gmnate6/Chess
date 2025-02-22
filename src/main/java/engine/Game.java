@@ -6,6 +6,8 @@ import engine.board.Board;
 import engine.board.Position;
 import engine.pieces.*;
 
+import utils.Color;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
@@ -71,11 +73,16 @@ public class Game {
             return positions;
         }
 
+        // If Wrong Color
+        if (pieceToMove.getColor() != currentPlayer) {
+            return positions;
+        }
+
         // Loop Through Board
         for (int file = 0; file < 8; file++) {
             for (int rank = 0; rank < 8; rank++) {
                 Position finalPosition = new Position(file, rank);
-                Move currentMove = new Move(initialPosition, finalPosition, '\0');
+                Move currentMove = new Move(initialPosition, finalPosition, 'q');
                 try {
                     if (currentMove.isMoveSafe(board, getCurrentPlayer())) {
                         positions.add(finalPosition);

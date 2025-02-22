@@ -3,7 +3,8 @@ package engine.pieces;
 import engine.board.Board;
 import engine.board.Position;
 import engine.utils.Move;
-import engine.utils.Color;
+
+import utils.Color;
 
 public class Queen extends Piece {
     public Queen(Color color) { super(color); }

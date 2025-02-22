@@ -3,7 +3,8 @@ package engine.pieces;
 import engine.board.Board;
 import engine.board.Position;
 import engine.utils.Move;
-import engine.utils.Color;
+
+import utils.Color;
 
 import java.util.Map;
 
@@ -70,6 +71,9 @@ public abstract class Piece {
     // To String
     @Override
     public String toString() { return String.valueOf(Piece.pieceToChar(this)); }
+
+    // To Char
+    public char toChar() { return Piece.pieceToChar(this); }
 
     // Get Deep Copy
     public Piece getDeepCopy() {
