@@ -6,7 +6,6 @@ import utils.Color;
  * The `Timer` class provides functionality to manage chess timers for both players.
  * It tracks the remaining time for White and Black players, handles time increments,
  * and manages the state of the timer during the game, including turn switching.
- *
  * This class supports initializing timers with a specific starting time and increment,
  * switching turns, and checking if a player is out of time.
  *
@@ -21,20 +20,36 @@ public class Timer {
     boolean started = false;
 
     /**
-     * Constructs a Timer for a chess game with specified initial time, increment per move,
-     * and starting player. This constructor allows customization of both players' starting
-     * time and determines which player begins the game.
+     * Constructs a Timer for a chess game with the specified initial time for both players
+     * and an optional increment per move. This constructor assumes White starts the game.
      *
-     * @param initialTime The initial time (in milliseconds) assigned to both players at the
-     *                    start of the game (e.g., 10 minutes = 600,000 milliseconds).
-     * @param increment   The additional time (in milliseconds) added to a player's clock
-     *                    after each move (e.g., 5 seconds = 5,000 milliseconds).
-     * @param currentTurn Specifies the player who starts the game, either `Color.WHITE` or
-     *                    `Color.BLACK`.
+     * @param initialTime The initial time (in milliseconds) assigned to both players at the start of the game.
+     *                    For example, 10 minutes = 600,000 milliseconds.
+     * @param increment   The additional time (in milliseconds) added to a player's clock after each move.
+     *                    For example, 5 seconds = 5,000 milliseconds.
      */
-    public Timer(long initialTime, long increment, Color currentTurn) {
+    public Timer(long initialTime, long increment) {
         this.whiteTime = initialTime;
         this.blackTime = initialTime;
+        this.increment = increment;
+        this.currentTurn = Color.WHITE;
+    }
+
+    /**
+     * Constructs a Timer with specific remaining times for both players, an optional increment,
+     * and a specified starting turn. This constructor allows more fine-grained control over
+     * the Timer, such as initializing games from an intermediate state or custom scenarios.
+     *
+     * @param whiteTime    The remaining time (in milliseconds) for the White player.
+     *                     For example, 5 minutes = 300,000 milliseconds.
+     * @param blackTime    The remaining time (in milliseconds) for the Black player.
+     * @param increment    The additional time (in milliseconds) added to a player's clock after each move.
+     *                     For example, 10 seconds = 10,000 milliseconds.
+     * @param currentTurn  Specifies the player who starts the game, either `Color.WHITE` or `Color.BLACK`.
+     */
+    public Timer(long whiteTime, long blackTime, long increment, Color currentTurn) {
+        this.whiteTime = whiteTime;
+        this.blackTime = blackTime;
         this.increment = increment;
         this.currentTurn = currentTurn;
     }

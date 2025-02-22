@@ -1,10 +1,11 @@
 package tests;
 
 import engine.Game;
+
 import engine.board.Position;
+
 import engine.utils.Move;
 import engine.utils.Timer;
-import utils.Color;
 
 import java.util.Scanner;
 
@@ -15,7 +16,7 @@ public class CommandLineGame {
 
         // Create Game / Timer
         Game game;
-        Timer timer = new Timer(600_000, 0, Color.WHITE); // 10 minute game
+        Timer timer = new Timer(600_000, 0); // 10 minute game
 
         // Import FEN?
         System.out.print("Import FEN? (y, n): ");
@@ -34,6 +35,7 @@ public class CommandLineGame {
         // Main Loop
         while (game.isGameInPlay()) {
             // Print Game
+            System.out.println("\n");
             System.out.println(game);
             System.out.print(game.getCurrentPlayer().toString() + "'s Move: ");
             input = scanner.nextLine();
@@ -59,9 +61,16 @@ public class CommandLineGame {
             // Create Move Obj
             Move move = new Move(initialPosition, finalPosition, 'q');
 
+            // Check Move Legality
+            if (!game.isMoveLegal(move)) {
+                System.out.println("Illegal Move :(");
+                System.out.println("\n");
+                continue;
+            }
+
             // Make Move
             game.move(move);
-            System.out.println(game.toFEN());
+            System.out.println("FEN: " + game.toFEN());
             System.out.println("\n");
         }
     }

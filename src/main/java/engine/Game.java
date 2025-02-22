@@ -33,8 +33,15 @@ public class Game {
      *              This includes settings like initial time and increment per move.
      */
     public Game(Timer timer) {
+        if (timer == null) {
+            throw new NullPointerException("Timer must not be null.");
+        }
+
+        // Set Timer
         this.timer = timer;
-        this.timer.start();
+        if (!this.timer.isStarted()) {
+            this.timer.start();
+        }
     }
 
     /**
@@ -83,6 +90,7 @@ public class Game {
     public Board getBoard() { return board; }
     public GameResult getGameResult() { return gameResult; }
     public boolean isGameInPlay() { return gameResult == GameResult.ON_GOING;}
+    public Timer getTimer() { return timer; }
 
     // Setter
     private void setCurrentPlayer(Color currentPlayer) { this.currentPlayer = currentPlayer;}
@@ -150,8 +158,6 @@ public class Game {
      * @return `true` if the move is legal according to chess rules; otherwise, `false`.
      */
     public boolean isMoveLegal(Move move) {
-        Position initialPosition = move.getInitialPosition();
-        Position finalPosition = move.getFinalPosition();
         Piece pieceToMove = board.getPieceAt(move.getInitialPosition());
 
         // Cannot move after game
@@ -261,7 +267,6 @@ public class Game {
         // Convert Stuff
         Position initialPosition = move.getInitialPosition();
         Position finalPosition = move.getFinalPosition();
-        char promotionPiece = move.getPromotionPiece();
         Piece pieceToMove = board.getPieceAt(initialPosition);
 
         // If Game is Over
@@ -281,7 +286,7 @@ public class Game {
 
         // Move must be valid
         if (!pieceToMove.isMoveValid(move, board)) {
-            throw new IllegalArgumentException("Illegal move for '" + pieceToMove.toString() + "': " + move.toString());
+            throw new IllegalArgumentException("Illegal move for '" + pieceToMove + "': " + move);
         }
 
         // Is Move Safe?
@@ -303,13 +308,16 @@ public class Game {
         } else {
             this.halfMoveClock++;
         }
+
+        // Switch Players
         this.setCurrentPlayer(this.getCurrentPlayer() == Color.WHITE ? Color.BLACK : Color.WHITE);
+        this.timer.switchTurn();
+        if (this.currentPlayer != timer.getCurrentTurn()) {
+            throw new IllegalStateException("Timer.turn did not equal Game.currentPlayer");
+        }
 
         //  Update Board History
         this.updateBoardHistory();
-
-        // Update Timer
-        this.timer.switchTurn();
 
         // Check for Win Condition
         this.checkWinConditions();
