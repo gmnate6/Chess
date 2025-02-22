@@ -1,7 +1,7 @@
 package frontend.gui.game;
 
 import frontend.gui.utils.ImageLoader;
-import frontend.Color;
+import frontend.utils.Color;
 
 import javax.swing.*;
 import java.awt.*;

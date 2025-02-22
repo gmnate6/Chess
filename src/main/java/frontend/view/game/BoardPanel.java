@@ -4,7 +4,7 @@ import engine.board.Board;
 import engine.board.Position;
 import engine.pieces.Piece;
 
-import frontend.Color;
+import frontend.utils.Color;
 
 import javax.swing.*;
 import javax.swing.border.Border;
