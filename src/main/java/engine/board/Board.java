@@ -4,28 +4,42 @@ import engine.utils.CastlingRights;
 import engine.pieces.*;
 import engine.utils.Move;
 
+import engine.utils.PieceUtils;
 import utils.Color;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Represents the chess board with a 8x8 grid containing pieces.
+ * Handles board setup, piece movements, and deep copying for game state management.
+ */
 public class Board {
     private final Piece[][] board = new Piece[8][8];
     private Position enPassantPosition = null;
     private CastlingRights castlingRights = new CastlingRights();
 
-    // Constructor
+    /**
+     * Default constructor: initializes a standard chessboard setup.
+     */
     public Board() {
         this.setup();
     }
+
+    /**
+     * Creates an empty board with no pieces.
+     *
+     * @return A new board instance with all squares cleared.
+     */
     public static Board getEmptyBoard() {
         Board board = new Board();
         board.clear();
         return board;
     }
 
-    // Clear Board
+    /**
+     * Clears all pieces from the board.
+     */
     public void clear() {
         for (int file = 0; file < 8; file++) {
             for (int rank = 0; rank < 8; rank++) {
@@ -34,7 +48,10 @@ public class Board {
         }
     }
 
-    // Build Default Board
+    /**
+     * Sets up the board to a standard initial chess game configuration.
+     * Places all pieces for both players in their initial positions.
+     */
     public void setup() {
         // Clear
         this.clear();
@@ -66,7 +83,13 @@ public class Board {
         }
     }
 
-    // Get King Position
+    /**
+     * Finds the position of the King of a given color.
+     *
+     * @param color The color of the King to locate.
+     * @return The position of the King.
+     * @throws RuntimeException If no King of the specified color is found.
+     */
     public Position getKingPosition(Color color) {
         for (int file = 0; file < 8; file++) {
             for (int rank = 0; rank < 8; rank++) {
@@ -80,23 +103,22 @@ public class Board {
         throw new RuntimeException("Game state is invalid: King of color " + color + " is missing.");
     }
 
-    // Get King Piece
-    public King getKingPiece(Color color) {
+    /**
+     * Retrieves the King piece of a specific color.
+     *
+     * @param color The color of the King.
+     * @return The King piece.
+     */
+    public King getKing(Color color) {
         Position kingPosition = getKingPosition(color);
         return (King) getPieceAt(kingPosition);
     }
 
-    // Is King In Check
-    public boolean isKingInCheck(Color color) {
-        // Find the king's position
-        Position kingPosition = this.getKingPosition(color);
-
-        // Check if the king is under attack
-        King king = (King) this.getPieceAt(kingPosition);
-        return king.isChecked(kingPosition, this);
-    }
-
-    // Get Deep Copy
+    /**
+     * Creates a deep copy of the board, including all pieces.
+     *
+     * @return A new `Board` object with a deep copy of the current state.
+     */
     public Board getDeepCopy() {
         Board copy = Board.getEmptyBoard();
         for (int file = 0; file < 8; file++) {
@@ -113,7 +135,12 @@ public class Board {
         return copy;
     }
 
-    // Get Pieces By Color
+    /**
+     * Retrieves all positions occupied by pieces of a specific color.
+     *
+     * @param color The color to filter by.
+     * @return A list of positions occupied by pieces of the given color.
+     */
     public List<Position> getPiecePositionsByColor(Color color) {
         List<Position> pieces = new ArrayList<>();
 
@@ -141,7 +168,12 @@ public class Board {
     public void setEnPassantPosition(Position enPassantPosition) { this.enPassantPosition = enPassantPosition; }
     public void setCastlingRights(CastlingRights castlingRights) { this.castlingRights = castlingRights; }
 
-    // To String
+    /**
+     * Converts the board to a multi-line string for visualization.
+     * Empty squares are represented by spaces, and pieces are represented by their symbols.
+     *
+     * @return A string representation of the board.
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -159,26 +191,25 @@ public class Board {
         return sb.toString();
     }
 
-    /// Move: Makes move without Game level knowledge
+    /**
+     * Handles the movement of a piece on the board.
+     * This includes en passant, promotion, and castling logic.
+     *
+     * @param move The move to execute.
+     * @throws IllegalArgumentException If the starting position is empty or the move is invalid.
+     */
     public void move(Move move) {
         // Collapse Move Obj
         Position initialPosition = move.getInitialPosition();
         Position finalPosition = move.getFinalPosition();
         Piece pieceToMove = getPieceAt(initialPosition);
 
-        /// No Piece To Move
+        // No Piece To Move
         if (pieceToMove == null) {
             throw new IllegalArgumentException("No piece at initial position: " + initialPosition);
         }
 
-        /// Validate Move Legality
-        if (!pieceToMove.moveLegality(move, this)) {
-            throw new IllegalArgumentException("Illegal move for '" + pieceToMove.toString() +
-                    "' from " + initialPosition +
-                    " to " + finalPosition);
-        }
-
-        /// Pawn Weirdness
+        // Pawn Weirdness
         if (pieceToMove instanceof Pawn) {
             // If enPassant
             if (((Pawn) pieceToMove).isLegalEnPassant(move, this)) {
@@ -195,17 +226,16 @@ public class Board {
 
             // Promotion
             if (finalPosition.rank() == 0 || finalPosition.rank() == 7) {
-                pieceToMove = Piece.charToPiece(move.getPromotionPiece(), pieceToMove.getColor());
+                pieceToMove = PieceUtils.charToPiece(move.getPromotionPiece(), pieceToMove.getColor());
             }
         } else {
             setEnPassantPosition(null);
         }
 
-        /// King Weirdness
+        // King Weirdness
         if (pieceToMove instanceof King) {
             // If Castle King Side
-            if (((King) pieceToMove).isLegalCastle(move, this, 'K')) {
-                System.out.println("king side");
+            if (((King) pieceToMove).isCastleAttempt(move, true)) {
                 Position rookPosition = initialPosition.move(3, 0);
                 Piece rookPiece = getPieceAt(rookPosition);
 
@@ -217,8 +247,7 @@ public class Board {
             }
 
             // If Castle Queen Side
-            if (((King) pieceToMove).isLegalCastle(move, this, 'Q')) {
-                System.out.println("queen side");
+            if (((King) pieceToMove).isCastleAttempt(move, false)) {
                 Position rookPosition = initialPosition.move(-4, 0);
                 Piece rookPiece = getPieceAt(rookPosition);
 
@@ -239,7 +268,7 @@ public class Board {
             }
         }
 
-        /// Rook Weirdness
+        // Rook Weirdness
         if (pieceToMove instanceof Rook) {
             // Update CastlingRights
             if (pieceToMove.getColor() == Color.WHITE) {
@@ -261,7 +290,7 @@ public class Board {
             }
         }
 
-        /// Update Board
+        // Update Board
         setPieceAt(initialPosition, null);
         setPieceAt(finalPosition, pieceToMove);
     }

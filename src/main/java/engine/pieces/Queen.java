@@ -2,18 +2,34 @@ package engine.pieces;
 
 import engine.board.Board;
 import engine.board.Position;
+
 import engine.utils.Move;
+import engine.utils.PieceUtils;
 
 import utils.Color;
 
+/**
+ * Represents a Queen piece in chess.
+ * Implements the specific movement logic for a Queen.
+ */
 public class Queen extends Piece {
+
+    /**
+     * Constructor to initialize a Queen with a specific color.
+     *
+     * @param color The color of the Queen (`Color.WHITE` or `Color.BLACK`).
+     */
     public Queen(Color color) { super(color); }
 
-    // Move Legality
-    public boolean moveLegality(Move move, Board board) {
-        // Super
-        if (!super.moveLegality(move, board)) { return false; }
-
+    /**
+     * Validates whether a given move adheres to the Queen's movement rules.
+     *
+     * @param move  The move to validate (initial and final positions).
+     * @param board The current board to check for obstructions.
+     * @return `true` if the move is valid for a Queen; otherwise, `false`.
+     */
+    @Override
+    public boolean isPieceSpecificMoveValid(Move move, Board board) {
         // Collapse Move Obj
         Position initialPosition = move.getInitialPosition();
         Position finalPosition = move.getFinalPosition();
@@ -28,7 +44,7 @@ public class Queen extends Piece {
         if (!(isStraightMove || isDiagonalMove)) { return false; }
 
         // Check if the path is clear
-        if (!this.isPathClear(move, board)) { return false; }
+        if (!PieceUtils.isPathClear(move, board)) { return false; }
 
         // Is Legal Move
         return true;
