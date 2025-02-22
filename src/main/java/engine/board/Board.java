@@ -169,29 +169,6 @@ public class Board {
     public void setCastlingRights(CastlingRights castlingRights) { this.castlingRights = castlingRights; }
 
     /**
-     * Converts the board to a multi-line string for visualization.
-     * Empty squares are represented by spaces, and pieces are represented by their symbols.
-     *
-     * @return A string representation of the board.
-     */
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (int rank = 7; rank >= 0; rank--) {
-            for (int file = 0; file < 8; file++) {
-                if (board[file][rank] == null) {
-                    sb.append(" ");
-                } else {
-                    Piece piece = this.getPieceAt(new Position(file, rank));
-                    sb.append(piece.toString());
-                }
-            }
-            sb.append("\n");
-        }
-        return sb.toString();
-    }
-
-    /**
      * Handles the movement of a piece on the board.
      * This includes en passant, promotion, and castling logic.
      *
@@ -293,5 +270,28 @@ public class Board {
         // Update Board
         setPieceAt(initialPosition, null);
         setPieceAt(finalPosition, pieceToMove);
+    }
+
+    /**
+     * Converts the board to a multi-line string for visualization.
+     * Empty squares are represented by spaces, and pieces are represented by their symbols.
+     *
+     * @return A string representation of the board.
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int rank = 7; rank >= 0; rank--) {
+            for (int file = 0; file < 8; file++) {
+                if (board[file][rank] == null) {
+                    sb.append(".");
+                } else {
+                    Piece piece = this.getPieceAt(new Position(file, rank));
+                    sb.append(piece.toString());
+                }
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 }
