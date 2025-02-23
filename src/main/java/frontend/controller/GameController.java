@@ -1,18 +1,19 @@
 package frontend.controller;
 
+import engine.game.Timer;
+import engine.utils.Move;
 import frontend.view.game.BoardPanel;
 import frontend.view.game.SquareButton;
 
 import frontend.model.GameModel;
 
-import engine.Game;
-import engine.board.Position;
+import engine.game.Game;
+import engine.utils.Position;
 import engine.pieces.Piece;
 
 import utils.Color;
+import utils.RandomMoveAI;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 public class GameController {
@@ -30,7 +31,7 @@ public class GameController {
 
     // Creates New Game
     public void startGame(Color color, long initialTime, long increment) {
-        game = new Game(initialTime, increment);
+        game = new Game(new Timer(600_000, 0));
         this.color = color;
 
         // Initialize
@@ -49,12 +50,7 @@ public class GameController {
                 final int r = rank;
 
                 SquareButton squareButton = boardPanel.getSquareButton(file, rank);
-                squareButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        handleSquareClick(new Position(f, r)); // Handle clicks
-                    }
-                });
+                squareButton.addActionListener(e -> handleSquareClick(new Position(f, r)));
             }
         }
     }
@@ -85,7 +81,7 @@ public class GameController {
         SquareButton squareButton = boardPanel.getSquareButton(position.file(), position.rank());
 
         // Select Square
-        squareButton.setActive(true);
+        squareButton.setHighLight(true);
         selectedPiecePosition = position;
 
         // Show Move Hints
@@ -95,11 +91,41 @@ public class GameController {
         }
     }
 
+    // Make Move
+    public void makeMove(Move move) {
+        // Make Move
+        game.move(move);
+
+        // Update BoardPanel
+        boardPanel.loadFromBoard(game.getBoard());
+
+        // Add High lights
+        Position initialPosition = move.initialPosition();
+        Position finalPosition = move.finalPosition();
+        boardPanel.getSquareButton(initialPosition.file(), initialPosition.rank()).setHighLight(true);
+        boardPanel.getSquareButton(finalPosition.file(), finalPosition.rank()).setHighLight(true);
+    }
+
     // Square Button Listeners
-    private void handleSquareClick(Position position) {
-        Piece selectedPiece = game.getBoard().getPieceAt(position);
+    private void handleSquareClick(Position clickedPosition) {
+        if (!game.isGameInPlay()) {
+            return;
+        }
+
+        // Try to make move
+        if (selectedPiecePosition != null) {
+            Move move = new Move(selectedPiecePosition, clickedPosition, 'q');
+            if (game.isMoveLegal(move)) {
+                makeMove(move);
+
+                /// Random Black Move
+                makeMove(RandomMoveAI.getMove(game));
+                /// Random Black Move
+                return;
+            }
+        }
 
         // Handle Selected Piece Position
-        selectPiece(position);
+        selectPiece(clickedPosition);
     }
 }

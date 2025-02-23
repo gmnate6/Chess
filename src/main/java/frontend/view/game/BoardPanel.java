@@ -1,7 +1,7 @@
 package frontend.view.game;
 
-import engine.board.Board;
-import engine.board.Position;
+import engine.game.Board;
+import engine.utils.Position;
 import engine.pieces.Piece;
 
 import utils.Color;
@@ -82,6 +82,9 @@ public class BoardPanel extends JPanel{
 
                 // Set Piece
                 squareButton.setPiece(currentPieceChar);
+
+                // Clear Layovers
+                squareButton.clearOverlays();
             }
         }
     }
@@ -90,8 +93,7 @@ public class BoardPanel extends JPanel{
         for (int file = 0; file < SIZE; file++) {
             for (int rank = 0; rank < SIZE; rank++) {
                 SquareButton currentSquare = getSquareButton(file, rank);
-                currentSquare.setHint(false);
-                currentSquare.setActive(false);
+                currentSquare.clearOverlays();
             }
         }
     }

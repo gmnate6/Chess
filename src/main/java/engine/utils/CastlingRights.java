@@ -1,29 +1,48 @@
 package engine.utils;
 
-import engine.board.Board;
-import engine.board.Position;
+import engine.game.Board;
 import engine.pieces.Rook;
 
 import utils.Color;
 
+/**
+ * The `CastlingRights` class represents the castling rights of a chess game for both players.
+ * Castling rights determine whether each player can castle (king-side or queen-side) in the current game state.
+ */
 public class CastlingRights {
     private boolean whiteKingSide;
     private boolean whiteQueenSide;
     private boolean blackKingSide;
     private boolean blackQueenSide;
 
-    // Constructor
+    /**
+     * Constructor to initialize a new set of castling rights with all rights enabled by default.
+     */
     public CastlingRights() {
         this.whiteKingSide = true;
         this.whiteQueenSide = true;
         this.blackKingSide = true;
         this.blackQueenSide = true;
     }
+
+
+    /**
+     * Creates a `CastlingRights` object based on the given FEN string.
+     *
+     * @param FEN The FEN substring that specifies castling rights (e.g., "KQkq", "-").
+     *            Not implemented fully here; returns default castling rights.
+     *
+     * @return A new `CastlingRights` instance.
+     */
     public static CastlingRights fromFEN(String FEN) {
         return new CastlingRights();
     }
 
-    // Deep Copy CastlingRights
+    /**
+     * Creates a deep copy of the current `CastlingRights` object.
+     *
+     * @return A new `CastlingRights` object with the same values as the current one.
+     */
     public CastlingRights getDeepCopy() {
         CastlingRights copy = new CastlingRights();
         copy.setWhiteKingSide(whiteKingSide);
@@ -42,8 +61,32 @@ public class CastlingRights {
         if (isWhiteKingSide()) return false;
         if (isWhiteQueenSide()) return false;
         if (isBlackKingSide()) return false;
-        if (isBlackQueenSide()) return false;
-        return true;
+        return !isBlackQueenSide();
+    }
+
+    /**
+     * Determines if castling is allowed for a specific player and castling side.
+     *
+     * @param color The player color (`Color.WHITE` or `Color.BLACK`).
+     * @param kingSide `true` for king-side castling, `false` for queen-side castling.
+     * @return `true` if the requested castling is allowed; otherwise, `false`.
+     */
+    public boolean isCastlingAllowed(Color color, boolean kingSide) {
+        if (color == Color.WHITE) {
+            if (kingSide) {
+                return isWhiteKingSide();
+            } else {
+                return isWhiteQueenSide();
+            }
+        }
+        if (color == Color.BLACK) {
+            if (kingSide) {
+                return isBlackKingSide();
+            } else {
+                return isBlackQueenSide();
+            }
+        }
+        return false;
     }
 
     // Setters
@@ -52,7 +95,12 @@ public class CastlingRights {
     public void setBlackKingSide(boolean blackKingSide) { this.blackKingSide = blackKingSide; }
     public void setBlackQueenSide(boolean blackQueenSide) { this.blackQueenSide = blackQueenSide; }
 
-    // Correct Based on Board
+    /**
+     * Verifies and adjusts castling rights based on the current board state.
+     * Removes castling rights if the associated king or rook is not in its original position.
+     *
+     * @param board The chess board to verify against.
+     */
     public void verifyRights(Board board) {
         // Check for White King
         if (!board.getKingPosition(Color.WHITE).equals("e1")) {

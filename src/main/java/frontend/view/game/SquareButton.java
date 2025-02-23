@@ -10,8 +10,8 @@ import java.awt.*;
 public class SquareButton extends JButton {
     private final Color color;
     private Character currentPiece = null;
-    private boolean isActive = false;
-    private boolean isHint = false;
+    private boolean isHighLighted = false;
+    private boolean isHinted = false;
     public static int SIZE = 70;
 
     public SquareButton(Color color) {
@@ -31,8 +31,8 @@ public class SquareButton extends JButton {
         ImageIcon icon = ImageLoader.getImageIcon("board/" + (color == Color.WHITE ? "white.png": "black.png"));
 
         // Active Icon
-        if (isActive) {
-            ImageIcon activeIcon = ImageLoader.getImageIcon("board/active.png");
+        if (isHighLighted) {
+            ImageIcon activeIcon = ImageLoader.getImageIcon("board/high_light.png");
             icon = ImageLoader.overlayIcons(icon, activeIcon);
         }
 
@@ -43,7 +43,7 @@ public class SquareButton extends JButton {
         }
 
         // Hint Icon
-        if (isHint) {
+        if (isHinted) {
             ImageIcon hintIcon = ImageLoader.getImageIcon("board/" + (currentPiece == null ? "move_hint.png": "capture_hint.png"));
             icon = ImageLoader.overlayIcons(icon, hintIcon);
         }
@@ -54,16 +54,36 @@ public class SquareButton extends JButton {
         setIcon(new ImageIcon(scaledImage));
     }
 
+    // Clear Overlays
+    public void clearOverlays() {
+        if (!isHighLighted && !isHinted) {
+            return;
+        }
+        isHighLighted = false;
+        isHinted = false;
+        buildIcon();
+    }
+
+    // Setters
     public void setPiece(Character pieceChar) {
+        if (this.currentPiece == pieceChar) {
+            return;
+        }
         currentPiece = pieceChar;
         buildIcon();
     }
-    public void setActive(boolean isActive) {
-        this.isActive = isActive;
+    public void setHighLight(boolean isHighLighted) {
+        if (this.isHighLighted == isHighLighted) {
+            return;
+        }
+        this.isHighLighted = isHighLighted;
         buildIcon();
     }
-    public void setHint(boolean isHint) {
-        this.isHint = isHint;
+    public void setHint(boolean isHinted) {
+        if (this.isHinted == isHinted) {
+            return;
+        }
+        this.isHinted = isHinted;
         buildIcon();
     }
 }

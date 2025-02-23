@@ -1,11 +1,14 @@
 package engine.utils;
 
 import engine.pieces.Piece;
-import engine.board.Board;
-import engine.board.Position;
+import engine.game.Board;
 
 import utils.Color;
 
+/**
+ * The `FEN` class represents a board state in the standard chess FEN (Forsyth–Edwards Notation) format.
+ * It is responsible for parsing FEN strings into a board representation and converting board states back into FEN notation.
+ */
 public final class FEN {
     private final Board board;
     private final Color currentPlayer;
@@ -14,7 +17,14 @@ public final class FEN {
     private final int halfMoveClock;
     private final int fullMoveNumber;
 
-    // Constructor
+    /**
+     * Constructs a new FEN object with the given board state and additional details.
+     *
+     * @param board The current state of the chess board.
+     * @param currentPlayer The player whose turn it is (White or Black).
+     * @param halfMoveClock The halfmove counter for the 50-move rule.
+     * @param fullMoveNumber The current full move number.
+     */
     public FEN(Board board, Color currentPlayer, int halfMoveClock, int fullMoveNumber) {
         this.board = board;
         this.currentPlayer = currentPlayer;
@@ -23,10 +33,18 @@ public final class FEN {
         this.halfMoveClock = halfMoveClock;
         this.fullMoveNumber = fullMoveNumber;
     }
+
+    /**
+     * Creates a `FEN` object by parsing the given FEN string.
+     *
+     * @param fen The FEN string representing the board state.
+     * @return A new `FEN` object representing the parsed board state.
+     * @throws RuntimeException If the FEN string is invalid, such as missing kings.
+     */
     public static FEN fromFEN(String fen) {
         String[] fenParts = fen.split(" ");
 
-        /// Construct Board
+        // Construct Board
         String boardFEN = fenParts[0];
         String[] ranks = boardFEN.split("/");
         Board board = Board.getEmptyBoard();
@@ -34,6 +52,11 @@ public final class FEN {
         // Check for Kings
         if (!boardFEN.contains("K") || !boardFEN.contains("k")) {
             throw new RuntimeException("Illegal FEN: Both kings (K and k) MUST be on the board.");
+        }
+
+        // Check for 8 ranks
+        if (ranks.length != 8) {
+            throw new RuntimeException("Illegal FEN: Board must be 8 ranks");
         }
 
         // Loop Through Board
@@ -44,8 +67,15 @@ public final class FEN {
                     file += (c - '0');
                 } else {
                     // Set Piece On Board
-                    Position p = new Position(file, rank);
-                    board.setPieceAt(p, Piece.charToPiece(c));
+                    Position pos = new Position(file, rank);
+                    board.setPieceAt(pos, PieceUtils.charToPiece(c));
+
+                    // No Pawns on edge
+                    if (rank == 0 || rank == 7) {
+                        if (c == 'P' || c == 'p') {
+                            throw new RuntimeException("Illegal FEN: Pawns cannot be placed on the edge of the board.");
+                        }
+                    }
 
                     // Move to Next File
                     file++;
@@ -53,11 +83,19 @@ public final class FEN {
             }
         }
 
-        /// Construct Current Player
+        // Construct Current Player
         String currentPlayerFEN = fenParts[1];
+        if (!currentPlayerFEN.equalsIgnoreCase("w") && !currentPlayerFEN.equalsIgnoreCase("b")) {
+            throw new RuntimeException("Illegal FEN: Current Player must either be 'w' or 'b'.");
+        }
         Color currentPlayer = currentPlayerFEN.equalsIgnoreCase("w") ? Color.WHITE : Color.BLACK;
 
-        /// Construct Castling Rights
+        // Cannot be left in check
+        if (board.isKingInCheck(currentPlayer.inverse())) {
+            throw new RuntimeException("Illegal FEN: Other Player cannot be left in check.");
+        }
+
+        // Construct Castling Rights
         String castlingRightsFEN = fenParts[2];
         CastlingRights castlingRights = new CastlingRights();
 
@@ -73,7 +111,7 @@ public final class FEN {
         // Add Castling Rights to Board
         board.setCastlingRights(castlingRights);
 
-        /// Construct En Passant Position
+        // Construct En Passant Position
         String enPassantPositionFEN = fenParts[3];
         Position enPassantPosition;
         if (enPassantPositionFEN.equals("-")) {
@@ -89,7 +127,7 @@ public final class FEN {
         // Add enPassantPosition to Board
         board.setEnPassantPosition(enPassantPosition);
 
-        /// Construct Half Move Clock
+        // Construct Half Move Clock
         String halfMoveClockFEN = fenParts[4];
         int halfMoveClock;
         try {
@@ -98,7 +136,7 @@ public final class FEN {
             halfMoveClock = 0;
         }
 
-        /// Construct Full Move Number
+        // Construct Full Move Number
         String fullMoveNumberFEN = fenParts[5];
         int fullMoveNumber;
         try {
@@ -107,15 +145,19 @@ public final class FEN {
             fullMoveNumber = 0;
         }
 
-        /// Construct FEN Obj
+        // Construct and return the FEN object.
         return new FEN(board, currentPlayer, halfMoveClock, fullMoveNumber);
     }
 
-    // To FEN
+    /**
+     * Converts the current board state to its FEN string representation.
+     *
+     * @return The FEN string representing the board state.
+     */
     public String toFEN() {
         StringBuilder fen = new StringBuilder();
 
-        /// Construct Board
+        // Construct Board
         for (int rank = 7; rank >= 0; rank--) {
             int emptyCount = 0;
 
@@ -150,24 +192,20 @@ public final class FEN {
             }
         }
 
-        /// Construct Current Player
+        // Construct Current Player
         fen.append(" ").append(this.currentPlayer == Color.WHITE ? "w" : "b");
 
-        /// Construct Castling Rights
+        // Construct Castling Rights
         fen.append(" ");
 
-        // K
         if (castlingRights.isWhiteKingSide()) { fen.append("K"); }
-        // Q
         if (castlingRights.isWhiteQueenSide()) { fen.append("Q"); }
-        // k
         if (castlingRights.isBlackKingSide()) { fen.append("k"); }
-        // q
         if (castlingRights.isBlackQueenSide()) { fen.append("q"); }
         // If no castling rights add "-"
         if (castlingRights.isNone()) { fen.append("-"); }
 
-        /// Construct En Passant Position
+        // Construct En Passant Position
         fen.append(" ");
         if (enPassantPosition == null) {
             fen.append("-");
@@ -175,13 +213,13 @@ public final class FEN {
             fen.append(enPassantPosition.toAlgebraic());
         }
 
-        /// Construct Half Move Clock
+        // Construct Half Move Clock
         fen.append(" ").append(halfMoveClock);
 
-        /// Construct Full Move Number
+        // Construct Full Move Number
         fen.append(" ").append(fullMoveNumber);
 
-        /// Return
+        // Return
         return fen.toString();
     }
 
