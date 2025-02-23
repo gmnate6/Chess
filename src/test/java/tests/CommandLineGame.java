@@ -34,6 +34,11 @@ public class CommandLineGame {
 
             processPlayerInput(game, input);
         }
+        System.out.println("\n");
+        System.out.println("Game Over!");
+        if (!game.isGameInPlay()) {
+            System.out.println("Result: " + game.getGameResult());
+        }
     }
 
     /**

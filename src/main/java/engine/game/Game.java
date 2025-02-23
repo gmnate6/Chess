@@ -146,7 +146,7 @@ public class Game {
 
         // Check if the king is in check after the move
         King king = boardCopy.getKing(currentPlayer);
-        Position kingPosition = board.getKingPosition(currentPlayer);
+        Position kingPosition = boardCopy.getKingPosition(currentPlayer);
         return !king.isChecked(kingPosition, boardCopy);
     }
 
