@@ -13,7 +13,6 @@ import utils.Color;
  * Implements the specific movement logic for a Rook.
  */
 public class Rook extends Piece {
-
     /**
      * Constructor to initialize a Rook with a specific color.
      *
