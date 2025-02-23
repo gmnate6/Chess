@@ -1,4 +1,4 @@
-package tests;
+package engine;
 
 import engine.game.Game;
 import engine.utils.Position;

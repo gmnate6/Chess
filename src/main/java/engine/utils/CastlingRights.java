@@ -25,19 +25,6 @@ public class CastlingRights {
         this.blackQueenSide = true;
     }
 
-
-    /**
-     * Creates a `CastlingRights` object based on the given FEN string.
-     *
-     * @param FEN The FEN substring that specifies castling rights (e.g., "KQkq", "-").
-     *            Not implemented fully here; returns default castling rights.
-     *
-     * @return A new `CastlingRights` instance.
-     */
-    public static CastlingRights fromFEN(String FEN) {
-        return new CastlingRights();
-    }
-
     /**
      * Creates a deep copy of the current `CastlingRights` object.
      *

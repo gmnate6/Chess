@@ -49,7 +49,7 @@ This project is a chess engine built in Java featuring core functionalities for 
     ```
 2. Run the command-line application:
     ```bash
-    java -cp out tests.CommandLineGame
+    java -cp out engine.CommandLineGame
     ```
 
 ### Usage Instructions

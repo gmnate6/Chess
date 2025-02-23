@@ -48,12 +48,7 @@ public abstract class Piece{
 
         // Can't capture piece of same color
         Piece targetPiece = board.getPieceAt(finalPosition);
-        if (targetPiece != null && targetPiece.getColor() == this.getColor()) {
-            return false;
-        }
-
-        // Add any other shared generic validations.
-        return true;
+        return targetPiece == null || targetPiece.getColor() != this.getColor();
     }
 
     /**

@@ -71,7 +71,7 @@ public final class FEN {
                     board.setPieceAt(pos, PieceUtils.charToPiece(c));
 
                     // No Pawns on edge
-                    if (file != 0 && file != 7) {
+                    if (rank == 0 || rank == 7) {
                         if (c == 'P' || c == 'p') {
                             throw new RuntimeException("Illegal FEN: Pawns cannot be placed on the edge of the board.");
                         }

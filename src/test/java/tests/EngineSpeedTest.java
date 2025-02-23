@@ -6,6 +6,13 @@ import engine.game.Timer;
 
 import java.util.List;
 
+/**
+ * A utility for benchmarking the performance of the chess engine's move generation.
+ * Measures the time taken to compute legal moves from a specific chessboard position.
+ *
+ * <p>Initializes a game state using a FEN string, calculates legal moves from
+ * a given position, and outputs the results and execution time.</p>
+ */
 public class EngineSpeedTest {
     public static void main(String[] args) {
         // Setup Game

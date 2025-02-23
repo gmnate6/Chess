@@ -40,9 +40,6 @@ public class Bishop extends Piece {
         }
 
         // Check if the path is clear
-        if (!PieceUtils.isPathClear(move, board)) { return false; }
-
-        // Is Legal Move
-        return true;
+        return PieceUtils.isPathClear(move, board);
     }
 }
