@@ -4,7 +4,6 @@ import engine.game.Game;
 import engine.types.Move;
 import engine.types.Position;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.io.*;
@@ -40,23 +39,48 @@ public class AI {
 
     }
 
+    private static String getStockfishPath() {
+        // Set path based on the user's operating system
+        String os = System.getProperty("os.name").toLowerCase();
+        String stockfishPath = "stockfish/";
+
+        if (os.contains("win")) {
+            stockfishPath += "windows/stockfish.exe";
+        } else if (os.contains("nix") || os.contains("nux") || os.contains("mac")) {
+            stockfishPath += "linux/stockfish";
+        }
+        return stockfishPath;
+    }
+
+    public static boolean doesStockfishExist() {
+        String stockfishPath = getStockfishPath();
+        File stockfishFile = new File(stockfishPath);
+        return stockfishFile.exists();
+    }
+
     private static String parseBestMove(String stockfishOutput) {
         String[] parts = stockfishOutput.split(" "); // Split by spaces
-
         if (parts.length >= 2 && parts[0].equals("bestmove")) {
             return parts[1]; // Return the move after "bestmove"
         }
-
         return null; // Return null if no valid move is found
     }
 
-    public static Move stockFishMove(Game game) {
+    public static Move stockfishMove(Game game) {
         String fen = game.toFEN();
         String stringMove;
+        String stockfishPath = getStockfishPath();
+
+        // Check if the Stockfish executable exists
+        File stockfishFile = new File(stockfishPath);
+        if (!stockfishFile.exists()) {
+            System.out.println("Stockfish Failed. Did Random Move.");
+            return randomMove(game);
+        }
 
         // Get Stock Fish Move
         try {
-            Process stockfish = new ProcessBuilder("src/main/stockfish/stockfish-windows-x86-64-sse41-popcnt.exe").start();
+            Process stockfish = new ProcessBuilder(stockfishPath).start();
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stockfish.getOutputStream()));
             BufferedReader reader = new BufferedReader(new InputStreamReader(stockfish.getInputStream()));
 
@@ -89,7 +113,7 @@ public class AI {
         }
 
         // In Case
-        System.out.println("StockFish Failed. Did Random Move.");
+        System.out.println("Stockfish Failed. Did Random Move.");
         return randomMove(game);
     }
 }

@@ -41,30 +41,6 @@ public class GameController {
 
         // Load Board
         boardPanel.loadFromBoard(game.getBoard());
-
-        /// Random Black Move
-        new SwingWorker<Move, Void>() {
-            @Override
-            protected Move doInBackground() {
-                while (true){
-                    if (!game.isGameInPlay()) {
-                        System.out.println(game.getGameResult());
-                        game = new Game(new Timer(initialTime, increment));
-                    }
-                    if (game.getCurrentPlayer() == Color.WHITE){
-                        makeMove(AI.randomMove(game));
-                    } else if (game.getCurrentPlayer() == Color.BLACK){
-                        makeMove(AI.randomMove(game));
-                    }
-                }
-            }
-
-            @Override
-            protected void done() {
-                startGame(color, initialTime, increment);
-            }
-        }.execute();
-        /// Random Black Move
     }
 
     // Initializes Square Button Listeners
@@ -147,7 +123,7 @@ public class GameController {
                 new SwingWorker<Move, Void>() {
                     @Override
                     protected Move doInBackground() {
-                        return AI.stockFishMove(game); // Runs in a background thread
+                        return AI.stockfishMove(game); // Runs in a background thread
                     }
 
                     @Override
