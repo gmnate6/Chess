@@ -12,7 +12,6 @@ import utils.Color;
  * Implements specific pawn movement logic, including special moves like double advance and en passant.
  */
 public class Pawn extends Piece {
-
     /**
      * Constructor to initialize a Pawn with a specific color.
      *
@@ -29,11 +28,20 @@ public class Pawn extends Piece {
      */
     @Override
     public boolean isPieceSpecificMoveValid(Move move, Board board) {
-        return
-                isLegalSingle(move, board) ||
-                isLegalDouble(move, board) ||
-                isLegalCapture(move, board) ||
-                isLegalEnPassant(move, board);
+        // En Passant
+        if (isLegalEnPassant(move, board)) { return true; }
+
+        // Capture
+        if (isLegalCapture(move, board)) { return true; }
+
+        // Double
+        if (isLegalDouble(move, board)) { return true; }
+
+        // Single
+        if (isLegalSingle(move, board)) { return true; }
+
+        // Is Legal Move
+        return false;
     }
 
     /**
@@ -44,14 +52,21 @@ public class Pawn extends Piece {
      * @return `true` if the move is a valid single-step forward move; otherwise, `false`.
      */
     private boolean isLegalSingle(Move move, Board board) {
-        Position initial = move.initialPosition();
-        Position finalPos = move.finalPosition();
-        int direction = (getColor() == Color.WHITE) ? 1 : -1;
+        Position initialPosition = move.initialPosition();
+        Position finalPosition = move.finalPosition();
+        int fileDirection = this.getColor() == Color.WHITE ? 1 : -1;
 
-        // Moving straight forward one square
-        return finalPos.file() == initial.file() &&
-                finalPos.rank() - initial.rank() == direction &&
-                board.getPieceAt(finalPos) == null;
+        // Must be same file
+        if (finalPosition.file() != initialPosition.file()) { return false; }
+
+        // Must be 1 rank away
+        if (finalPosition.rank() - initialPosition.rank() != fileDirection) { return false; }
+
+        // No Piece on Final
+        if (board.getPieceAt(finalPosition) != null) { return false; }
+
+        // Is Legal Single
+        return true;
     }
 
     /**
@@ -62,15 +77,27 @@ public class Pawn extends Piece {
      * @return `true` if the move is a valid two-square forward move; otherwise, `false`.
      */
     public boolean isLegalDouble(Move move, Board board) {
-        Position initial = move.initialPosition();
-        Position finalPos = move.finalPosition();
-        int direction = (getColor() == Color.WHITE) ? 1 : -1;
+        Position initialPosition = move.initialPosition();
+        Position finalPosition = move.finalPosition();
+        int fileDirection = this.getColor() == Color.WHITE ? 1 : -1;
 
-        return finalPos.file() == initial.file() &&
-                finalPos.rank() - initial.rank() == 2 * direction &&
-                board.getPieceAt(finalPos) == null &&
-                initial.rank() == ((getColor() == Color.WHITE) ? 1 : 6) &&
-                board.getPieceAt(initial.move(0, direction)) == null;
+        // Initial Rank must be 1 (white) or 6 (black)
+        if (initialPosition.rank() != (getColor() == Color.WHITE ? 1 : 6)) { return false; }
+
+        // Must be same file
+        if (finalPosition.file() != initialPosition.file()) { return false; }
+
+        // Must be 2 rank away
+        if (finalPosition.rank() - initialPosition.rank() != 2 * fileDirection) { return false; }
+
+        // No Piece on Final
+        if (board.getPieceAt(finalPosition) != null) { return false; }
+
+        // No Piece in front of initial
+        if (board.getPieceAt(initialPosition.move(0, fileDirection)) != null) {return false; }
+
+        // Is Legal Double
+        return true;
     }
 
     /**
@@ -81,15 +108,21 @@ public class Pawn extends Piece {
      * @return `true` if the move is a valid capture; otherwise, `false`.
      */
     private boolean isLegalCapture(Move move, Board board) {
-        Position initial = move.initialPosition();
-        Position finalPos = move.finalPosition();
-        int direction = (getColor() == Color.WHITE) ? 1 : -1;
+        Position initialPosition = move.initialPosition();
+        Position finalPosition = move.finalPosition();
+        int fileDirection = this.getColor() == Color.WHITE ? 1 : -1;
 
-        Piece target = board.getPieceAt(finalPos);
-        return target != null &&
-                target.getColor() != this.getColor() &&
-                finalPos.rank() - initial.rank() == direction &&
-                Math.abs(finalPos.file() - initial.file()) == 1;
+        // Must be 1 file away
+        if (Math.abs(finalPosition.file() - initialPosition.file()) != 1) { return false; }
+
+        // Must be 1 rank away
+        if (finalPosition.rank() - initialPosition.rank() != fileDirection) { return false; }
+
+        // Must have piece to capture
+        if (board.getPieceAt(finalPosition) == null) { return false; }
+
+        // Is Legal Capture
+        return true;
     }
 
     /**
@@ -100,10 +133,31 @@ public class Pawn extends Piece {
      * @return `true` if the move is a valid en passant capture; otherwise, `false`.
      */
     public boolean isLegalEnPassant(Move move, Board board) {
-        Position initial = move.initialPosition();
-        Position finalPos = move.finalPosition();
+        Position initialPosition = move.initialPosition();
+        Position finalPosition = move.finalPosition();
 
-        Position enPassantTarget = board.getEnPassantPosition();
-        return finalPos.equals(enPassantTarget) && Math.abs(finalPos.file() - initial.file()) == 1;
+        // Files are 1 away
+        if (Math.abs(finalPosition.file() - initialPosition.file()) != 1) {
+            return false;
+        }
+
+        // Ranks are 1 away (sign depends on color)
+        if (finalPosition.rank() - initialPosition.rank() != (this.getColor() == Color.WHITE ? 1 : -1)) {
+            return false;
+        }
+
+        // Final has no Piece
+        if (board.getPieceAt(finalPosition) != null) {
+            return false;
+        }
+
+        // enPassant Position must be enPassantAble
+        Position enPassantPosition = new Position(finalPosition.file(), initialPosition.rank());
+        if (!enPassantPosition.equals(board.getEnPassantPosition())) {
+            return false;
+        }
+
+        // Is Legal En Passant
+        return true;
     }
 }
