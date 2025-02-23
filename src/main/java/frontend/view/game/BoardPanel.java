@@ -113,29 +113,11 @@ public class BoardPanel extends JPanel{
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Chess - BoardPanel");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(new Dimension(600, 600));
+            frame.setSize(new Dimension(560, 560));
             frame.setResizable(false);
-            frame.setLayout(new GridBagLayout());
-
-            // Grid Bag
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.gridx = 0;                        // Column 0
-            gbc.gridy = 0;                        // Row 0
-            gbc.anchor = GridBagConstraints.WEST; // Anchor to the left (west)
-            gbc.weightx = 0;                      // No horizontal expansion
-            gbc.weighty = 0;                      // No vertical expansion
-            gbc.fill = GridBagConstraints.NONE;   // Don't let it stretch
-            gbc.insets = new Insets(0, 0, 0, 0);  // No extra padding
 
             // Add the BoardPanel to the frame
-            frame.add(this, gbc);
-
-            // Add a filler to consume remaining space
-            gbc.gridx = 1;                        // Column to the right
-            gbc.weightx = 1.0;                    // Consume remaining horizontal space
-            gbc.fill = GridBagConstraints.HORIZONTAL; // Filler expands horizontally
-            frame.add(Box.createHorizontalGlue(), gbc);
-
+            frame.add(this);
             frame.setVisible(true);
         });
     }
