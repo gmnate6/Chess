@@ -1,10 +1,10 @@
 package engine.pieces;
 
 import engine.game.Board;
-import engine.utils.Position;
+import engine.types.Position;
 
-import engine.utils.CastlingRights;
-import engine.utils.Move;
+import engine.types.CastlingRights;
+import engine.types.Move;
 
 import utils.Color;
 

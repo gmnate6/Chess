@@ -1,7 +1,7 @@
 package frontend.view.game;
 
 import engine.game.Board;
-import engine.utils.Position;
+import engine.types.Position;
 import engine.pieces.Piece;
 
 import utils.Color;

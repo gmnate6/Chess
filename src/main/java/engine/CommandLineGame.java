@@ -1,8 +1,8 @@
 package engine;
 
 import engine.game.Game;
-import engine.utils.Position;
-import engine.utils.Move;
+import engine.types.Position;
+import engine.types.Move;
 import engine.game.Timer;
 
 import java.util.Scanner;

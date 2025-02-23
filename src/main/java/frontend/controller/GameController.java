@@ -1,20 +1,21 @@
 package frontend.controller;
 
+import engine.game.Game;
+import engine.types.Position;
+import engine.pieces.Piece;
 import engine.game.Timer;
-import engine.utils.Move;
+import engine.types.Move;
+import engine.utils.AI;
+
 import frontend.view.game.BoardPanel;
 import frontend.view.game.SquareButton;
-
 import frontend.model.GameModel;
 
-import engine.game.Game;
-import engine.utils.Position;
-import engine.pieces.Piece;
-
 import utils.Color;
-import utils.RandomMoveAI;
 
 import java.util.List;
+import javax.swing.*;
+import java.util.concurrent.ExecutionException;
 
 public class GameController {
     private final BoardPanel boardPanel;
@@ -31,7 +32,7 @@ public class GameController {
 
     // Creates New Game
     public void startGame(Color color, long initialTime, long increment) {
-        game = new Game(new Timer(600_000, 0));
+        game = new Game(new Timer(initialTime, increment));
         this.color = color;
 
         // Initialize
@@ -40,6 +41,30 @@ public class GameController {
 
         // Load Board
         boardPanel.loadFromBoard(game.getBoard());
+
+        /// Random Black Move
+        new SwingWorker<Move, Void>() {
+            @Override
+            protected Move doInBackground() {
+                while (true){
+                    if (!game.isGameInPlay()) {
+                        System.out.println(game.getGameResult());
+                        game = new Game(new Timer(initialTime, increment));
+                    }
+                    if (game.getCurrentPlayer() == Color.WHITE){
+                        makeMove(AI.randomMove(game));
+                    } else if (game.getCurrentPlayer() == Color.BLACK){
+                        makeMove(AI.randomMove(game));
+                    }
+                }
+            }
+
+            @Override
+            protected void done() {
+                startGame(color, initialTime, increment);
+            }
+        }.execute();
+        /// Random Black Move
     }
 
     // Initializes Square Button Listeners
@@ -119,8 +144,24 @@ public class GameController {
                 makeMove(move);
 
                 /// Random Black Move
-                makeMove(RandomMoveAI.getMove(game));
+                new SwingWorker<Move, Void>() {
+                    @Override
+                    protected Move doInBackground() {
+                        return AI.stockFishMove(game); // Runs in a background thread
+                    }
+
+                    @Override
+                    protected void done() {
+                        try {
+                            Move bestMove = get(); // Retrieve the computed move
+                            makeMove(bestMove);
+                        } catch (InterruptedException | ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.execute();
                 /// Random Black Move
+
                 return;
             }
         }

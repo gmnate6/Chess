@@ -3,6 +3,8 @@ package engine.utils;
 import engine.pieces.Piece;
 import engine.game.Board;
 
+import engine.types.CastlingRights;
+import engine.types.Position;
 import utils.Color;
 
 /**
@@ -150,11 +152,11 @@ public final class FEN {
     }
 
     /**
-     * Converts the current board state to its FEN string representation.
+     * Converts the current board to its FEN string representation.
      *
      * @return The FEN string representing the board state.
      */
-    public String toFEN() {
+    public String toFENBoardAndTurn() {
         StringBuilder fen = new StringBuilder();
 
         // Construct Board
@@ -194,6 +196,20 @@ public final class FEN {
 
         // Construct Current Player
         fen.append(" ").append(this.currentPlayer == Color.WHITE ? "w" : "b");
+
+        return fen.toString();
+    }
+
+    /**
+     * Converts the current game state to its FEN string representation.
+     *
+     * @return The FEN string representing the game state.
+     */
+    public String toFEN() {
+        StringBuilder fen = new StringBuilder();
+
+        // Construct Board
+        fen.append(this.toFENBoardAndTurn());
 
         // Construct Castling Rights
         fen.append(" ");
