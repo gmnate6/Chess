@@ -1,11 +1,11 @@
 package frontend.controller;
 
+import engine.ai.*;
 import engine.game.Game;
 import engine.types.Position;
 import engine.pieces.Piece;
 import engine.game.Timer;
 import engine.types.Move;
-import engine.utils.AI;
 
 import frontend.view.game.BoardPanel;
 import frontend.view.game.SquareButton;
@@ -123,7 +123,7 @@ public class GameController {
                 new SwingWorker<Move, Void>() {
                     @Override
                     protected Move doInBackground() {
-                        return AI.stockfishMove(game); // Runs in a background thread
+                        return StockfishAI.makeMove(game); // Runs in a background thread
                     }
 
                     @Override

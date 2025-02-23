@@ -1,44 +1,11 @@
-package engine.utils;
+package engine.ai;
 
 import engine.game.Game;
 import engine.types.Move;
-import engine.types.Position;
 
-import java.util.List;
-import java.util.Random;
 import java.io.*;
 
-public class AI {
-    public static Move randomMove(Game game) {
-        // Random instance
-        Random random = new Random();
-
-        // Get Initial Positions for Current Player
-        List<Position> initialPositionList = game.getBoard().getPiecePositionsByColor(game.getCurrentPlayer());
-
-        while (!initialPositionList.isEmpty()) {
-            // Select Random Initial Position
-            int randomInitialIndex = random.nextInt(initialPositionList.size());
-            Position initialPosition = initialPositionList.get(randomInitialIndex);
-
-            // Get Legal Moves for Initial Position
-            List<Position> finalPositionList = game.getLegalMoves(initialPosition);
-
-            // If there are legal moves, pick one and return
-            if (!finalPositionList.isEmpty()) {
-                Position finalPosition = finalPositionList.get(random.nextInt(finalPositionList.size()));
-                return new Move(initialPosition, finalPosition, 'q');
-            }
-
-            // Remove position from list if no legal moves are found
-            initialPositionList.remove(randomInitialIndex);
-        }
-
-        // No moves available
-        throw new RuntimeException("Error: No Moves Available");
-
-    }
-
+public class StockfishAI {
     private static String getStockfishPath() {
         // Set path based on the user's operating system
         String os = System.getProperty("os.name").toLowerCase();
@@ -66,7 +33,7 @@ public class AI {
         return null; // Return null if no valid move is found
     }
 
-    public static Move stockfishMove(Game game) {
+    public static Move makeMove(Game game) {
         String fen = game.toFEN();
         String stringMove;
         String stockfishPath = getStockfishPath();
@@ -75,7 +42,7 @@ public class AI {
         File stockfishFile = new File(stockfishPath);
         if (!stockfishFile.exists()) {
             System.out.println("Stockfish Failed. Did Random Move.");
-            return randomMove(game);
+            return RandomAI.makeMove(game);
         }
 
         // Get Stock Fish Move
@@ -114,6 +81,6 @@ public class AI {
 
         // In Case
         System.out.println("Stockfish Failed. Did Random Move.");
-        return randomMove(game);
+        return RandomAI.makeMove(game);
     }
 }

@@ -1,0 +1,39 @@
+package engine.ai;
+
+import engine.game.Game;
+import engine.types.Move;
+import engine.types.Position;
+
+import java.util.List;
+import java.util.Random;
+
+public class RandomAI {
+    public static Move makeMove(Game game) {
+        // Random instance
+        Random random = new Random();
+
+        // Get Initial Positions for Current Player
+        List<Position> initialPositionList = game.getBoard().getPiecePositionsByColor(game.getCurrentPlayer());
+
+        while (!initialPositionList.isEmpty()) {
+            // Select Random Initial Position
+            int randomInitialIndex = random.nextInt(initialPositionList.size());
+            Position initialPosition = initialPositionList.get(randomInitialIndex);
+
+            // Get Legal Moves for Initial Position
+            List<Position> finalPositionList = game.getLegalMoves(initialPosition);
+
+            // If there are legal moves, pick one and return
+            if (!finalPositionList.isEmpty()) {
+                Position finalPosition = finalPositionList.get(random.nextInt(finalPositionList.size()));
+                return new Move(initialPosition, finalPosition, 'q');
+            }
+
+            // Remove position from list if no legal moves are found
+            initialPositionList.remove(randomInitialIndex);
+        }
+
+        // No moves available
+        throw new RuntimeException("Error: No Moves Available");
+    }
+}
