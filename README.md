@@ -1,4 +1,4 @@
-# Chess Engine and Command-Line Interface
+# Chess Engine and GUI Interface
 
 This project is a chess engine built in Java featuring core functionalities for simulating chess games, including move validation, special rules handling (castling, en passant, etc.), and game state management via Forsyth–Edwards Notation (FEN). Additionally, it includes a basic command-line interface (CLI) for human players to interact with the engine.
 
