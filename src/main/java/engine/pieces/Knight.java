@@ -38,11 +38,6 @@ public class Knight extends Piece {
         int deltaRank = Math.abs(finalPosition.rank() - initialPosition.rank());
 
         // 2 in one 1 in another
-        if ((deltaFile == 2 && deltaRank == 1) || (deltaFile == 1 && deltaRank == 2)) {
-            return true;
-        }
-
-        // Not Legal
-        return false;
+        return (deltaFile == 2 && deltaRank == 1) || (deltaFile == 1 && deltaRank == 2);
     }
 }

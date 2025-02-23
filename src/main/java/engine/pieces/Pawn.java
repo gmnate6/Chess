@@ -38,10 +38,7 @@ public class Pawn extends Piece {
         if (isLegalDouble(move, board)) { return true; }
 
         // Single
-        if (isLegalSingle(move, board)) { return true; }
-
-        // Is Legal Move
-        return false;
+        return isLegalSingle(move, board);
     }
 
     /**
@@ -63,10 +60,7 @@ public class Pawn extends Piece {
         if (finalPosition.rank() - initialPosition.rank() != fileDirection) { return false; }
 
         // No Piece on Final
-        if (board.getPieceAt(finalPosition) != null) { return false; }
-
-        // Is Legal Single
-        return true;
+        return board.getPieceAt(finalPosition) == null;
     }
 
     /**
@@ -94,10 +88,7 @@ public class Pawn extends Piece {
         if (board.getPieceAt(finalPosition) != null) { return false; }
 
         // No Piece in front of initial
-        if (board.getPieceAt(initialPosition.move(0, fileDirection)) != null) {return false; }
-
-        // Is Legal Double
-        return true;
+        return board.getPieceAt(initialPosition.move(0, fileDirection)) == null;
     }
 
     /**
@@ -119,10 +110,7 @@ public class Pawn extends Piece {
         if (finalPosition.rank() - initialPosition.rank() != fileDirection) { return false; }
 
         // Must have piece to capture
-        if (board.getPieceAt(finalPosition) == null) { return false; }
-
-        // Is Legal Capture
-        return true;
+        return board.getPieceAt(finalPosition) != null;
     }
 
     /**
@@ -153,11 +141,6 @@ public class Pawn extends Piece {
 
         // enPassant Position must be enPassantAble
         Position enPassantPosition = new Position(finalPosition.file(), initialPosition.rank());
-        if (!enPassantPosition.equals(board.getEnPassantPosition())) {
-            return false;
-        }
-
-        // Is Legal En Passant
-        return true;
+        return enPassantPosition.equals(board.getEnPassantPosition());
     }
 }

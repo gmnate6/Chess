@@ -180,12 +180,7 @@ public class Game {
         }
 
         // Move must be safe
-        if (!isMoveSafe(move)) {
-            return false;
-        }
-
-        // Move must be legal
-        return true;
+        return isMoveSafe(move);
     }
 
     /**
