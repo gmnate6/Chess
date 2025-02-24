@@ -54,13 +54,7 @@ public class Game {
      */
     public static Game fromFEN(String fen, Timer timer) {
         Game game = new Game(timer);
-        FEN fenObj;
-
-        try {
-            fenObj = FEN.fromFEN(fen);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid FEN format: " + fen + "\n", e);
-        }
+        FEN fenObj = FEN.fromFEN(fen);
 
         // Update Game
         game.board = fenObj.getBoard();

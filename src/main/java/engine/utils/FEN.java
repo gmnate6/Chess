@@ -7,10 +7,6 @@ import engine.types.CastlingRights;
 import engine.types.Position;
 import utils.Color;
 
-/**
- * The `FEN` class represents a board state in the standard chess FEN (Forsyth–Edwards Notation) format.
- * It is responsible for parsing FEN strings into a board representation and converting board states back into FEN notation.
- */
 public final class FEN {
     private final Board board;
     private final Color currentPlayer;
