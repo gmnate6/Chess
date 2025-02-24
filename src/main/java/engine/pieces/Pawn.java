@@ -5,6 +5,7 @@ import engine.types.Position;
 
 import engine.types.Move;
 
+import engine.utils.PieceUtils;
 import utils.Color;
 
 /**
@@ -18,6 +19,39 @@ public class Pawn extends Piece {
      * @param color The color of the Pawn (`Color.WHITE` or `Color.BLACK`).
      */
     public Pawn(Color color) { super(color); }
+
+    /**
+     * Executes special moves such as "en passant", "castling", or "pawn promotion".
+     * Updates the board to reflect the effects of these moves (e.g., removing a pawn during en passant
+     * or moving the rook during castling).
+     * Assumes `Board.enPassantPosition` is set to `null` before being called.
+     * This method does nothing in the base class and must be overridden by pieces
+     * with special move behavior (e.g., `Pawn`, `King`).
+     *
+     * @param move  The move to execute, containing origin and destination positions.
+     * @param board The chess board, updated to reflect the special move.
+     */
+    @Override
+    public void specialMoveExecution(Move move, Board board) {
+        // Collapse Move Obj
+        Position finalPosition = move.finalPosition();
+
+        // If enPassant
+        if (isLegalEnPassant(move, board)) {
+            // Remove En Passanted Pawn
+            board.setPieceAt(board.getEnPassantPosition(), null);
+        }
+
+        // Update enPassantPosition
+        if (isLegalDouble(move, board)) {
+            board.setEnPassantPosition(finalPosition);
+        }
+
+        // Promotion
+        if (finalPosition.rank() == 0 || finalPosition.rank() == 7) {
+            board.setPieceAt(finalPosition, PieceUtils.charToPiece(move.promotionPiece(), getColor()));
+        }
+    }
 
     /**
      * Validates whether a given move adheres to the Pawn's movement rules.

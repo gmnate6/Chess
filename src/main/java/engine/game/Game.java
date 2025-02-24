@@ -143,10 +143,10 @@ public class Game {
      */
     public boolean isMoveSafe(Move move) {
         // Create a copy of the board
-        Board boardCopy = BoardUtils.getDeepCopy(board);
+        Board boardCopy = board.getDeepCopy();
 
         // Apply Move
-        BoardUtils.executeMove(move, boardCopy);
+        boardCopy.executeMove(move);
 
         // Check if the king is in check after the move
         King king = boardCopy.getKing(currentPlayer);
@@ -305,7 +305,7 @@ public class Game {
         }
 
         // Make Move on Board
-        BoardUtils.executeMove(move, board);
+        board.executeMove(move);
 
         // Switch Players
         this.setCurrentPlayer(this.getCurrentPlayer().inverse());

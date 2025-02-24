@@ -12,7 +12,6 @@ import utils.Color;
  * Represents the King piece in chess, including movement and castling logic.
  */
 public class King extends Piece {
-
     /**
      * Constructor to initialize a King piece with the specified color.
      *
@@ -21,12 +20,62 @@ public class King extends Piece {
     public King(Color color) { super(color); }
 
     /**
-     * Validates if a move is valid for the King, specific to its movement rules.
+     * Executes special moves for the King, specifically castling.
+     * If the move is a valid castling attempt, both the King and the corresponding Rook
+     * are moved to their respective positions.
+     * Assumes `Board.enPassantPosition` is set to `null` before this method is called.
      *
-     * @param move  The move to validate.
-     * @param board The current state of the chess board.
-     * @return `true` if the move is valid for a King; otherwise, `false`.
+     * @param move  The move being executed, containing details about the King's movement.
+     * @param board The chess board, updated to reflect the castling move if applicable.
      */
+    @Override
+    public void specialMoveExecution(Move move, Board board) {
+        super.specialMoveExecution(move, board);
+
+        // Collapse Move Obj
+        Position initialPosition = move.initialPosition();
+
+        // If Castle King Side
+        if (isCastleAttempt(move, true)) {
+            Position rookPosition = initialPosition.move(3, 0);
+            Piece rookPiece = board.getPieceAt(rookPosition);
+
+            // Place Rook
+            board.setPieceAt(initialPosition.move(1, 0), rookPiece);
+
+            // Remove Old Rook
+            board.setPieceAt(rookPosition, null);
+        }
+
+        // If Castle Queen Side
+        if (isCastleAttempt(move, false)) {
+            Position rookPosition = initialPosition.move(-4, 0);
+            Piece rookPiece = board.getPieceAt(rookPosition);
+
+            // Place Rook
+            board.setPieceAt(initialPosition.move(-1, 0), rookPiece);
+
+            // Remove Old Rook
+            board.setPieceAt(rookPosition, null);
+        }
+
+        // Update CastlingRights
+        if (getColor() == Color.WHITE) {
+            board.getCastlingRights().setWhiteKingSide(false);
+            board.getCastlingRights().setWhiteQueenSide(false);
+        } else {
+            board.getCastlingRights().setBlackKingSide(false);
+            board.getCastlingRights().setBlackQueenSide(false);
+        }
+    }
+
+        /**
+         * Validates if a move is valid for the King, specific to its movement rules.
+         *
+         * @param move  The move to validate.
+         * @param board The current state of the chess board.
+         * @return `true` if the move is valid for a King; otherwise, `false`.
+         */
     @Override
     public boolean isPieceSpecificMoveValid(Move move, Board board) {
         Position initial = move.initialPosition();

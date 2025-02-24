@@ -1,5 +1,6 @@
 package engine.game;
 
+import engine.types.Move;
 import engine.types.Position;
 import engine.types.CastlingRights;
 
@@ -84,6 +85,33 @@ public class  Board {
     }
 
     /**
+     * Creates a deep copy of the board, preserving the state of the board including:
+     * - The positions and states of all pieces.
+     * - Castling rights for both players.
+     * - The en passant position (if available).
+     * The resulting deep copy is independent of the original board, meaning changes
+     * made to one will not affect the other.
+     *
+     * @return A new `Board` object that is a deep copy of the provided board, including
+     *         all the pieces, castling rights, and en passant state.
+     */
+    public Board getDeepCopy() {
+        Board copy = Board.getEmptyBoard();
+        for (int file = 0; file < 8; file++) {
+            for (int rank = 0; rank < 8; rank++) {
+                Position position = new Position(file, rank);
+                Piece piece = getPieceAt(position);
+                if (piece != null) {
+                    copy.setPieceAt(position, piece.getDeepCopy());
+                }
+            }
+        }
+        copy.setEnPassantPosition(getEnPassantPosition());
+        copy.setCastlingRights(getCastlingRights().getDeepCopy());
+        return copy;
+    }
+
+    /**
      * Finds the position of the King of a given color.
      *
      * @param color The color of the King to locate.
@@ -146,6 +174,40 @@ public class  Board {
             }
         }
         return pieces;
+    }
+
+    /**
+     * Executes a specified chess move on the given board, making all relevant changes
+     * to the board state. This includes handling the following special chess rules:
+     * - **En Passant**: Captures en passant pawns and updates the en passant position.
+     * - **Pawn Promotion**: Promotes pawns to a specified piece (default: Queen).
+     * - **Castling**: Moves the rook in addition to the king and updates castling rights.
+     * - **Castling Rights**: Updates castling rights when rooks or the king move.
+     * It updates the board state accordingly and ensures the integrity of rules at every step.
+     *
+     * @param move  The `Move` object that describes the chess move to execute. It contains:
+     *              - The initial position of the moving piece.
+     *              - The final position of the moving piece.
+     *              - Optional promotion details if the move involves pawn promotion.
+     * @throws IllegalStateException If there is no piece at the specified initial position.
+     */
+    public void executeMove(Move move) {
+        // Collapse Move Obj
+        Position initialPosition = move.initialPosition();
+        Position finalPosition = move.finalPosition();
+        Piece pieceToMove = getPieceAt(initialPosition);
+
+        // No Piece To Move
+        if (pieceToMove == null) {
+            throw new IllegalStateException("No piece at initial position: " + initialPosition);
+        }
+
+        // Execute Piece To Move Weirdness
+        pieceToMove.specialMoveExecution(move, this);
+
+        // Update Board
+        setPieceAt(initialPosition, null);
+        setPieceAt(finalPosition, pieceToMove);
     }
 
     // Getters

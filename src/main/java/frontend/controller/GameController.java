@@ -65,14 +65,22 @@ public class GameController {
         // Clear Piece Overlays
         boardPanel.clearPieceOverlays();
 
+        // Unselect Piece
+        if (position.equals(selectedPiecePosition)) {
+            selectedPiecePosition = null;
+            return;
+        }
+
         // Get Selected Piece
         Piece selectedPiece = game.getBoard().getPieceAt(position);
 
+        // Empty Click
         if (selectedPiece == null) {
             selectedPiecePosition = null;
             return;
         }
 
+        // Wrong Color
         if (selectedPiece.getColor() != this.color) {
             selectedPiecePosition = null;
             return;
