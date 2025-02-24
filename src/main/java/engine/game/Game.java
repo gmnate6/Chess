@@ -1,11 +1,13 @@
 package engine.game;
 
+import engine.types.Move;
 import engine.utils.*;
 
-import engine.utils.Position;
+import engine.types.Position;
 import engine.pieces.*;
 
 import utils.Color;
+import utils.GameResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,13 +54,7 @@ public class Game {
      */
     public static Game fromFEN(String fen, Timer timer) {
         Game game = new Game(timer);
-        FEN fenObj;
-
-        try {
-            fenObj = FEN.fromFEN(fen);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid FEN format: " + fen + "\n", e);
-        }
+        FEN fenObj = FEN.fromFEN(fen);
 
         // Update Game
         game.board = fenObj.getBoard();
@@ -73,13 +69,21 @@ public class Game {
     }
 
     /**
+     * Converts the current game state into a FEN object.
+     *
+     * @return A FEN object representation of the game's current state.
+     */
+    public FEN toFENObject() {
+        return new FEN(board, currentPlayer, halfMoveClock, fullMoveNumber);
+    }
+
+    /**
      * Converts the current game state into a FEN string.
      *
      * @return A FEN representation of the game's current state.
      */
     public String toFEN() {
-        FEN fen = new FEN(board, currentPlayer, halfMoveClock, fullMoveNumber);
-        return fen.toFEN();
+        return toFENObject().toFEN();
     }
 
     // Getters
@@ -213,7 +217,7 @@ public class Game {
      * Updates the game's board history for tracking repetitions.
      */
     public void updateBoardHistory() {
-        String fen = this.toFEN(); // Convert board to FEN string
+        String fen = toFENObject().toFENBoardAndTurn(); // Convert board to FEN string
         boardHistory.put(fen, boardHistory.getOrDefault(fen, 0) + 1);
     }
 
@@ -239,7 +243,7 @@ public class Game {
         }
 
         // Threefold Repetition
-        if (boardHistory.get(this.toFEN()) >= 3) {
+        if (boardHistory.get(toFENObject().toFENBoardAndTurn()) >= 3) {
             gameResult = GameResult.THREEFOLD_REPETITION;
         }
 
@@ -288,9 +292,6 @@ public class Game {
             throw new IllegalArgumentException("Move puts king in check: " + move);
         }
 
-        // Make Move on Board
-        BoardUtils.executeMove(move, board);
-
         // Update Full
         if (this.currentPlayer == Color.BLACK) {
             this.fullMoveNumber++;
@@ -302,6 +303,9 @@ public class Game {
         } else {
             this.halfMoveClock++;
         }
+
+        // Make Move on Board
+        BoardUtils.executeMove(move, board);
 
         // Switch Players
         this.setCurrentPlayer(this.getCurrentPlayer().inverse());

@@ -1,4 +1,4 @@
-package engine.utils;
+package utils;
 
 public enum GameResult {
     WHITE_CHECKMATE,               // White wins by checkmate
@@ -11,5 +11,10 @@ public enum GameResult {
     DRAW_AGREEMENT,                // Draw by mutual agreement
     RESIGN_WHITE,                  // White resigns
     RESIGN_BLACK,                  // Black resigns
-    ON_GOING                           // Game still in progress
+    ON_GOING;                      // Game still in progress
+
+    /// Returns true if GameResult is a Checkmate
+    public boolean isCheckmate() {
+        return this == WHITE_CHECKMATE || this == BLACK_CHECKMATE;
+    }
 }

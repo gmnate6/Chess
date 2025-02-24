@@ -1,7 +1,7 @@
 package tests;
 
 import engine.game.Game;
-import engine.utils.Position;
+import engine.types.Position;
 import engine.game.Timer;
 
 import java.util.List;

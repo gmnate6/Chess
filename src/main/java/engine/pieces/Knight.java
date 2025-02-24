@@ -1,9 +1,9 @@
 package engine.pieces;
 
 import engine.game.Board;
-import engine.utils.Position;
+import engine.types.Position;
 
-import engine.utils.Move;
+import engine.types.Move;
 
 import utils.Color;
 

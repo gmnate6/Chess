@@ -2,6 +2,8 @@ package engine.utils;
 
 import engine.game.Board;
 import engine.pieces.*;
+import engine.types.Move;
+import engine.types.Position;
 import utils.Color;
 
 import java.util.Map;

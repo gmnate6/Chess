@@ -1,7 +1,7 @@
 package engine.game;
 
-import engine.utils.Position;
-import engine.utils.CastlingRights;
+import engine.types.Position;
+import engine.types.CastlingRights;
 
 import engine.pieces.*;
 
@@ -14,7 +14,7 @@ import java.util.List;
  * Represents the chess board with a 8x8 grid containing pieces.
  * Handles board setup and deep copying for game state management.
  */
-public class Board {
+public class  Board {
     private final Piece[][] board = new Piece[8][8];
     private Position enPassantPosition = null;
     private CastlingRights castlingRights = new CastlingRights();
