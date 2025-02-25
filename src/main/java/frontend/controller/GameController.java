@@ -131,7 +131,7 @@ public class GameController {
                 new SwingWorker<Move, Void>() {
                     @Override
                     protected Move doInBackground() {
-                        return StockfishAI.makeMove(game); // Runs in a background thread
+                        return StockfishAI.getMove(game); // Runs in a background thread
                     }
 
                     @Override

@@ -33,7 +33,7 @@ public class StockfishAI {
         return null; // Return null if no valid move is found
     }
 
-    public static Move makeMove(Game game) {
+    public static Move getMove(Game game) {
         String fen = game.toFEN();
         String stringMove;
         String stockfishPath = getStockfishPath();
@@ -42,7 +42,7 @@ public class StockfishAI {
         File stockfishFile = new File(stockfishPath);
         if (!stockfishFile.exists()) {
             System.out.println("Stockfish Failed. Did Random Move.");
-            return RandomAI.makeMove(game);
+            return RandomAI.getMove(game);
         }
 
         // Get Stock Fish Move

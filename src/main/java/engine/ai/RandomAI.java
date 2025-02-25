@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 public class RandomAI {
-    public static Move makeMove(Game game) {
+    public static Move getMove(Game game) {
         // Random instance
         Random random = new Random();
 
