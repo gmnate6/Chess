@@ -81,6 +81,6 @@ public class StockfishAI {
 
         // In Case
         System.out.println("Stockfish Failed. Did Random Move.");
-        return RandomAI.makeMove(game);
+        return RandomAI.getMove(game);
     }
 }
