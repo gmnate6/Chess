@@ -113,7 +113,7 @@ public class BoardPanel extends JPanel{
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(new Dimension(700, 700));
             frame.setLayout(new BorderLayout());
-            frame.setResizable(false);
+            //frame.setResizable(false);
 
             // Add the BoardPanel to the frame
             frame.add(this, BorderLayout.CENTER);

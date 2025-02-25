@@ -32,18 +32,20 @@ public class SquareButton extends JButton {
         addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
             public void componentResized(java.awt.event.ComponentEvent e) {
-                //repaint();  // Forces a repaint to adjust the image size
+                buildIcon();  // Forces a repaint to adjust the image size
             }
         });
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
+    // Builds and sets icon
+    public void buildIcon() {
         int width = getWidth();
         int height = getHeight();
+        if (width == 0 || height == 0) { return; }
 
-        assert(!(isHighLighted && isMarkedRed));
+        // Create a new buffered image for the icon
+        BufferedImage iconImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = iconImage.createGraphics();
 
         // Square
         g.drawImage(color == Color.WHITE ? pieceImageLoader.getWhiteImage() : pieceImageLoader.getBlackImage(), 0, 0, width, height, this);
@@ -68,6 +70,11 @@ public class SquareButton extends JButton {
         if (isHinted) {
             g.drawImage(pieceImage == null ? pieceImageLoader.getMoveHintImage() : pieceImageLoader.getCaptureHintImage(), 0, 0, width, height, this);
         }
+
+        // Set the button's icon to the rendered image
+        g.dispose();
+        setIcon(new ImageIcon(iconImage));
+
     }
 
     // Clear Overlays
@@ -76,7 +83,7 @@ public class SquareButton extends JButton {
         isHinted = false;
         isHighLighted = false;
         isMarkedRed = false;
-        repaint();
+        buildIcon();
     }
 
     // Setters
@@ -89,7 +96,7 @@ public class SquareButton extends JButton {
     }
     public void setHint(boolean isHinted) {
         this.isHinted = isHinted;
-        repaint();
+        buildIcon();
     }
     public void setHighLight(boolean isHighLighted) {
         this.isHighLighted = isHighLighted;
