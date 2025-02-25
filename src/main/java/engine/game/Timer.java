@@ -105,4 +105,7 @@ public class Timer {
         return player == Color.WHITE ? whiteTime : blackTime;
     }
     public Color getCurrentTurn() { return currentTurn; }
+
+    // Setters
+    public void setCurrentTurn(Color currentTurn) { this.currentTurn = currentTurn; }
 }

@@ -47,14 +47,16 @@ public class Game {
 
     /**
      * Creates a Game object from a FEN string.
+     * Note: If fen.currentPlayer != timer.currentTurn: fen overrides timer.
      *
      * @param fen The FEN string describing the game state.
      * @return A Game instance reflecting the given FEN state.
      * @throws IllegalArgumentException If the FEN string is invalid.
      */
     public static Game fromFEN(String fen, Timer timer) {
-        Game game = new Game(timer);
         FEN fenObj = FEN.fromFEN(fen);
+        timer.setCurrentTurn(fenObj.getCurrentPlayer());
+        Game game = new Game(timer);
 
         // Update Game
         game.board = fenObj.getBoard();
