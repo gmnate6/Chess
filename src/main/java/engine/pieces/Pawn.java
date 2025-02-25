@@ -48,9 +48,20 @@ public class Pawn extends Piece {
         }
 
         // Promotion
-        if (finalPosition.rank() == 0 || finalPosition.rank() == 7) {
+        if (isLegalPromotion(move, board)) {
             board.setPieceAt(finalPosition, PieceUtils.charToPiece(move.promotionPiece(), getColor()));
         }
+    }
+
+    public boolean isLegalPromotion(Move move, Board board) {
+        Position finalPosition = move.finalPosition();
+
+        // Must be Legal Single
+        if (!isLegalSingle(move, board)) {
+            return false;
+        }
+
+        return finalPosition.rank() == 0 || finalPosition.rank() == 7;
     }
 
     /**

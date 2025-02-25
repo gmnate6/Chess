@@ -2,88 +2,101 @@ package frontend.view.game;
 
 import frontend.view.utils.ImageLoader;
 
+import frontend.view.utils.PieceImageLoader;
 import utils.Color;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class SquareButton extends JButton {
     private final Color color;
-    private Character currentPiece = null;
-    private boolean isHighLighted = false;
-    private boolean isHinted = false;
-    public static int SIZE = 70;
+    private PieceImageLoader pieceImageLoader;
 
-    public SquareButton(Color color) {
+    // State
+    private BufferedImage pieceImage = null;
+    private boolean isHinted = false;
+    private boolean isHighLighted = false;
+    private boolean isMarkedRed = false;
+
+    public SquareButton(Color color, PieceImageLoader pieceImageLoader) {
         this.color = color;
-        buildIcon();
+        this.pieceImageLoader = pieceImageLoader;
 
         // Setup
-        setPreferredSize(new Dimension(SIZE, SIZE));
         setBorderPainted(false);
         setFocusPainted(false);
         setContentAreaFilled(false);
+
+        // Ensures the button repaints when resized
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                //repaint();  // Forces a repaint to adjust the image size
+            }
+        });
     }
 
-    // Build and Set Icon based on Button State
-    private void buildIcon() {
-        // Base Color Icon
-        ImageIcon icon = ImageLoader.getImageIcon("board/" + (color == Color.WHITE ? "white.png": "black.png"));
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        int width = getWidth();
+        int height = getHeight();
 
-        // Active Icon
+        assert(!(isHighLighted && isMarkedRed));
+
+        // Square
+        g.drawImage(color == Color.WHITE ? pieceImageLoader.getWhiteImage() : pieceImageLoader.getBlackImage(), 0, 0, width, height, this);
+
+        // Highlight
         if (isHighLighted) {
-            ImageIcon activeIcon = ImageLoader.getImageIcon("board/high_light.png");
-            icon = ImageLoader.overlayIcons(icon, activeIcon);
+            g.drawImage(pieceImageLoader.getHighlightImage(), 0, 0, width, height, this);
         }
 
-        // Piece Icon
-        if (currentPiece != null) {
-            ImageIcon pieceIcon = ImageLoader.getPieceIcon(currentPiece);
-            icon = ImageLoader.overlayIcons(icon, pieceIcon);
+        // Marked Red
+        if (isMarkedRed) {
+            g.drawImage(pieceImageLoader.getMarkedRedImage(), 0, 0, width, height, this);
         }
 
-        // Hint Icon
+        // Draw Piece
+        if (pieceImage != null) {
+            Image scaledImage = pieceImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            g.drawImage(scaledImage, 0, 0, width, height, this);
+        }
+
+        // Hint
         if (isHinted) {
-            ImageIcon hintIcon = ImageLoader.getImageIcon("board/" + (currentPiece == null ? "move_hint.png": "capture_hint.png"));
-            icon = ImageLoader.overlayIcons(icon, hintIcon);
+            g.drawImage(pieceImage == null ? pieceImageLoader.getMoveHintImage() : pieceImageLoader.getCaptureHintImage(), 0, 0, width, height, this);
         }
-
-        // Scale Image
-        Image scaledImage = icon.getImage().getScaledInstance(SIZE, SIZE, Image.SCALE_SMOOTH);
-        // Set Icon
-        setIcon(new ImageIcon(scaledImage));
     }
 
     // Clear Overlays
     public void clearOverlays() {
-        if (!isHighLighted && !isHinted) {
-            return;
-        }
-        isHighLighted = false;
+        // if (!isHinted  && !isHighLighted && !isMarkedRed) { return; }
         isHinted = false;
-        buildIcon();
+        isHighLighted = false;
+        isMarkedRed = false;
+        repaint();
     }
 
     // Setters
     public void setPiece(Character pieceChar) {
-        if (this.currentPiece == pieceChar) {
+        if (pieceChar == null) {
+            pieceImage = null;
             return;
         }
-        currentPiece = pieceChar;
-        buildIcon();
-    }
-    public void setHighLight(boolean isHighLighted) {
-        if (this.isHighLighted == isHighLighted) {
-            return;
-        }
-        this.isHighLighted = isHighLighted;
-        buildIcon();
+        pieceImage = pieceImageLoader.getPieceImage(pieceChar);
     }
     public void setHint(boolean isHinted) {
-        if (this.isHinted == isHinted) {
-            return;
-        }
         this.isHinted = isHinted;
-        buildIcon();
+        repaint();
+    }
+    public void setHighLight(boolean isHighLighted) {
+        this.isHighLighted = isHighLighted;
+        this.isMarkedRed = false;
+    }
+    public void setMarkedRed(boolean isMarkedRed) {
+        this.isMarkedRed = isMarkedRed;
+        this.isHighLighted = false;
     }
 }

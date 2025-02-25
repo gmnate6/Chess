@@ -4,10 +4,13 @@ import engine.game.Board;
 import engine.types.Position;
 import engine.pieces.Piece;
 
+import frontend.view.utils.PieceImageLoader;
 import utils.Color;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class BoardPanel extends JPanel{
     private final SquareButton[][] squares = new SquareButton[SIZE][SIZE];
@@ -17,7 +20,6 @@ public class BoardPanel extends JPanel{
     public BoardPanel() {
         // Setup
         setLayout(new GridLayout(SIZE, SIZE, 0, 0));
-        setPreferredSize(new Dimension((SIZE * SquareButton.SIZE), (SIZE * SquareButton.SIZE)));
 
         // Background
         setBackground(new java.awt.Color(0xE5E5E5));
@@ -29,11 +31,13 @@ public class BoardPanel extends JPanel{
             throw new RuntimeException("Error: BoardPanel.initializeBoard() must be called only once.");
         }
 
+        // Initialize Squares
+        PieceImageLoader pieceImageLoader = new PieceImageLoader();
         if (perspective == Color.WHITE) {
             // White
             for (int rank = SIZE - 1; rank >= 0; rank--) {
                 for (int file = 0; file < SIZE; file++) {
-                    squares[file][rank] = new SquareButton((file + rank) % 2 == 0 ? Color.WHITE : Color.BLACK);
+                    squares[file][rank] = new SquareButton((file + rank) % 2 == 0 ? Color.WHITE : Color.BLACK, pieceImageLoader);
                     add(squares[file][rank]);
                 }
             }
@@ -41,7 +45,7 @@ public class BoardPanel extends JPanel{
             // Black
             for (int rank = 0; rank < SIZE; rank++) {
                 for (int file = SIZE - 1; file >= 0; file--) {
-                    squares[file][rank] = new SquareButton((file + rank) % 2 == 0 ? Color.WHITE : Color.BLACK);
+                    squares[file][rank] = new SquareButton((file + rank) % 2 == 0 ? Color.WHITE : Color.BLACK, pieceImageLoader);
                     add(squares[file][rank]);
                 }
             }
@@ -54,7 +58,6 @@ public class BoardPanel extends JPanel{
             throw new IllegalArgumentException("Cannot get SquareButton at Invalid Position: " + file + ", " + rank + ". Valid range for file and rank is 0-7.");
         }
 
-        SquareButton squareButton = squares[file][rank];
         if (!isInitialized) {
             throw new RuntimeException("Error: BoardPanel.initializeBoard() must be called before getting SquareButton.");
         }
@@ -74,11 +77,6 @@ public class BoardPanel extends JPanel{
 
                 // Get Square Button
                 SquareButton squareButton = getSquareButton(file, rank);
-
-                // If Square Button Null
-                if (squareButton == null) {
-                    throw new RuntimeException("Error: BoardPanel.initializeBoard() must be called before loading board.");
-                }
 
                 // Set Piece
                 squareButton.setPiece(currentPieceChar);
@@ -113,16 +111,18 @@ public class BoardPanel extends JPanel{
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Chess - BoardPanel");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(new Dimension(560, 560));
+            frame.setSize(new Dimension(700, 700));
+            frame.setLayout(new BorderLayout());
             frame.setResizable(false);
 
             // Add the BoardPanel to the frame
-            frame.add(this);
+            frame.add(this, BorderLayout.CENTER);
             frame.setVisible(true);
         });
     }
     public static void main(String[] args) {
         BoardPanel boardPanel = new BoardPanel();
         boardPanel.createJFrame();
+        boardPanel.initializeBoard(Color.WHITE);
     }
 }

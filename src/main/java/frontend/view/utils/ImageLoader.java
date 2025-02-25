@@ -2,7 +2,6 @@ package frontend.view.utils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,6 +9,25 @@ import javax.imageio.ImageIO;
 
 public class ImageLoader {
     public static final String basePath = "images/";
+
+    public static BufferedImage loadBufferedImage(String path) {
+        String fullPath = basePath + path;
+        try (InputStream imageStream = ImageLoader.class.getClassLoader().getResourceAsStream(fullPath))
+        {
+            return ImageIO.read(imageStream);
+        } catch (Exception e) {
+            System.err.println("Error loading image: " + fullPath);
+        }
+
+        // Return Orange BufferedImage
+        int size = 100;
+        BufferedImage blankImage = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = blankImage.createGraphics();
+        g2d.setColor(Color.ORANGE);
+        g2d.fillRect(0, 0, size, size);
+        g2d.dispose();
+        return blankImage;
+    }
 
     public static ImageIcon getImageIcon(String path) {
         path = basePath + path;
@@ -26,57 +44,6 @@ public class ImageLoader {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static ImageIcon getPieceIcon(char pieceChar) {
-        String file = null;
-        switch (pieceChar) {
-            // White
-            case 'P':
-                file = "white_pawn.png";
-                break;
-            case 'R':
-                file = "white_rook.png";
-                break;
-            case 'N':
-                file = "white_knight.png";
-                break;
-            case 'B':
-                file = "white_bishop.png";
-                break;
-            case 'Q':
-                file = "white_queen.png";
-                break;
-            case 'K':
-                file = "white_king.png";
-                break;
-            // Black
-            case 'p':
-                file = "black_pawn.png";
-                break;
-            case 'r':
-                file = "black_rook.png";
-                break;
-            case 'n':
-                file = "black_knight.png";
-                break;
-            case 'b':
-                file = "black_bishop.png";
-                break;
-            case 'q':
-                file = "black_queen.png";
-                break;
-            case 'k':
-                file = "black_king.png";
-                break;
-        }
-
-        // If pieceChar is not valid
-        if (file == null) {
-            throw new RuntimeException("Illegal PieceChar: '" + pieceChar + "' is not valid.");
-        }
-
-        return getImageIcon("pieces/" + file);
     }
 
     public static BufferedImage iconToBufferedImage(ImageIcon icon) {
@@ -118,28 +85,5 @@ public class ImageLoader {
 
         // Convert the combined BufferedImage back to an ImageIcon
         return new ImageIcon(combined);
-    }
-
-    // Rotates an image by a given angle (in degrees)
-    public ImageIcon getRotatedImageIcon(ImageIcon icon, double angle) {
-        int width = icon.getIconWidth();
-        int height = icon.getIconHeight();
-
-        // Create a buffered image with transparency
-        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = (Graphics2D) bufferedImage.getGraphics();
-
-        // Perform rotation using AffineTransform
-        AffineTransform transform = new AffineTransform();
-        transform.rotate(Math.toRadians(angle), width / 2.0, height / 2.0);
-        transform.translate((bufferedImage.getWidth() - width) / 2.0, (bufferedImage.getHeight() - height) / 2.0);
-        g2d.setTransform(transform);
-
-        // Draw the original image
-        g2d.drawImage(icon.getImage(), 0, 0, null);
-        g2d.dispose();
-
-        // Return a new rotated ImageIcon
-        return new ImageIcon(bufferedImage);
     }
 }

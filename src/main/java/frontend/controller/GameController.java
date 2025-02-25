@@ -23,7 +23,7 @@ public class GameController {
     private Game game;
 
     private Color color;
-    private Position selectedPiecePosition = null;
+    private Position selectedPosition = null;
 
     public GameController(BoardPanel boardPanel, GameModel gameModel) {
         this.boardPanel = boardPanel;
@@ -66,8 +66,8 @@ public class GameController {
         boardPanel.clearPieceOverlays();
 
         // Unselect Piece
-        if (position.equals(selectedPiecePosition)) {
-            selectedPiecePosition = null;
+        if (position.equals(selectedPosition)) {
+            selectedPosition = null;
             return;
         }
 
@@ -76,13 +76,13 @@ public class GameController {
 
         // Empty Click
         if (selectedPiece == null) {
-            selectedPiecePosition = null;
+            selectedPosition = null;
             return;
         }
 
         // Wrong Color
         if (selectedPiece.getColor() != this.color) {
-            selectedPiecePosition = null;
+            selectedPosition = null;
             return;
         }
 
@@ -91,7 +91,7 @@ public class GameController {
 
         // Select Square
         squareButton.setHighLight(true);
-        selectedPiecePosition = position;
+        selectedPosition = position;
 
         // Show Move Hints
         List<Position> finalPositions = game.getLegalMoves(position);
@@ -122,8 +122,8 @@ public class GameController {
         }
 
         // Try to make move
-        if (selectedPiecePosition != null) {
-            Move move = new Move(selectedPiecePosition, clickedPosition, 'q');
+        if (selectedPosition != null) {
+            Move move = new Move(selectedPosition, clickedPosition, 'q');
             if (game.isMoveLegal(move)) {
                 makeMove(move);
 
