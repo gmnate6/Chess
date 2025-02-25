@@ -101,9 +101,11 @@ public class SquareButton extends JButton {
     public void setHighLight(boolean isHighLighted) {
         this.isHighLighted = isHighLighted;
         this.isMarkedRed = false;
+        buildIcon();
     }
     public void setMarkedRed(boolean isMarkedRed) {
         this.isMarkedRed = isMarkedRed;
         this.isHighLighted = false;
+        buildIcon();
     }
 }
