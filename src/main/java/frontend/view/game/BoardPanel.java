@@ -37,7 +37,7 @@ public class BoardPanel extends JPanel{
             // White
             for (int rank = SIZE - 1; rank >= 0; rank--) {
                 for (int file = 0; file < SIZE; file++) {
-                    squares[file][rank] = new SquareButton((file + rank) % 2 == 0 ? Color.WHITE : Color.BLACK, pieceImageLoader);
+                    squares[file][rank] = new SquareButton((file + rank) % 2 == 0 ? Color.BLACK : Color.WHITE, pieceImageLoader);
                     add(squares[file][rank]);
                 }
             }
@@ -45,7 +45,7 @@ public class BoardPanel extends JPanel{
             // Black
             for (int rank = 0; rank < SIZE; rank++) {
                 for (int file = SIZE - 1; file >= 0; file--) {
-                    squares[file][rank] = new SquareButton((file + rank) % 2 == 0 ? Color.WHITE : Color.BLACK, pieceImageLoader);
+                    squares[file][rank] = new SquareButton((file + rank) % 2 == 0 ? Color.BLACK : Color.WHITE, pieceImageLoader);
                     add(squares[file][rank]);
                 }
             }

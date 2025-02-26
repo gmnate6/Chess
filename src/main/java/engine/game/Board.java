@@ -206,6 +206,7 @@ public class  Board {
         pieceToMove.specialMoveExecution(move, this);
 
         // Update Board
+        pieceToMove = getPieceAt(initialPosition);
         setPieceAt(initialPosition, null);
         setPieceAt(finalPosition, pieceToMove);
     }

@@ -34,6 +34,7 @@ public class Pawn extends Piece {
     @Override
     public void specialMoveExecution(Move move, Board board) {
         // Collapse Move Obj
+        Position initialPosition = move.initialPosition();
         Position finalPosition = move.finalPosition();
 
         // If enPassant
@@ -49,7 +50,7 @@ public class Pawn extends Piece {
 
         // Promotion
         if (isLegalPromotion(move, board)) {
-            board.setPieceAt(finalPosition, PieceUtils.charToPiece(move.promotionPiece(), getColor()));
+            board.setPieceAt(initialPosition, PieceUtils.charToPiece(move.promotionPiece(), getColor()));
         }
     }
 
@@ -57,7 +58,7 @@ public class Pawn extends Piece {
         Position finalPosition = move.finalPosition();
 
         // Must be Legal Single
-        if (!isLegalSingle(move, board)) {
+        if (!isLegalSingle(move, board) && !isLegalCapture(move, board)) {
             return false;
         }
 
