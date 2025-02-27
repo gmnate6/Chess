@@ -21,20 +21,23 @@ public class Game {
     private Color turn = Color.WHITE;
     private int halfMoveClock = 0;
     private int fullMoveNumber = 1;
+    public Timer timer;
     private GameResult gameResult = GameResult.ON_GOING;
     private final HashMap<String, Integer> boardHistory = new HashMap<>();
-    public Timer timer;
+    private final MoveHistory moveHistory = new MoveHistory();
 
     /**
-     * Constructs a new Game instance with an already initialized Timer object.
-     * Ensures the Timer is valid (non-null) and starts it if it is not already running.
+     * Constructs a new Game instance, optionally with an already initialized Timer object.
+     * If a Timer is provided and enabled, it ensures the Timer is valid (non-null) and starts it
+     * if it is not already running. If the Timer is disabled (or null), the game operates without
+     * time tracking.
      *
-     * @param timer The Timer object used to manage time for both players.
-     * @throws NullPointerException if the provided Timer is null.
+     * @param timer The Timer object used to manage time for both players, or null if timers are disabled.
      */
     public Game(Timer timer) {
+        // Disabled Timer
         if (timer == null) {
-            throw new NullPointerException("Timer must not be null.");
+            timer = new Timer();
         }
 
         // Set Timer
@@ -79,6 +82,7 @@ public class Game {
     public GameResult getGameResult() { return gameResult; }
     public boolean isGameInPlay() { return gameResult == GameResult.ON_GOING;}
     public Timer getTimer() { return timer; }
+    public MoveHistory getMoveHistory() { return moveHistory; }
 
     // Setter
     public void setTurn(Color turn) { this.turn = turn;}
@@ -205,6 +209,13 @@ public class Game {
     }
 
     /**
+     * Updates the game's move history.
+     */
+    public void updateMoveHistory(Move move) {
+        moveHistory.addMove(move);
+    }
+
+    /**
      * Checks and updates the game's result based on win conditions.
      */
     public void checkWinConditions() {
@@ -231,11 +242,13 @@ public class Game {
         }
 
         // Timer
-        if (this.timer.isOutOfTime(Color.WHITE)) {
-            gameResult = GameResult.TIME_WHITE_LOSS;
-        }
-        if (this.timer.isOutOfTime(Color.BLACK)) {
-            gameResult = GameResult.TIME_BLACK_LOSS;
+        if (!timer.isDisabled()){
+            if (this.timer.isOutOfTime(Color.WHITE)) {
+                gameResult = GameResult.TIME_WHITE_LOSS;
+            }
+            if (this.timer.isOutOfTime(Color.BLACK)) {
+                gameResult = GameResult.TIME_BLACK_LOSS;
+            }
         }
     }
 
@@ -297,8 +310,9 @@ public class Game {
             throw new IllegalStateException("Timer.turn did not equal Game.turn");
         }
 
-        //  Update Board History
+        //  Update History
         this.updateBoardHistory();
+        this.updateMoveHistory(move);
 
         // Check for Win Condition
         this.checkWinConditions();

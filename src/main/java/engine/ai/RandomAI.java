@@ -26,7 +26,7 @@ public class RandomAI {
             // If there are legal moves, pick one and return
             if (!finalPositionList.isEmpty()) {
                 Position finalPosition = finalPositionList.get(random.nextInt(finalPositionList.size()));
-                return new Move(initialPosition, finalPosition, 'q');
+                return new Move(initialPosition, finalPosition, 'Q');
             }
 
             // Remove position from list if no legal moves are found

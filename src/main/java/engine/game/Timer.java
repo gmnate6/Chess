@@ -17,7 +17,21 @@ public class Timer {
     private long lastMoveTimestamp;
     private Color turn;
     private final long increment; // Time increment per move (if applicable)
-    boolean started = false;
+    private boolean started = false;
+    private boolean isDisabled = false;
+
+    /**
+     * Initializes a Timer with default values:
+     * both players start with zero time, no increment, and White as the starting turn.
+     *
+     * <p>This constructor is useful for creating a Timer instance in scenarios where
+     * time settings are not immediately required, and additional configuration can
+     * be applied later.</p>
+     */
+    public Timer() {
+        this(0, 0);
+        this.isDisabled = true;
+    }
 
     /**
      * Constructs a Timer for a chess game with the specified initial time for both players
@@ -54,11 +68,21 @@ public class Timer {
         this.turn = turn;
     }
 
-    // Deep Copy
+    /**
+     * Creates and returns a deep copy of the current Timer object.
+     *
+     * <p>The deep copy ensures that all fields, including time values and
+     * game state (e.g., current turn, started state, etc.), are duplicated to
+     * create a completely independent Timer instance. Modifications to the
+     * copied Timer do not affect the original Timer and vice versa.</p>
+     *
+     * @return A new Timer instance that is a deep copy of this Timer.
+     */
     public Timer getDeepCopy() {
         Timer copy = new Timer(whiteTime, blackTime, increment, turn);
         copy.lastMoveTimestamp = lastMoveTimestamp;
         copy.started = started;
+        copy.isDisabled = isDisabled;
         return copy;
     }
 
@@ -67,6 +91,7 @@ public class Timer {
      * Also marks the timer as started.
      */
     public void start() {
+        if (isDisabled) { return; }
         this.lastMoveTimestamp = System.currentTimeMillis();
         started = true;
     }
@@ -91,15 +116,24 @@ public class Timer {
      * and adds the increment time to their clock.
      */
     public void switchTurn() {
+        if (isDisabled) {
+            turn = turn.inverse();
+            return;
+        }
+        if (!started) { return; }
+
+        // Calc
         long now = System.currentTimeMillis();
         long elapsed = now - lastMoveTimestamp;
 
+        // Switch
         if (turn == Color.WHITE) {
             whiteTime = Math.max(0, whiteTime - elapsed + increment);
         } else {
             blackTime = Math.max(0, blackTime - elapsed + increment);
         }
 
+        // Update Time Stamp
         lastMoveTimestamp = now;
         turn = turn.inverse();
     }
@@ -113,6 +147,7 @@ public class Timer {
         return player == Color.WHITE ? whiteTime : blackTime;
     }
     public Color getTurn() { return turn; }
+    public boolean isDisabled() { return isDisabled; }
 
     // Setters
     public void setTurn(Color currentTurn) { this.turn = currentTurn; }

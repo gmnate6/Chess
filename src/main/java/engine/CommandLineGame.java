@@ -5,6 +5,7 @@ import engine.types.Position;
 import engine.types.Move;
 import engine.game.Timer;
 import engine.utils.FEN;
+import engine.utils.PGN;
 
 import java.util.Scanner;
 
@@ -40,6 +41,7 @@ public class CommandLineGame {
         if (!game.isGameInPlay()) {
             System.out.println("Result: " + game.getGameResult());
         }
+        System.out.println(PGN.getPGN(game));
     }
 
     /**

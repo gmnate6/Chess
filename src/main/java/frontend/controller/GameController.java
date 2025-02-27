@@ -2,12 +2,14 @@ package frontend.controller;
 
 import engine.ai.*;
 import engine.game.Game;
+import engine.pieces.Pawn;
 import engine.types.Position;
 import engine.pieces.Piece;
 import engine.game.Timer;
 import engine.types.Move;
 
 import engine.utils.MoveUtils;
+import engine.utils.PGN;
 import frontend.view.game.BoardPanel;
 import frontend.view.game.SquareButton;
 import frontend.model.GameModel;
@@ -101,18 +103,39 @@ public class GameController {
         }
     }
 
+    // Black's Move
+    public void blackMove() {
+        if (!game.isGameInPlay()) { return; }
+        new SwingWorker<Move, Void>() {
+            @Override
+            protected Move doInBackground() {
+                return StockfishAI.getMove(game); // Runs in a background thread
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    Move bestMove = get(); // Retrieve the computed move
+                    makeMove(bestMove);
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.execute();
+    }
+
     // Make Move
     public void makeMove(Move move) {
-        // Update Promotion Piece if needed
-        if (MoveUtils.causesPromotion(move, game)) {
-            move = new Move(move.initialPosition(), move.finalPosition(), 'Q');
-        }
-
         // Make Move
         game.move(move);
 
         // Update BoardPanel
         boardPanel.loadFromBoard(game.board);
+
+        // Print PGN
+        if (!game.isGameInPlay()) {
+            System.out.println(PGN.getPGN(game));
+        }
 
         // Add High lights
         Position initialPosition = move.initialPosition();
@@ -121,37 +144,26 @@ public class GameController {
         boardPanel.getSquareButton(finalPosition.file(), finalPosition.rank()).setHighLight(true);
     }
 
+    // Handle Promotion
+    private Move handlePromotion(Move move) {
+        Piece pieceToMove = game.board.getPieceAt(move.initialPosition());
+        if (move.promotionPiece() != '\0') { return move;}
+        if (!(pieceToMove instanceof Pawn pawn)) { return move; }
+        if (!pawn.isLegalPromotion(move, game.board)) { return move; }
+        return new Move(move.initialPosition(), move.finalPosition(), 'Q');
+    }
+
     // Square Button Listeners
     private void handleSquareClick(Position clickedPosition) {
-        if (!game.isGameInPlay()) {
-            return;
-        }
+        if (!game.isGameInPlay()) { return; }
 
         // Try to make move
         if (selectedPosition != null) {
             Move move = new Move(selectedPosition, clickedPosition, '\0');
+            move = handlePromotion(move);
             if (game.isMoveLegal(move)) {
                 makeMove(move);
-
-                /// Random Black Move
-                new SwingWorker<Move, Void>() {
-                    @Override
-                    protected Move doInBackground() {
-                        return StockfishAI.getMove(game); // Runs in a background thread
-                    }
-
-                    @Override
-                    protected void done() {
-                        try {
-                            Move bestMove = get(); // Retrieve the computed move
-                            makeMove(bestMove);
-                        } catch (InterruptedException | ExecutionException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }.execute();
-                /// Random Black Move
-
+                blackMove();
                 return;
             }
         }

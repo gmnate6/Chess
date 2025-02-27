@@ -32,7 +32,7 @@ public record Move(Position initialPosition, Position finalPosition, char promot
      * For example: "A2 -> A4".
      */
     public String toString() {
-        return initialPosition.toString() + " -> " + finalPosition.toString() + (promotionPiece != '\0' ? ": (" + promotionPiece + ")" : "");
+        return initialPosition.toString() + " -> " + finalPosition.toString() + " (" + promotionPiece + ")";
     }
 
     // Equality & Hashing
