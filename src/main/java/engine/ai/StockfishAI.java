@@ -2,6 +2,8 @@ package engine.ai;
 
 import engine.game.Game;
 import engine.types.Move;
+import engine.utils.FEN;
+import engine.utils.MoveUtils;
 
 import java.io.*;
 
@@ -34,7 +36,7 @@ public class StockfishAI {
     }
 
     public static Move getMove(Game game) {
-        String fen = game.toFEN();
+        String fen = FEN.getFEN(game);
         String stringMove;
         String stockfishPath = getStockfishPath();
 
@@ -67,7 +69,7 @@ public class StockfishAI {
                 if (line.startsWith("bestmove")) {
                     stringMove = parseBestMove(line);
                     assert stringMove != null;
-                    return Move.fromLongAlgebraic(stringMove);
+                    return MoveUtils.fromLongAlgebraic(stringMove);
                 }
             }
 

@@ -177,6 +177,29 @@ public class  Board {
     }
 
     /**
+     * Retrieves all pieces of a specific color.
+     *
+     * @param color The color to filter by.
+     * @return A list of pieces of the given color.
+     */
+    public List<Piece> getPiecesByColor(Color color) {
+        List<Piece> pieces = new ArrayList<>();
+
+        // Loop through board
+        for (int file = 0; file < 8; file++) {
+            for (int rank = 0; rank < 8; rank++) {
+                Position currentPosition = new Position(file, rank);
+                Piece currentPiece = getPieceAt(currentPosition);
+                if (currentPiece == null) { continue; }
+                if (currentPiece.getColor() ==  color) {
+                    pieces.add(currentPiece);
+                }
+            }
+        }
+        return pieces;
+    }
+
+    /**
      * Executes a specified chess move on the given board, making all relevant changes
      * to the board state. This includes handling the following special chess rules:
      * - **En Passant**: Captures en passant pawns and updates the en passant position.

@@ -7,6 +7,7 @@ import engine.pieces.Piece;
 import engine.game.Timer;
 import engine.types.Move;
 
+import engine.utils.MoveUtils;
 import frontend.view.game.BoardPanel;
 import frontend.view.game.SquareButton;
 import frontend.model.GameModel;
@@ -40,7 +41,7 @@ public class GameController {
         initializeSquareButtons();
 
         // Load Board
-        boardPanel.loadFromBoard(game.getBoard());
+        boardPanel.loadFromBoard(game.board);
     }
 
     // Initializes Square Button Listeners
@@ -72,7 +73,7 @@ public class GameController {
         }
 
         // Get Selected Piece
-        Piece selectedPiece = game.getBoard().getPieceAt(position);
+        Piece selectedPiece = game.board.getPieceAt(position);
 
         // Empty Click
         if (selectedPiece == null) {
@@ -102,11 +103,16 @@ public class GameController {
 
     // Make Move
     public void makeMove(Move move) {
+        // Update Promotion Piece if needed
+        if (MoveUtils.causesPromotion(move, game)) {
+            move = new Move(move.initialPosition(), move.finalPosition(), 'Q');
+        }
+
         // Make Move
         game.move(move);
 
         // Update BoardPanel
-        boardPanel.loadFromBoard(game.getBoard());
+        boardPanel.loadFromBoard(game.board);
 
         // Add High lights
         Position initialPosition = move.initialPosition();
@@ -123,7 +129,7 @@ public class GameController {
 
         // Try to make move
         if (selectedPosition != null) {
-            Move move = new Move(selectedPosition, clickedPosition, 'q');
+            Move move = new Move(selectedPosition, clickedPosition, '\0');
             if (game.isMoveLegal(move)) {
                 makeMove(move);
 

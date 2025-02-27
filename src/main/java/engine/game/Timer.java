@@ -15,7 +15,7 @@ public class Timer {
     private long whiteTime; // In milliseconds
     private long blackTime;
     private long lastMoveTimestamp;
-    private Color currentTurn;
+    private Color turn;
     private final long increment; // Time increment per move (if applicable)
     boolean started = false;
 
@@ -32,7 +32,7 @@ public class Timer {
         this.whiteTime = initialTime;
         this.blackTime = initialTime;
         this.increment = increment;
-        this.currentTurn = Color.WHITE;
+        this.turn = Color.WHITE;
     }
 
     /**
@@ -45,13 +45,21 @@ public class Timer {
      * @param blackTime    The remaining time (in milliseconds) for the Black player.
      * @param increment    The additional time (in milliseconds) added to a player's clock after each move.
      *                     For example, 10 seconds = 10,000 milliseconds.
-     * @param currentTurn  Specifies the player who starts the game, either `Color.WHITE` or `Color.BLACK`.
+     * @param turn  Specifies the player who starts the game, either `Color.WHITE` or `Color.BLACK`.
      */
-    public Timer(long whiteTime, long blackTime, long increment, Color currentTurn) {
+    public Timer(long whiteTime, long blackTime, long increment, Color turn) {
         this.whiteTime = whiteTime;
         this.blackTime = blackTime;
         this.increment = increment;
-        this.currentTurn = currentTurn;
+        this.turn = turn;
+    }
+
+    // Deep Copy
+    public Timer getDeepCopy() {
+        Timer copy = new Timer(whiteTime, blackTime, increment, turn);
+        copy.lastMoveTimestamp = lastMoveTimestamp;
+        copy.started = started;
+        return copy;
     }
 
     /**
@@ -86,14 +94,14 @@ public class Timer {
         long now = System.currentTimeMillis();
         long elapsed = now - lastMoveTimestamp;
 
-        if (currentTurn == Color.WHITE) {
+        if (turn == Color.WHITE) {
             whiteTime = Math.max(0, whiteTime - elapsed + increment);
         } else {
             blackTime = Math.max(0, blackTime - elapsed + increment);
         }
 
         lastMoveTimestamp = now;
-        currentTurn = currentTurn.inverse();
+        turn = turn.inverse();
     }
 
     // Getters
@@ -104,8 +112,8 @@ public class Timer {
     public long getTimeLeft(Color player) {
         return player == Color.WHITE ? whiteTime : blackTime;
     }
-    public Color getCurrentTurn() { return currentTurn; }
+    public Color getTurn() { return turn; }
 
     // Setters
-    public void setCurrentTurn(Color currentTurn) { this.currentTurn = currentTurn; }
+    public void setTurn(Color currentTurn) { this.turn = currentTurn; }
 }

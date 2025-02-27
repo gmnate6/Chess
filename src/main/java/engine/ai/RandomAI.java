@@ -13,7 +13,7 @@ public class RandomAI {
         Random random = new Random();
 
         // Get Initial Positions for Current Player
-        List<Position> initialPositionList = game.getBoard().getPiecePositionsByColor(game.getCurrentPlayer());
+        List<Position> initialPositionList = game.board.getPiecePositionsByColor(game.getTurn());
 
         while (!initialPositionList.isEmpty()) {
             // Select Random Initial Position
