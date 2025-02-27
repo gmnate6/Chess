@@ -132,16 +132,16 @@ public class GameController {
         // Update BoardPanel
         boardPanel.loadFromBoard(game.board);
 
-        // Print PGN
-        if (!game.isGameInPlay()) {
-            System.out.println(PGN.getPGN(game));
-        }
-
         // Add High lights
         Position initialPosition = move.initialPosition();
         Position finalPosition = move.finalPosition();
         boardPanel.getSquareButton(initialPosition.file(), initialPosition.rank()).setHighLight(true);
         boardPanel.getSquareButton(finalPosition.file(), finalPosition.rank()).setHighLight(true);
+
+        // Print PGN
+        if (!game.isGameInPlay()) {
+            JOptionPane.showMessageDialog(null, PGN.getPGN(game), "PGN", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     // Handle Promotion
