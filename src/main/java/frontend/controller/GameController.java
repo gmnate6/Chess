@@ -141,7 +141,9 @@ public class GameController {
         // Print PGN
         if (!game.inPlay()) {
             String result = game.getResult().toString().replace("_", " ");
-            JOptionPane.showMessageDialog(null, PGN.getPGN(game), result, JOptionPane.INFORMATION_MESSAGE);
+            String message =
+                    "<html><body style='width: 300px;'>" + PGN.getPGN(game) + "</body></html>";
+            JOptionPane.showMessageDialog(null, message, result, JOptionPane.INFORMATION_MESSAGE);
             System.exit(0);
         }
     }
