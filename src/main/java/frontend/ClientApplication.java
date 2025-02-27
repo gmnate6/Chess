@@ -6,21 +6,49 @@ import frontend.controller.GameController;
 
 import utils.Color;
 
+import javax.swing.*;
+
 public class ClientApplication {
     GameModel gameModel;
     BoardPanel boardPanel;
     GameController gameController;
 
-    public ClientApplication() {
+    public ClientApplication(Color color) {
         boardPanel = new BoardPanel();
         gameModel = new GameModel();
         gameController = new GameController(boardPanel, gameModel);
 
-        gameController.startGame(Color.WHITE, 600_000, 0);
+        gameController.startGame(color, 600_000, 0);
         boardPanel.createJFrame();
     }
 
     public static void main(String[] args) {
-        new ClientApplication();
+        // Prompt the user to choose white or black using a pop-up dialog
+        Object[] options = {"White", "Black"}; // Options for the dialog
+        int choice = JOptionPane.showOptionDialog(
+                null,
+                "Which color would you like to play as?",
+                "Choose Your Color",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+
+        // Determine color based on the user's choice
+        Color chosenColor;
+        if (choice == JOptionPane.YES_OPTION) {
+            chosenColor = Color.WHITE;
+        } else if (choice == JOptionPane.NO_OPTION) {
+            chosenColor = Color.BLACK;
+        } else {
+            // If the user closes the dialog or doesn't choose, fallback to a default color
+            JOptionPane.showMessageDialog(null, "No color selected. Defaulting to Black.");
+            chosenColor = Color.WHITE;
+        }
+
+        // Start the application with the chosen color
+        new ClientApplication(chosenColor);
     }
 }

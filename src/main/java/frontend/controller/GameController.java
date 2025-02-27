@@ -38,6 +38,14 @@ public class GameController {
         game = new Game(new Timer(initialTime, increment));
         this.color = color;
 
+        // TODO
+        if (!StockfishAI.doesStockfishExist()) {
+            JOptionPane.showMessageDialog(null, "Stockfish is missing, you will play against randomAI.", "Missing Dependencies", JOptionPane.INFORMATION_MESSAGE);
+        }
+        if (color == Color.BLACK) {
+            aiMove();
+        }
+
         // Initialize
         boardPanel.initializeBoard(color);
         initializeSquareButtons();
@@ -103,8 +111,8 @@ public class GameController {
         }
     }
 
-    // Black's Move
-    public void blackMove() {
+    // Black's Move TODO
+    public void aiMove() {
         if (!game.inPlay()) { return; }
         new SwingWorker<Move, Void>() {
             @Override
@@ -167,7 +175,7 @@ public class GameController {
             move = handlePromotion(move);
             if (game.isMoveLegal(move)) {
                 makeMove(move);
-                blackMove();
+                aiMove(); // TODO
                 return;
             }
         }
