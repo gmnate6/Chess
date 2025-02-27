@@ -24,7 +24,7 @@ public class ClientApplication {
 
     public static void main(String[] args) {
         // Prompt the user to choose white or black using a pop-up dialog
-        Object[] options = {"White", "Black"}; // Options for the dialog
+        Object[] options = {"White", "Black", "AI vs AI"}; // Options for the dialog
         int choice = JOptionPane.showOptionDialog(
                 null,
                 "Which color would you like to play as?",
@@ -43,9 +43,8 @@ public class ClientApplication {
         } else if (choice == JOptionPane.NO_OPTION) {
             chosenColor = Color.BLACK;
         } else {
-            // If the user closes the dialog or doesn't choose, fallback to a default color
-            JOptionPane.showMessageDialog(null, "No color selected. Defaulting to Black.");
-            chosenColor = Color.WHITE;
+            // AI vs. AI
+            chosenColor = null;
         }
 
         // Start the application with the chosen color

@@ -45,6 +45,19 @@ public class GameController {
         if (color == Color.BLACK) {
             aiMove();
         }
+        // AI vs AI
+        if (color == null) {
+            new SwingWorker<Void, Void>() {
+                @Override
+                protected Void doInBackground() {
+                    while (game.inPlay()) {
+                        makeMove(StockfishAI.getRandomTopMove(game));
+                    }
+                    return null;
+                }
+            }.execute();
+            color = Color.WHITE;
+        }
 
         // Initialize
         boardPanel.initializeBoard(color);
