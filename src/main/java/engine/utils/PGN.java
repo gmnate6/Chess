@@ -33,8 +33,8 @@ public class PGN {
         }
 
         // Add Result
-        if (!game.getGameResult().isOnGoing()){
-            pgn.append(game.getGameResult().toString());
+        if (!game.getResult().isOnGoing()){
+            pgn.append(game.getResult().getScore());
         }
 
         // Return PGN

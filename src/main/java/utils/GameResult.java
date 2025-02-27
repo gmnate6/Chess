@@ -32,11 +32,10 @@ public enum GameResult {
         return this == ON_GOING;
     }
 
-    @Override
-    public String toString() {
+    public String getScore() {
         if (whiteWon()) { return "1-0"; }
         if (blackWon()) { return "0-1"; }
         if (isDraw()) { return "1/2-1/2"; }
-        return "On Going";
+        return "";
     }
 }

@@ -22,7 +22,7 @@ public class Game {
     private int halfMoveClock = 0;
     private int fullMoveNumber = 1;
     public Timer timer;
-    private GameResult gameResult = GameResult.ON_GOING;
+    private GameResult result = GameResult.ON_GOING;
     private final HashMap<String, Integer> boardHistory = new HashMap<>();
     private final MoveHistory moveHistory = new MoveHistory();
 
@@ -79,8 +79,8 @@ public class Game {
     public Color getTurn() { return turn; }
     public int getHalfMoveClock() { return halfMoveClock; }
     public int getFullMoveNumber() { return fullMoveNumber; }
-    public GameResult getGameResult() { return gameResult; }
-    public boolean isGameInPlay() { return gameResult == GameResult.ON_GOING;}
+    public GameResult getResult() { return result; }
+    public boolean inPlay() { return result == GameResult.ON_GOING;}
     public Timer getTimer() { return timer; }
     public MoveHistory getMoveHistory() { return moveHistory; }
 
@@ -151,7 +151,7 @@ public class Game {
         Piece pieceToMove = board.getPieceAt(move.initialPosition());
 
         // Cannot move after game
-        if (getGameResult() != GameResult.ON_GOING) {
+        if (getResult() != GameResult.ON_GOING) {
             return false;
         }
 
@@ -221,33 +221,35 @@ public class Game {
     public void checkWinConditions() {
         // Checkmated
         if (isCheckmate()) {
-            gameResult = (turn == Color.WHITE ? GameResult.BLACK_CHECKMATE : GameResult.WHITE_CHECKMATE);
+            result = (turn == Color.WHITE ? GameResult.BLACK_CHECKMATE : GameResult.WHITE_CHECKMATE);
             return;
         }
 
         // Stalemate
         if (isStalemate()) {
-            gameResult = GameResult.STALEMATE;
+            result = GameResult.STALEMATE;
             return;
         }
 
         // 50 Move Rule
         if (this.halfMoveClock >= 100) {
-            gameResult = GameResult.FIFTY_MOVE_RULE;
+            result = GameResult.FIFTY_MOVE_RULE;
+            return;
         }
 
         // Threefold Repetition
         if (boardHistory.get(FEN.getFENBoardAndTurn(this)) >= 3) {
-            gameResult = GameResult.THREEFOLD_REPETITION;
+            result = GameResult.THREEFOLD_REPETITION;
+            return;
         }
 
         // Timer
         if (!timer.isDisabled()){
             if (this.timer.isOutOfTime(Color.WHITE)) {
-                gameResult = GameResult.TIME_WHITE_LOSS;
+                result = GameResult.TIME_WHITE_LOSS;
             }
             if (this.timer.isOutOfTime(Color.BLACK)) {
-                gameResult = GameResult.TIME_BLACK_LOSS;
+                result = GameResult.TIME_BLACK_LOSS;
             }
         }
     }
@@ -264,7 +266,7 @@ public class Game {
         Piece pieceToMove = board.getPieceAt(initialPosition);
 
         // If Game is Over
-        if (getGameResult() != GameResult.ON_GOING) {
+        if (getResult() != GameResult.ON_GOING) {
             throw new RuntimeException("Cannot make move after game is finished.");
         }
 
@@ -325,7 +327,7 @@ public class Game {
     public String toString() {
         return board.toString() +
                 "\nEn Passant: " + board.getEnPassantPosition() +
-                "\nGame Result: " + getGameResult() +
+                "\nGame Result: " + getResult() +
                 "\nCurrent Turn: " + getTurn() +
                 "\nWhite Time: " + timer.getFormatedTimeLeft(Color.WHITE) +
                 "\nBlack Time: " + timer.getFormatedTimeLeft(Color.BLACK);

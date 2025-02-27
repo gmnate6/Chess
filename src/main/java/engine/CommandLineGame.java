@@ -28,7 +28,7 @@ public class CommandLineGame {
         System.out.println("\n");
 
         // Main game loop
-        while (game.isGameInPlay()) {
+        while (game.inPlay()) {
             displayGame(game); // Display the game state
 
             String input = getPlayerInput(game);
@@ -38,9 +38,7 @@ public class CommandLineGame {
         }
         System.out.println("\n");
         System.out.println("Game Over!");
-        if (!game.isGameInPlay()) {
-            System.out.println("Result: " + game.getGameResult());
-        }
+        System.out.println("Result: " + game.getResult());
         System.out.println(PGN.getPGN(game));
     }
 

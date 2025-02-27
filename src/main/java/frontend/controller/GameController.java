@@ -105,7 +105,7 @@ public class GameController {
 
     // Black's Move
     public void blackMove() {
-        if (!game.isGameInPlay()) { return; }
+        if (!game.inPlay()) { return; }
         new SwingWorker<Move, Void>() {
             @Override
             protected Move doInBackground() {
@@ -139,8 +139,10 @@ public class GameController {
         boardPanel.getSquareButton(finalPosition.file(), finalPosition.rank()).setHighLight(true);
 
         // Print PGN
-        if (!game.isGameInPlay()) {
-            JOptionPane.showMessageDialog(null, PGN.getPGN(game), "PGN", JOptionPane.INFORMATION_MESSAGE);
+        if (!game.inPlay()) {
+            String result = game.getResult().toString().replace("_", " ");
+            JOptionPane.showMessageDialog(null, PGN.getPGN(game), result, JOptionPane.INFORMATION_MESSAGE);
+            System.exit(0);
         }
     }
 
@@ -155,7 +157,7 @@ public class GameController {
 
     // Square Button Listeners
     private void handleSquareClick(Position clickedPosition) {
-        if (!game.isGameInPlay()) { return; }
+        if (!game.inPlay()) { return; }
 
         // Try to make move
         if (selectedPosition != null) {
