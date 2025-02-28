@@ -15,6 +15,22 @@ import utils.Color;
  * promotions, checks, or checkmates, without modifying the actual game state.
  */
 public class MoveUtils {
+    public static boolean isCapture(Move move, Game game) {
+        Piece pieceToMove = game.board.getPieceAt(move.initialPosition());
+        Piece pieceToCapture = game.board.getPieceAt(move.finalPosition());
+
+        // Direct Capture
+        if (pieceToCapture != null) {
+            return true;
+        }
+
+        // En Passant Capture
+        if (pieceToMove instanceof Pawn pawn) {
+            return pawn.isLegalEnPassant(move, game.board);
+        }
+        return false;
+    }
+
     /**
      * Determines if the given move causes a promotion.
      *
@@ -91,7 +107,7 @@ public class MoveUtils {
         Position initialPosition = move.initialPosition();
         Position finalPosition = move.finalPosition();
         Piece pieceToMove = game.board.getPieceAt(initialPosition);
-        boolean isCapture = game.board.getPieceAt(finalPosition) != null;
+        boolean isCapture = isCapture(move, game);
 
         // Pawn
         if (pieceToMove instanceof Pawn) {
@@ -190,8 +206,6 @@ public class MoveUtils {
                 }
             }
         }
-        System.out.println(game);
-        System.out.println(ambiguity + " (" + pieceChar + ")");
         throw new IllegalArgumentException("Ambiguous move: cannot resolve initial position from notation.");
     }
 
@@ -281,21 +295,17 @@ public class MoveUtils {
         // Validate the move
         Move move = new Move(initialPosition, finalPosition, promotionPiece);
         if (!game.isMoveLegal(move)) {
-            System.out.println(game);
             throw new IllegalArgumentException("Illegal move parsed from algebraic notation: '" + originalNotation + "'");
         }
 
         // Check for extras
-        if (isCapture ^ game.board.getPieceAt(finalPosition) != null) {
-            System.out.println(game);
+        if (isCapture ^ isCapture(move, game)) {
             throw new IllegalArgumentException("Illegal move parsed from algebraic notation: '" + originalNotation + "'. Capture and non-capture conditions do not match.");
         }
         if ((causesCheck ^ moveCausesCheck(move, game)) && !causesCheckmate) {
-            System.out.println(game);
             throw new IllegalArgumentException("Illegal move parsed from algebraic notation: '" + originalNotation + "'. Check conditions do not match.");
         }
         if (causesCheckmate ^ moveCausesCheckmate(move, game)) {
-            System.out.println(game);
             throw new IllegalArgumentException("Illegal move parsed from algebraic notation: '" + originalNotation + "'. Checkmate conditions do not match.");
         }
 
@@ -319,7 +329,7 @@ public class MoveUtils {
         Position finalPosition = move.finalPosition();
         char promotionPiece = move.promotionPiece();
         Piece pieceToMove = game.board.getPieceAt(initialPosition);
-        boolean isCapture = game.board.getPieceAt(finalPosition) != null;
+        boolean isCapture = isCapture(move, game);
 
         // Early Check
         if (!game.isMoveLegal(move)) {

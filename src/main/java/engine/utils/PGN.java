@@ -41,7 +41,7 @@ public class PGN {
         return pgn.toString().trim();
     }
 
-    public static Game getGame(String pgn) throws Exception {
+    public static Game getGame(String pgn) {
         Game game = new Game(null);
 
         // Split PGN into moves, excluding metadata or headers
@@ -51,11 +51,7 @@ public class PGN {
             if (moveNotation.matches("^\\d.*")) { continue; } // Skip turn numbers and results
 
             Move move = MoveUtils.fromAlgebraic(moveNotation, game);
-            try {
-                game.move(move);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            game.move(move);
         }
         return game;
     }

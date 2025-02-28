@@ -166,12 +166,6 @@ public class GameController {
             String message =
                     "<html><body style='width: 300px;'>" + pgn + "</body></html>";
             JOptionPane.showMessageDialog(null, message, result, JOptionPane.INFORMATION_MESSAGE);
-            System.out.println(pgn);
-            try {
-                System.out.println(PGN.getGame(pgn));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
             System.exit(0);
         }
     }

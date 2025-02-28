@@ -296,7 +296,7 @@ public class Game {
         }
 
         // Update Half
-        if ((pieceToMove instanceof Pawn) || (this.board.getPieceAt(finalPosition) != null)) {
+        if ((pieceToMove instanceof Pawn) || (MoveUtils.isCapture(move, this))) {
             this.halfMoveClock = 0;
         } else {
             this.halfMoveClock++;

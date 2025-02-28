@@ -1,11 +1,10 @@
 package engine;
 
 import engine.game.Game;
-import engine.types.Position;
-import engine.types.Move;
 import engine.game.Timer;
+import engine.types.Move;
+import engine.types.Position;
 import engine.utils.FEN;
-import engine.utils.MoveUtils;
 import engine.utils.PGN;
 
 import java.util.Scanner;
@@ -99,23 +98,56 @@ public class CommandLineGame {
      * @param input The player's raw input string.
      */
     private void processPlayerInput(Game game, String input) {
-        try {
-            Move move = MoveUtils.fromAlgebraic(input, game);
+        String[] positions = input.split(" ");
 
-            // Process the move
-            handlePlayerMove(move, game);
-        } catch (Exception e) {
-            System.out.println("Error: A legal move looks like this: 'Qxb5'");
+        // Display legal moves if only one position is provided
+        if (positions.length == 1) {
+            try {
+                Position position = Position.fromAlgebraic(positions[0]);
+                System.out.println("Legal moves from '" + position + "' -> " + game.getLegalMoves(position));
+            } catch (Exception e) {
+                System.out.println("Error: A legal position looks like this: 'e2'");
+            }
+            return;
         }
+
+        // Len must be 2
+        if (positions.length != 2) {
+            System.out.println("Error: A legal move looks like this: 'e2 e4'");
+            return;
+        }
+
+        // Process the move
+        handlePlayerMove(game, positions);
     }
 
-    private void handlePlayerMove(Move move, Game game) {
+    /**
+     * Handles the player's move by validating it and applying it to the game if legal.
+     *
+     * @param game      The current `Game` object.
+     * @param positions An array containing the initial and final positions of the move.
+     */
+    private void handlePlayerMove(Game game, String[] positions) {
+        Move move;
+
+        // Try to make vars
+        try {
+            Position initialPosition = Position.fromAlgebraic(positions[0]);
+            Position finalPosition = Position.fromAlgebraic(positions[1]);
+            move = new Move(initialPosition, finalPosition, '\0');
+        } catch (Exception e) {
+            System.out.println("Error: A legal move looks like this: 'e2 e4'");
+            return;
+        }
+
         // Try to make move
         if (!game.isMoveLegal(move)) {
             System.out.println("Error: Move '" + move + "' is not legal.");
             System.out.println("\n");
         } else {
             game.move(move);
+            System.out.println("FEN: " + FEN.getFEN(game));
+            System.out.println("\n");
         }
     }
 

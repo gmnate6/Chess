@@ -1,6 +1,8 @@
 package tests.engine.MoveUtils;
 
 import engine.game.Game;
+import engine.pieces.Pawn;
+import engine.pieces.Piece;
 import engine.types.Move;
 import engine.types.Position;
 import engine.utils.FEN;
@@ -25,6 +27,11 @@ public class FromAlgebraicTest {
         move2 = new Move(Position.fromAlgebraic("f7"), Position.fromAlgebraic("f5"), '\0');
         assertEquals(move1, MoveUtils.fromAlgebraic("g6", game));
         assertEquals(move2, MoveUtils.fromAlgebraic("f5", game));
+
+        // Extra
+        game = FEN.getGame("r3kb1r/pp2p1pp/3qb3/1PpPP3/4n3/1n1PBPPB/P1Q5/RN2K1NR w KQkq c6 0 16", null);
+        move1 = new Move(Position.fromAlgebraic("b5"), Position.fromAlgebraic("c6"), '\0');
+        assertEquals(move1, MoveUtils.fromAlgebraic("bxc6", game));
     }
 
     @Test

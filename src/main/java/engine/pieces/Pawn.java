@@ -40,12 +40,16 @@ public class Pawn extends Piece {
         // If enPassant
         if (isLegalEnPassant(move, board)) {
             // Remove En Passanted Pawn
-            board.setPieceAt(board.getEnPassantPosition(), null);
+            Position removedPawnPos = new Position(finalPosition.file(), initialPosition.rank());
+            board.setPieceAt(removedPawnPos, null);
         }
 
         // Update enPassantPosition
         if (isLegalDouble(move, board)) {
-            board.setEnPassantPosition(finalPosition);
+            Position newEnPassantPosition = initialPosition.move(0, this.getColor() == Color.WHITE ? 1 : -1);
+            board.setEnPassantPosition(newEnPassantPosition);
+        } else {
+            board.setEnPassantPosition(null);
         }
 
         // Promotion
@@ -186,7 +190,6 @@ public class Pawn extends Piece {
         }
 
         // enPassant Position must be enPassantAble
-        Position enPassantPosition = new Position(finalPosition.file(), initialPosition.rank());
-        return enPassantPosition.equals(board.getEnPassantPosition());
+        return finalPosition.equals(board.getEnPassantPosition());
     }
 }
