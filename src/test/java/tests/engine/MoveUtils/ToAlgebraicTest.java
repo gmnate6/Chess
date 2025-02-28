@@ -25,6 +25,12 @@ public class ToAlgebraicTest {
         move2 = new Move(Position.fromAlgebraic("f7"), Position.fromAlgebraic("f5"), '\0');
         assertEquals("g6", MoveUtils.toAlgebraic(move1, game));
         assertEquals("f5", MoveUtils.toAlgebraic(move2, game));
+
+        // Extra
+        game = FEN.getGame("r3kb1r/pp2p1pp/3qb3/1PpPP3/4n3/1n1PBPPB/P1Q5/RN2K1NR w KQkq c6 0 16", null);
+        move1 = new Move(Position.fromAlgebraic("b5"), Position.fromAlgebraic("c6"), '\0');
+        assertEquals(move1, MoveUtils.fromAlgebraic("bxc6", game));
+        assertEquals("bxc6", MoveUtils.toAlgebraic(move1, game));
     }
 
     @Test

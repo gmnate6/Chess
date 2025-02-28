@@ -2,10 +2,8 @@ package engine.game;
 
 import engine.types.Move;
 import engine.utils.*;
-
 import engine.types.Position;
 import engine.pieces.*;
-
 import utils.Color;
 import utils.GameResult;
 

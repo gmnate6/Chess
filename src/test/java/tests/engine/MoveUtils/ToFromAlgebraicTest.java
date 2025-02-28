@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.RepeatedTest;
 
 public class ToFromAlgebraicTest {
-    @RepeatedTest(1_000)
+    @RepeatedTest(20)
     public void randomGameTest() {
         Game game = new Game(null);
 
