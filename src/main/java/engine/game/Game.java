@@ -65,8 +65,8 @@ public class Game {
         this.fullMoveNumber = fullMoveNumber;
 
         // Update Timer.turn if needed
-        if (this.turn != timer.getTurn()) {
-            timer.setTurn(this.turn);
+        if (this.turn != this.timer.getTurn()) {
+            this.timer.setTurn(this.turn);
         }
     }
 

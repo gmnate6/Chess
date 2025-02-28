@@ -10,7 +10,6 @@ public class GamePanel extends JPanel {
 
     public GamePanel() {
         /// Setup
-        setSize(new Dimension(900, 600));
         setLayout(new BorderLayout());
         setBackground(Color.red);
 
@@ -18,7 +17,6 @@ public class GamePanel extends JPanel {
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftPanel.setBackground(Color.BLUE);
-        leftPanel.setSize(new Dimension(560, 600));
 
         // Top Player Panel
         topPlayerPanel = new PlayerPanel();
@@ -27,7 +25,6 @@ public class GamePanel extends JPanel {
 
         // Board Panel
         boardPanel = new BoardPanel();
-        boardPanel.setSize(new Dimension(560, 560));
         boardPanel.initializeBoard(utils.Color.WHITE);
 
         // Bottom Player Panel
@@ -43,7 +40,6 @@ public class GamePanel extends JPanel {
         /// Right Panel
         JPanel rightPanel = new JPanel();
         rightPanel.setBackground(Color.WHITE);
-        rightPanel.setPreferredSize(new Dimension(300, 0));
 
         // Title
         // History
@@ -74,7 +70,6 @@ public class GamePanel extends JPanel {
 
             // Add the BoardPanel to the frame
             frame.add(this);
-            frame.pack();
             frame.setVisible(true);
         });
     }

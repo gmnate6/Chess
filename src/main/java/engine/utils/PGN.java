@@ -40,4 +40,23 @@ public class PGN {
         // Return PGN
         return pgn.toString().trim();
     }
+
+    public static Game getGame(String pgn) throws Exception {
+        Game game = new Game(null);
+
+        // Split PGN into moves, excluding metadata or headers
+        String[] movesArray = pgn.replaceAll("\\n", " ").split("\\s+");
+        for (String moveNotation : movesArray) {
+            if (moveNotation.isEmpty()) { continue; }
+            if (moveNotation.matches("^\\d.*")) { continue; } // Skip turn numbers and results
+
+            Move move = MoveUtils.fromAlgebraic(moveNotation, game);
+            try {
+                game.move(move);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return game;
+    }
 }

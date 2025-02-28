@@ -87,7 +87,7 @@ public class MoveUtils {
      * @param game The current game state to check for potential ambiguities.
      * @return A string describing the ambiguous part of the position, if any.
      */
-    private static String getAmbiguousPosition(Move move, Game game) {
+    private static String getAmbiguity(Move move, Game game) {
         Position initialPosition = move.initialPosition();
         Position finalPosition = move.finalPosition();
         Piece pieceToMove = game.board.getPieceAt(initialPosition);
@@ -117,11 +117,14 @@ public class MoveUtils {
 
             // Do the thing
             if (currentPos.file() == initialPosition.file()) {
-                addFile = true;
+                addRank = true;
+                continue;
             }
             if (currentPos.rank() == initialPosition.rank()) {
-                addRank = true;
+                addFile = true;
+                continue;
             }
+            addFile = true;
         }
         if (addFile && addRank) {
             return initialPosition.toAlgebraic();
@@ -159,7 +162,7 @@ public class MoveUtils {
             // Skip Wrong Instance
             if (Character.toUpperCase(currentPiece.toChar()) != Character.toUpperCase(pieceChar)) { continue; }
             // Skip Illegal Moves
-            if (!game.isMoveLegal(new Move(currentPos, finalPosition, '\0'))) { continue; }
+            if (!game.isMoveLegal(new Move(currentPos, finalPosition, 'Q'))) { continue; }
 
             // No Ambiguity
             if (ambiguity.isEmpty()) {
@@ -169,12 +172,12 @@ public class MoveUtils {
             // Some Ambiguity
             if (ambiguity.length() == 1) {
                 // File Ambiguity
-                if (ambiguity.charAt(0) == currentPos.fileToChar()) {
+                if (ambiguity.charAt(0) == currentPos.rankToChar()) {
                     return currentPos;
                 }
 
                 // Rank Ambiguity
-                if (ambiguity.charAt(0) == currentPos.rankToChar()) {
+                if (ambiguity.charAt(0) == currentPos.fileToChar()) {
                     return currentPos;
                 }
             }
@@ -187,6 +190,8 @@ public class MoveUtils {
                 }
             }
         }
+        System.out.println(game);
+        System.out.println(ambiguity + " (" + pieceChar + ")");
         throw new IllegalArgumentException("Ambiguous move: cannot resolve initial position from notation.");
     }
 
@@ -207,7 +212,7 @@ public class MoveUtils {
     }
 
     /**
-     * Converts an algebraic chess move notation (e.g., "e2e4") into a Move object.
+     * Converts an algebraic chess move notation (e.g., "Qxe4#") into a Move object.
      * The method parses the given notation, interprets the move, and constructs
      * a Move instance reflecting the player's action on the board.
      *
@@ -220,48 +225,81 @@ public class MoveUtils {
         Position finalPosition;
         char promotionPiece = '\0';
 
+        // Original Notation
+        String originalNotation = notation;
+
         // Ensure notation is not null or empty
         if (notation == null || notation.isEmpty()) {
-            throw new IllegalArgumentException("Invalid move algebraic notation: " + notation);
+            throw new IllegalArgumentException("Invalid move algebraic notation: '" + originalNotation + "'");
         }
 
-        /// Handle castling
+        // Handle Extras
+        boolean isCapture = notation.contains("x");
+        boolean causesCheck = notation.contains("+");
+        boolean causesCheckmate = notation.contains("#");
+        boolean isPromotion = notation.contains("=");
+        notation = notation.replaceAll("[+#x]", "");
+
+        // Handle castling
         if (notation.equals("O-O")) {
             return createCastlingMove(game, true);
         } else if (notation.equals("O-O-O")) {
             return createCastlingMove(game, false);
         }
 
-        /// Handle Promotion (e.g., e8=Q)
-        int promotionIndex = notation.indexOf('=');
-        if (promotionIndex != -1) {
+        // Handle Promotion
+        if (isPromotion) {
+            int promotionIndex = notation.indexOf('=');
+
+            // Update Promotion Piece
             promotionPiece = notation.charAt(promotionIndex + 1);
-            notation = notation.substring(0, promotionIndex); // Strip promotion from notation
+
+            // Remove Promotion Part
+            notation = notation.substring(0, promotionIndex);
         }
 
-        /// Get Final Position
-        String finalPositionString = notation.replaceAll(".*([a-h][1-8])$", "$1"); // Extract coordinates
+        // Get Final Position
+        String finalPositionString = notation.substring(notation.length() - 2);
         finalPosition = Position.fromAlgebraic(finalPositionString);
 
-        /// Get Initial Position
-        char pieceChar = notation.charAt(0);
-        if (Character.isUpperCase(pieceChar)) {
-            // Non Pawn
-            notation = notation.substring(1); // Remove piece Char
-        } else {
-            // Pawn
-            pieceChar = 'P';
+        // Remove Final Position from notation
+        notation = notation.substring(0, notation.length() - 2);
+
+        // Get Piece To Move Char
+        char pieceToMoveChar = (notation.isEmpty() || !Character.isUpperCase(notation.charAt(0)))
+                ? 'P'
+                : Character.toUpperCase(notation.charAt(0));
+
+        // Remove piece character from notation if it's not a pawn
+        if (pieceToMoveChar != 'P') {
+            notation = notation.substring(1);
         }
 
         // Resolve Ambiguity
-        String ambiguity = notation.replaceAll("x?[a-h1-8]+$", "");
-        initialPosition = resolveAmbiguity(ambiguity, pieceChar, finalPosition, game);
+        initialPosition = resolveAmbiguity(notation, pieceToMoveChar, finalPosition, game);
 
         // Validate the move
         Move move = new Move(initialPosition, finalPosition, promotionPiece);
         if (!game.isMoveLegal(move)) {
-            throw new IllegalArgumentException("Illegal move parsed from algebraic notation: " + notation);
+            System.out.println(game);
+            throw new IllegalArgumentException("Illegal move parsed from algebraic notation: '" + originalNotation + "'");
         }
+
+        // Check for extras
+        if (isCapture ^ game.board.getPieceAt(finalPosition) != null) {
+            System.out.println(game);
+            throw new IllegalArgumentException("Illegal move parsed from algebraic notation: '" + originalNotation + "'. Capture and non-capture conditions do not match.");
+        }
+        if ((causesCheck ^ moveCausesCheck(move, game)) && !causesCheckmate) {
+            System.out.println(game);
+            throw new IllegalArgumentException("Illegal move parsed from algebraic notation: '" + originalNotation + "'. Check conditions do not match.");
+        }
+        if (causesCheckmate ^ moveCausesCheckmate(move, game)) {
+            System.out.println(game);
+            throw new IllegalArgumentException("Illegal move parsed from algebraic notation: '" + originalNotation + "'. Checkmate conditions do not match.");
+        }
+
+        // Return Move
         return move;
     }
 
@@ -293,11 +331,11 @@ public class MoveUtils {
         if (pieceToMove instanceof King) {
             // Short
             if (((King) pieceToMove).isCastleAttempt(move, true)) {
-                return "O-O-O";
+                return "O-O";
             }
             // Long
             if (((King) pieceToMove).isCastleAttempt(move, false)) {
-                return "O-O";
+                return "O-O-O";
             }
         }
 
@@ -307,7 +345,7 @@ public class MoveUtils {
         }
 
         // Add Initial Position
-        sb.append(getAmbiguousPosition(move, game));
+        sb.append(getAmbiguity(move, game));
 
         // Add Capture
         if (isCapture) {
