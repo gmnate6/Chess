@@ -69,7 +69,7 @@ public class StockfishAI {
                 if (line.startsWith("bestmove")) {
                     stringMove = parseBestMove(line);
                     assert stringMove != null;
-                    return MoveUtils.fromLongAlgebraic(stringMove);
+                    return MoveUtils.fromLongAlgebraic(stringMove, game);
                 }
             }
 

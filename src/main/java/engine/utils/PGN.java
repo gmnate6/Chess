@@ -1,5 +1,8 @@
 package engine.utils;
 
+import engine.exceptions.IllegalMoveException;
+import engine.exceptions.IllegalNotationException;
+import engine.exceptions.IllegalPositionException;
 import engine.game.Game;
 import engine.types.Move;
 import utils.Color;
@@ -71,14 +74,26 @@ public class PGN {
     public static Game getGame(String pgn) {
         Game game = new Game(null);
 
+        // Early Throw
+        if (pgn == null || pgn.isEmpty()) {
+            throw new IllegalNotationException("Illegal PGN Notation: " + pgn);
+        }
+
         // Split PGN into moves, excluding metadata or headers
         String[] movesArray = pgn.replaceAll("\\n", " ").split("\\s+");
         for (String moveNotation : movesArray) {
             if (moveNotation.isEmpty()) { continue; }
             if (moveNotation.matches("^\\d.*")) { continue; } // Skip turn numbers and results
 
-            Move move = MoveUtils.fromAlgebraic(moveNotation, game);
-            game.move(move);
+            try {
+                Move move = MoveUtils.fromAlgebraic(moveNotation, game);
+                game.move(move);
+            } catch (Exception e) {
+                throw new IllegalNotationException(
+                        "Illegal PGN Notation: " + pgn +
+                        "\nException occurred on move: " + game.getFullMoveNumber() + ". " + moveNotation +
+                        "\n" + e.getMessage());
+            }
         }
         return game;
     }

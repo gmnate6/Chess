@@ -1,5 +1,6 @@
 package engine.utils;
 
+import engine.exceptions.IllegalNotationException;
 import engine.game.Board;
 import engine.game.Game;
 import engine.game.Timer;
@@ -27,14 +28,14 @@ public class FEN {
         String[] ranks = boardFEN.split("/");
         Board board = Board.getEmptyBoard();
 
-        // Check for Kings
-        if (!boardFEN.contains("K") || !boardFEN.contains("k")) {
-            throw new RuntimeException("Illegal FEN: Both kings (K and k) MUST be on the board.");
-        }
-
         // Check for 8 ranks
         if (ranks.length != 8) {
-            throw new RuntimeException("Illegal FEN: Board must be 8 ranks");
+            throw new IllegalNotationException("Illegal FEN: Board must be 8 ranks");
+        }
+
+        // Check for Kings
+        if (!boardFEN.contains("K") || !boardFEN.contains("k")) {
+            throw new IllegalNotationException("Illegal FEN: Both kings (K and k) MUST be on the board.");
         }
 
         // Loop Through Board
@@ -49,15 +50,22 @@ public class FEN {
 
                 // Set Piece On Board
                 Position pos = new Position(file, rank);
-                board.setPieceAt(pos, PieceUtils.charToPiece(c));
+                try {
+                    board.setPieceAt(pos, PieceUtils.charToPiece(c));
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalNotationException("Illegal FEN: Invalid piece character '" + c + "' at position " + pos.toAlgebraic() + ".");
+                }
 
                 // No Pawns on edge
                 if ((rank == 0 || rank == 7) && (c == 'P' || c == 'p')) {
-                    throw new RuntimeException("Illegal FEN: Pawns cannot be placed on the edge of the board.");
+                    throw new IllegalNotationException("Illegal FEN: Pawns cannot be on the 1st or 8th ranks.");
                 }
 
                 // Move to Next File
                 file++;
+            }
+            if (file != 8) {
+                throw new IllegalNotationException("Illegal FEN: Board must be 8 ranks wide.");
             }
         }
 
@@ -80,8 +88,18 @@ public class FEN {
         int halfMoveClock;
         int fullMoveNumber;
 
+        // Early Throw
+        if (fen == null || fen.isBlank()) {
+            throw new IllegalNotationException("Illegal FEN: FEN string cannot be null or blank.");
+        }
+
         // Break into parts
         String[] fenParts = fen.split(" ");
+
+        // Early Throw
+        if (fenParts.length != 6) {
+            throw new IllegalNotationException("Illegal FEN: FEN string must contain exactly 6 parts.");
+        }
 
         /// Construct Board
         String boardFEN = fenParts[0];
@@ -89,14 +107,20 @@ public class FEN {
 
         /// Construct Current Player
         String currentPlayerFEN = fenParts[1];
-        if (!currentPlayerFEN.equalsIgnoreCase("w") && !currentPlayerFEN.equalsIgnoreCase("b")) {
-            throw new RuntimeException("Illegal FEN: Current Player must either be 'w' or 'b'.");
+
+        // Early Throw
+        if (currentPlayerFEN.isBlank() || currentPlayerFEN.length() > 1) {
+            throw new IllegalNotationException("Illegal FEN: Current Player must be either 'w' or 'b'.");
         }
-        currentPlayer = currentPlayerFEN.equalsIgnoreCase("w") ? Color.WHITE : Color.BLACK;
+        currentPlayerFEN = currentPlayerFEN.toLowerCase();
+        if (!currentPlayerFEN.equals("w") && !currentPlayerFEN.equals("b")) {
+            throw new IllegalNotationException("Illegal FEN: Current Player must either be 'w' or 'b'.");
+        }
+        currentPlayer = currentPlayerFEN.equals("w") ? Color.WHITE : Color.BLACK;
 
         // Cannot be left in check
         if (board.isKingInCheck(currentPlayer.inverse())) {
-            throw new RuntimeException("Illegal FEN: Other Player cannot be left in check.");
+            throw new IllegalNotationException("Illegal FEN: Other Player cannot be left in check.");
         }
 
         /// Construct Castling Rights
@@ -117,6 +141,13 @@ public class FEN {
 
         /// Construct En Passant Position
         String enPassantPositionFEN = fenParts[3];
+
+        // Early Throw
+        if (enPassantPositionFEN.isBlank() || enPassantPositionFEN.length() > 2) {
+            throw new IllegalNotationException("Illegal FEN: Current Player must be either 'w' or 'b'.");
+        }
+
+        // get En Passant Position
         Position enPassantPosition;
         if (enPassantPositionFEN.equals("-")) {
             enPassantPosition = null;
@@ -124,7 +155,7 @@ public class FEN {
             try {
                 enPassantPosition = Position.fromAlgebraic(enPassantPositionFEN);
             } catch (IllegalArgumentException e) {
-                enPassantPosition = null;
+                throw new IllegalNotationException("Illegal FEN: Invalid en passant target position '" + enPassantPositionFEN + "'.");
             }
         }
 
@@ -136,7 +167,7 @@ public class FEN {
         try {
             halfMoveClock = Integer.parseInt(halfMoveClockFEN);
         } catch (NumberFormatException e) {
-            halfMoveClock = 0;
+            throw new IllegalNotationException("Illegal FEN: Invalid half move clock '" + halfMoveClockFEN + "'.");
         }
 
         /// Construct Full Move Number
@@ -144,7 +175,7 @@ public class FEN {
         try {
             fullMoveNumber = Integer.parseInt(fullMoveNumberFEN);
         } catch (NumberFormatException e) {
-            fullMoveNumber = 0;
+            throw new IllegalNotationException("Illegal FEN: Invalid full move number '" + fullMoveNumberFEN + "'.");
         }
 
         // Construct and return the FEN object.

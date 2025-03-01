@@ -1,5 +1,6 @@
 package engine.game;
 
+import engine.exceptions.IllegalMoveException;
 import engine.types.Move;
 import engine.utils.*;
 import engine.types.Position;
@@ -342,9 +343,8 @@ public class Game {
      * </ul>
      *
      * @param move The move to execute.
-     * @throws RuntimeException If the game is already finished.
-     * @throws IllegalStateException If no piece exists at the starting position.
-     * @throws IllegalArgumentException If the move is either invalid or unsafe.
+     * @throws IllegalStateException If the game is already finished.
+     * @throws IllegalMoveException If the move is illegal.
      */
     public void move(Move move) {
         // Convert Stuff
@@ -353,27 +353,27 @@ public class Game {
 
         // If Game is Over
         if (getResult() != GameResult.ON_GOING) {
-            throw new RuntimeException("Cannot make move after game is finished.");
+            throw new IllegalMoveException("Illegal Move: Cannot make move after game is finished.");
         }
 
         // Make sure there is a pieceToMove
         if (pieceToMove == null) {
-            throw new IllegalStateException("No piece at the initial position to move.");
+            throw new IllegalMoveException("Illegal Move: No piece at the initial position to move.");
         }
 
         // Wrong Color
         if (pieceToMove.getColor() != turn) {
-            throw new IllegalArgumentException("'" + turn + "' Player cannot move this piece: '" + pieceToMove + "'.");
+            throw new IllegalMoveException("Illegal Move: '" + pieceToMove + "' cannot move this turn.");
         }
 
         // Move must be valid
         if (!pieceToMove.isMoveValid(move, board)) {
-            throw new IllegalArgumentException("Illegal move for '" + pieceToMove + "': " + move);
+            throw new IllegalMoveException("Illegal Move: " + move);
         }
 
         // Is Move Safe?
         if (!isMoveSafe(move)) {
-            throw new IllegalArgumentException("Move puts king in check: " + move);
+            throw new IllegalMoveException("Illegal Move: " + move + " leaves king in check.");
         }
 
         // Update Full

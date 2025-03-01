@@ -1,5 +1,8 @@
 package engine.types;
 
+import engine.exceptions.IllegalNotationException;
+import engine.exceptions.IllegalPositionException;
+
 /**
  * Represents a position on a chessboard using file (column) and rank (row) coordinates.
  * This class uses a `record` to define an immutable object with `file` and `rank`.
@@ -12,11 +15,11 @@ public record Position(int file, int rank) {
      *
      * @param file The file (column) of the position (0 = 'a', 1 = 'b', ..., 7 = 'h').
      * @param rank The rank (row) of the position (0 = 1, 1 = 2, ..., 7 = 8).
-     * @throws IllegalArgumentException If the file or rank is out of range.
+     * @throws IllegalPositionException If the file or rank is out of range.
      */
     public Position {
         if (file < 0 || file > 7 || rank < 0 || rank > 7) {
-            throw new IllegalArgumentException("Invalid Position: " + file + ", " + rank + ". Valid range for file and rank is 0-7.");
+            throw new IllegalPositionException("Illegal Position: " + file + ", " + rank + ". Valid range for file and rank is 0-7.");
         }
     }
 
@@ -25,11 +28,11 @@ public record Position(int file, int rank) {
      *
      * @param notation The algebraic notation of the position (e.g., "a1", "e4").
      * @return The corresponding `Position` object.
-     * @throws IllegalArgumentException If the notation is invalid.
+     * @throws IllegalNotationException If the notation is invalid.
      */
     public static Position fromAlgebraic(String notation) {
         if (notation.length() != 2) {
-            throw new IllegalArgumentException("Invalid Position: Notation must be exactly 2 characters. Received: " + notation);
+            throw new IllegalNotationException("Illegal Position Notation: Notation must be exactly 2 characters. Received: " + notation);
         }
 
         // Parse
@@ -38,7 +41,7 @@ public record Position(int file, int rank) {
 
         // Rank must be Digit
         if (!Character.isDigit(rankChar)) {
-            throw new IllegalArgumentException("Invalid Position: Rank must be a digit (1-8). Received: " + notation);
+            throw new IllegalNotationException("Illegal Position Notation: Rank must be a digit (1-8). Received: " + notation);
         }
 
         // Convert to INT
@@ -47,7 +50,7 @@ public record Position(int file, int rank) {
 
         // Must be in range
         if (file < 0 || file > 7 || rank < 0 || rank > 7) {
-            throw new IllegalArgumentException("Invalid Position: " + notation + ". File and rank must be between 0 and 7.");
+            throw new IllegalNotationException("Illegal Position Notation: " + notation + ". File and rank must be between 0 and 7.");
         }
 
         // Return
@@ -71,7 +74,6 @@ public record Position(int file, int rank) {
         return toAlgebraic();
     }
 
-
     /**
      * @return The position's file as a char.
      */
@@ -92,13 +94,13 @@ public record Position(int file, int rank) {
      * @param fileDelta The change in the file (column).
      * @param rankDelta The change in the rank (row).
      * @return A new `Position` object after the move.
-     * @throws IllegalArgumentException If the move results in an out-of-bounds position.
+     * @throws IllegalPositionException If the move results in an out-of-bounds position.
      */
     public Position move(int fileDelta, int rankDelta) {
         int newFile = file + fileDelta;
         int newRank = rank + rankDelta;
         if (newFile < 0 || newFile > 7 || newRank < 0 || newRank > 7) {
-            throw new IllegalArgumentException("Moved Position is Out of Bounds.");
+            throw new IllegalPositionException("Illegal Position: Moved Position is Out of Bounds.");
         }
         return new Position(newFile, newRank);
     }

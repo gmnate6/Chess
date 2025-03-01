@@ -142,4 +142,9 @@ public class Timer {
 
     // Setters
     public void setTurn(Color currentTurn) { this.turn = currentTurn; }
+
+    @Override
+    public String toString() {
+        return "White Time: " + getFormatedTimeLeft(Color.WHITE) + "\nBlack Time: " + getFormatedTimeLeft(Color.BLACK);
+    }
 }

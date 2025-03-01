@@ -26,37 +26,63 @@ public class CommandLineGame {
         Timer timer = new Timer(DEFAULT_GAME_DURATION_MS, 0);
         Game game = initializeGame(timer); // Initialize the game
 
-        System.out.println("\n");
-
         // Main game loop
         while (game.inPlay()) {
             displayGame(game); // Display the game state
 
             String input = getPlayerInput(game);
-            if (isExitCommand(input)) break;
+            if (isExitCommand(input)) {
+                System.out.println("\n");
+                System.out.println("FEN: " + FEN.getFEN(game));
+                System.out.println("PGN: " + PGN.getPGN(game));
+                System.out.println("Thanks for playing!");
+                System.exit(0);
+            }
 
-            processPlayerInput(game, input);
+            processPlayerInput(input, game);
         }
         System.out.println("\n");
         System.out.println("Game Over!");
         System.out.println("Result: " + game.getResult());
-        System.out.println(PGN.getPGN(game));
+        System.out.println("PGN: " + PGN.getPGN(game));
     }
 
     /**
-     * Initializes the game by either starting a new game or loading from a FEN string.
+     * Initializes the game by either starting a new game or loading from a FEN or PGN.
      *
      * @param timer The game's timer to manage the duration.
      * @return The initialized `Game` object.
      */
     private Game initializeGame(Timer timer) {
-        System.out.print("Import FEN? (y, n): ");
+        System.out.print("Import Game? (y, n): ");
         String input = scanner.nextLine();
+
+        // Import Game
         if (input.equalsIgnoreCase("y")) {
-            System.out.print("Enter FEN: ");
-            input = scanner.nextLine().trim();
-            return FEN.getGame(input, timer);
+            System.out.print("\tImport FEN   (1)\n\tImport PGN   (2)\n\tWhich one? ");
+            input = scanner.nextLine();
+            if (input.equalsIgnoreCase("1")) {
+                // Import FEN
+                System.out.print("Enter FEN: ");
+                input = scanner.nextLine().trim();
+                try {
+                    return FEN.getGame(input, timer);
+                } catch (Exception e) {
+                    System.out.println("Not a valid FEN string.");
+                }
+            } else if (input.equalsIgnoreCase("2")) {
+                // Import PGN
+                System.out.print("Enter PGN: ");
+                input = scanner.nextLine().trim();
+                try {
+                    return PGN.getGame(input);
+                } catch (Exception e) {
+                    System.out.println("Not a valid PGN string.");
+                }
+            }
         }
+
+        // New Game
         return new Game(timer); // Default game creation
     }
 
@@ -67,7 +93,8 @@ public class CommandLineGame {
      */
     private void displayGame(Game game) {
         System.out.println("\n");
-        System.out.println(game);
+        System.out.println(game.board);
+        System.out.println(game.getTimer());
     }
 
     /**
@@ -98,13 +125,11 @@ public class CommandLineGame {
      * @param game  The current `Game` object.
      * @param input The player's raw input string.
      */
-    private void processPlayerInput(Game game, String input) {
-        String[] positions = input.split(" ");
-
+    private void processPlayerInput(String input, Game game) {
         // Display legal moves if only one position is provided
-        if (positions.length == 1) {
+        if (input.length() == 2) {
             try {
-                Position position = Position.fromAlgebraic(positions[0]);
+                Position position = Position.fromAlgebraic(input);
                 System.out.println("Legal moves from '" + position + "' -> " + game.getLegalMoves(position));
             } catch (Exception e) {
                 System.out.println("Error: A legal position looks like this: 'e2'");
@@ -113,45 +138,38 @@ public class CommandLineGame {
         }
 
         // Len must be 2
-        if (positions.length != 2) {
-            System.out.println("Error: A legal move looks like this: 'e2 e4'");
+        if (input.length() < 4 || input.length() > 5) {
+            System.out.println("Error: A legal move looks like this: 'e2e4'");
             return;
         }
 
         // Process the move
-        handlePlayerMove(game, positions);
+        handlePlayerMove(game, input);
     }
 
     /**
      * Handles the player's move by validating it and applying it to the game if legal.
      *
-     * @param game      The current `Game` object.
-     * @param positions An array containing the initial and final positions of the move.
+     * @param game         The current `Game` object.
+     * @param moveNotation A long algebraic notation of the move.
      */
-    private void handlePlayerMove(Game game, String[] positions) {
+    private void handlePlayerMove(Game game, String moveNotation) {
         Move move;
 
         // Try to make vars
         try {
-            Position initialPosition = Position.fromAlgebraic(positions[0]);
-            Position finalPosition = Position.fromAlgebraic(positions[1]);
-            move = new Move(initialPosition, finalPosition, '\0');
-            if (MoveUtils.causesPromotion(move, game)) {
-                move = new Move(initialPosition, finalPosition, 'Q');
-            }
+            move = MoveUtils.fromLongAlgebraic(moveNotation, game);
         } catch (Exception e) {
-            System.out.println("Error: A legal move looks like this: 'e2 e4'");
+            System.out.println("Error: A legal move looks like this: 'e2e4'");
             return;
         }
 
         // Try to make move
         if (!game.isMoveLegal(move)) {
-            System.out.println("Error: Move '" + MoveUtils.toLongAlgebraic(move) + "' is not legal.");
+            System.out.println("Error: Move '" + moveNotation + "' is not legal.");
             System.out.println("\n");
         } else {
             game.move(move);
-            System.out.println("FEN: " + FEN.getFEN(game));
-            System.out.println("\n");
         }
     }
 
@@ -164,7 +182,7 @@ public class CommandLineGame {
         System.out.println("Welcome to Command Line Chess Game!");
         System.out.println("Instructions:");
         System.out.println("1. To display all legal moves from a position, enter the position (e.g., 'e2').");
-        System.out.println("2. To make a move, enter the initial and final positions separated by a space (e.g., 'e2 e4').");
+        System.out.println("2. To make a move, enter the long algebraic notation of that move (e.g., 'e2e4').");
         System.out.println("3. To quit the game at any time, simply press Enter without typing anything.");
         System.out.println();
 

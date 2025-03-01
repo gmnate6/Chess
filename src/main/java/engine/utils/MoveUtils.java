@@ -1,5 +1,7 @@
 package engine.utils;
 
+import engine.exceptions.IllegalMoveException;
+import engine.exceptions.IllegalNotationException;
 import engine.game.Board;
 import engine.game.Game;
 import engine.pieces.King;
@@ -164,7 +166,7 @@ public class MoveUtils {
      */
     private static Position resolveAmbiguity(String ambiguity, char pieceChar, Position finalPosition, Game game) {
         if (ambiguity.length() > 2) {
-            throw new IllegalArgumentException("Ambiguous move must be at most 2 characters long: " + ambiguity);
+            throw new IllegalNotationException("Invalid Algebraic Notation: Ambiguity is too long: '" + ambiguity + "'.");
         }
 
         // Find Initial Position
@@ -202,7 +204,7 @@ public class MoveUtils {
                 }
             }
         }
-        throw new IllegalArgumentException("Ambiguous move: cannot resolve initial position from notation.");
+        throw new IllegalNotationException("Ambiguous algebraic notation: cannot resolve initial position from ambiguity: '" + ambiguity + "'.");
     }
 
     /**
@@ -240,7 +242,7 @@ public class MoveUtils {
 
         // Ensure notation is not null or empty
         if (notation == null || notation.isEmpty()) {
-            throw new IllegalArgumentException("Invalid move algebraic notation: '" + originalNotation + "'");
+            throw new IllegalNotationException("Illegal Algebraic Notation: '" + originalNotation + "'");
         }
 
         // Handle Extras
@@ -286,23 +288,27 @@ public class MoveUtils {
         }
 
         // Resolve Ambiguity
-        initialPosition = resolveAmbiguity(notation, pieceToMoveChar, finalPosition, game);
+        try {
+            initialPosition = resolveAmbiguity(notation, pieceToMoveChar, finalPosition, game);
+        } catch (IllegalNotationException e) {
+            throw new IllegalNotationException("Illegal Algebraic Notation: '" + originalNotation + "'. ");
+        }
 
         // Validate the move
         Move move = new Move(initialPosition, finalPosition, promotionPiece);
         if (!game.isMoveLegal(move)) {
-            throw new IllegalArgumentException("Illegal move parsed from algebraic notation: '" + originalNotation + "'");
+            throw new IllegalNotationException("Illegal Algebraic Notation: '" + originalNotation + "'. Move is not legal.");
         }
 
         // Check for extras
         if (isCapture ^ isCapture(move, game)) {
-            throw new IllegalArgumentException("Illegal move parsed from algebraic notation: '" + originalNotation + "'. Capture and non-capture conditions do not match.");
+            throw new IllegalNotationException("Illegal Algebraic Notation: '" + originalNotation + "'. Capture symbol does not match move.");
         }
         if ((causesCheck ^ moveCausesCheck(move, game)) && !causesCheckmate) {
-            throw new IllegalArgumentException("Illegal move parsed from algebraic notation: '" + originalNotation + "'. Check conditions do not match.");
+            throw new IllegalNotationException("Illegal Algebraic Notation: '" + originalNotation + "'. Check symbol does not match move.");
         }
         if (causesCheckmate ^ moveCausesCheckmate(move, game)) {
-            throw new IllegalArgumentException("Illegal move parsed from algebraic notation: '" + originalNotation + "'. Checkmate conditions do not match.");
+            throw new IllegalNotationException("Illegal Algebraic Notation: '" + originalNotation + "'. Checkmate symbol does not match move.");
         }
 
         // Return Move
@@ -329,7 +335,7 @@ public class MoveUtils {
 
         // Early Check
         if (!game.isMoveLegal(move)) {
-            throw new IllegalArgumentException("Cannot toAlgebraic an illegal move: Call toAlgebraic() before making move.");
+            throw new IllegalMoveException("Illegal Move: Make sure to call toAlgebraic() before making move.");
         }
         assert (pieceToMove != null);
 
@@ -385,9 +391,9 @@ public class MoveUtils {
      * @param notation The long algebraic notation of the move.
      * @return A Move object representing the described action.
      */
-    public static Move fromLongAlgebraic(String notation) {
+    public static Move fromLongAlgebraic(String notation, Game game) {
         if (notation.length() < 4 || notation.length() > 5) {
-            throw new IllegalArgumentException("Invalid Long Algebraic Notation: " + notation);
+            throw new IllegalNotationException("Invalid Long Algebraic Notation: " + notation);
         }
 
         // Get Sub Strings
@@ -400,10 +406,18 @@ public class MoveUtils {
             Position initialPosition = Position.fromAlgebraic(from);
             Position finalPosition = Position.fromAlgebraic(to);
 
+            // Create Move
+            Move move = new Move(initialPosition, finalPosition, promotion);
+
+            // Check for promotion
+            if (causesPromotion(move, game) && promotion == '\0') {
+                throw new IllegalNotationException("Invalid Long Algebraic Notation: '" + notation + "'. Move causes promotion and no promotion piece not specified.");
+            }
+
             // Make and Return Move
             return new Move(initialPosition, finalPosition, promotion);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid Long Algebraic Notation: " + notation);
+            throw new IllegalNotationException("Invalid Long Algebraic Notation: " + notation);
         }
     }
 
