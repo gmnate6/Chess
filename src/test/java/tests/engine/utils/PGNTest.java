@@ -14,9 +14,9 @@ import org.junit.jupiter.api.RepeatedTest;
  * 1. A PGN string correctly represents the game played.
  * 2. A game reconstructed from the PGN string reproduces the exact end state of the original game.
  *
- * To achieve this, it compares the FEN (Forsyth-Edwards Notation) strings of the original game
+ * <p>To achieve this, it compares the FEN (Forsyth-Edwards Notation) strings of the original game
  * and the game reconstructed from the PGN, asserting they are identical.
- * The test is repeated multiple times to ensure reliability under various random game scenarios.
+ * The test is repeated multiple times to ensure reliability under various random game scenarios.</p>
  */
 public class PGNTest {
     @RepeatedTest(20)

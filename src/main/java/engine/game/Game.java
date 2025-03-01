@@ -32,7 +32,7 @@ public class Game {
     private Color turn = Color.WHITE;
     private int halfMoveClock = 0;
     private int fullMoveNumber = 1;
-    public Timer timer;
+    private final Timer timer;
     private GameResult result = GameResult.ON_GOING;
     private final HashMap<String, Integer> boardHistory = new HashMap<>();
     private final MoveHistory moveHistory = new MoveHistory();
@@ -346,7 +346,6 @@ public class Game {
     public void move(Move move) {
         // Convert Stuff
         Position initialPosition = move.initialPosition();
-        Position finalPosition = move.finalPosition();
         Piece pieceToMove = board.getPieceAt(initialPosition);
 
         // If Game is Over

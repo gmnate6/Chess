@@ -74,7 +74,7 @@ public class ToAlgebraicTest {
     }
 
     /**
-     * Checks that castling moves (kingside and queenside) are correctly represented in algebraic notation.
+     * Checks that castling moves (king side and queen side) are correctly represented in algebraic notation.
      */
     @Test
     public void testCastling() {

@@ -51,7 +51,7 @@ public class GameController {
                 @Override
                 protected Void doInBackground() {
                     while (game.inPlay()) {
-                        makeMove(StockfishAI.getRandomTopMove(game));
+                        makeMove(StockfishAI.getMove(game));
                     }
                     return null;
                 }

@@ -182,7 +182,7 @@ public class FEN {
                     }
 
                     // Append Piece Representation
-                    fen.append(currentPiece.toString());
+                    fen.append(currentPiece);
                 }
             }
 
@@ -191,7 +191,7 @@ public class FEN {
                 fen.append(emptyCount);
             }
 
-            // Add '/' inbetween ranks
+            // Add '/' in between ranks
             if (rank > 0) {
                 fen.append('/');
             }

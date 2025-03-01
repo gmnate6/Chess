@@ -136,10 +136,6 @@ public class MoveUtils {
                 addRank = true;
                 continue;
             }
-            if (currentPos.rank() == initialPosition.rank()) {
-                addFile = true;
-                continue;
-            }
             addFile = true;
         }
         if (addFile && addRank) {
