@@ -2,10 +2,8 @@ package engine.game;
 
 import engine.types.Move;
 import engine.utils.*;
-
 import engine.types.Position;
 import engine.pieces.*;
-
 import utils.Color;
 import utils.GameResult;
 
@@ -14,28 +12,43 @@ import java.util.List;
 import java.util.HashMap;
 
 /**
- * Represents a chess game: handles game logic, win conditions, moves, player turns, and timers.
+ * Represents a chess game, encapsulating the game logic, rules, player turns,
+ * and timer management.
+ *
+ * <p>Key Responsibilities:</p>
+ * <ul>
+ *   <li>Manages the board state, player turns, and move histories.</li>
+ *   <li>Tracks game progression, including half-move and full-move counters.</li>
+ *   <li>Handles win conditions, including checks for draws, checkmates, and the fifty-move rule.</li>
+ *   <li>Supports optional timer integration for timed games.</li>
+ *   <li>Provides utility methods for generating legal moves, validating moves, and determining game state.</li>
+ * </ul>
+ *
+ * <p>This class facilitates core gameplay mechanics while maintaining flexibility
+ * for custom game states, such as initializing with specific board setups or timer configurations.</p>
  */
 public class Game {
-    private Board board = new Board();
-    private Color currentPlayer = Color.WHITE;
+    public Board board = new Board();
+    private Color turn = Color.WHITE;
     private int halfMoveClock = 0;
     private int fullMoveNumber = 1;
-    private GameResult gameResult = GameResult.ON_GOING;
+    private final Timer timer;
+    private GameResult result = GameResult.ON_GOING;
     private final HashMap<String, Integer> boardHistory = new HashMap<>();
-    public Timer timer;
+    private final MoveHistory moveHistory = new MoveHistory();
 
     /**
-     * Constructs a new Game instance with an already initialized Timer object.
-     * This constructor is different from other constructors as it accepts an
-     * external `Timer` instance and starts the game by triggering the Timer.
+     * Constructs a new Game instance, optionally with an initialized Timer.
+     * If a Timer is provided, it is validated and started if not already running.
+     * If no Timer is provided, the game is played without time tracking.
      *
-     * @param timer The Timer object used to manage time for both players.
-     *              This includes settings like initial time and increment per move.
+     * @param timer The Timer object for managing player time or null to disable timers.
      */
     public Game(Timer timer) {
+        // Disabled Timer
         if (timer == null) {
-            throw new NullPointerException("Timer must not be null.");
+            this.timer = null;
+            return;
         }
 
         // Set Timer
@@ -46,65 +59,83 @@ public class Game {
     }
 
     /**
-     * Creates a Game object from a FEN string.
+     * Constructs a Game instance with a custom board, turn, move counters, and timer.
+     * This allows initializing games in custom or intermediate states.
      *
-     * @param fen The FEN string describing the game state.
-     * @return A Game instance reflecting the given FEN state.
-     * @throws IllegalArgumentException If the FEN string is invalid.
+     * <p>If a Timer is provided, its setup logic is validated similarly
+     * to the single-argument constructor, ensuring it is usable and synchronized.</p>
+     *
+     * @param board           The initial game board state.
+     * @param turn            The current player's turn (Color.WHITE or Color.BLACK).
+     * @param halfMoveClock   The half-move counter for the fifty-move rule.
+     * @param fullMoveNumber  The turn count, incremented after each move by Black.
+     * @param timer           The Timer object for time management (nullable).
      */
-    public static Game fromFEN(String fen, Timer timer) {
-        Game game = new Game(timer);
-        FEN fenObj = FEN.fromFEN(fen);
+    public Game(Board board, Color turn, int halfMoveClock, int fullMoveNumber, Timer timer) {
+        this(timer);
+        this.board = board;
+        this.turn = turn;
+        this.halfMoveClock = halfMoveClock;
+        this.fullMoveNumber = fullMoveNumber;
 
-        // Update Game
-        game.board = fenObj.getBoard();
-        game.currentPlayer = fenObj.getCurrentPlayer();
-        game.board.setCastlingRights(fenObj.getCastlingRights());
-        game.board.setEnPassantPosition(fenObj.getEnPassantPosition());
-        game.halfMoveClock = fenObj.getHalfMoveClock();
-        game.fullMoveNumber = fenObj.getFullMoveNumber();
-
-        // Return
-        return game;
+        // Update Timer.turn if needed
+        if (timer != null && this.turn != this.timer.getTurn()) {
+            this.timer.setTurn(this.turn);
+        }
     }
 
     /**
-     * Converts the current game state into a FEN object.
+     * Creates a deep copy of the current game state.
+     * The method ensures all mutable fields, such as the board and timer, are deeply copied
+     * to prevent unintended modifications to the original game state when the copy is modified.
      *
-     * @return A FEN object representation of the game's current state.
+     * @return A new `Game` object with the same state as the original, but with independent copies of the board and timer.
      */
-    public FEN toFENObject() {
-        return new FEN(board, currentPlayer, halfMoveClock, fullMoveNumber);
-    }
-
-    /**
-     * Converts the current game state into a FEN string.
-     *
-     * @return A FEN representation of the game's current state.
-     */
-    public String toFEN() {
-        return toFENObject().toFEN();
+    public Game getDeepCopy() {
+        return new Game(
+                this.board.getDeepCopy(),
+                this.turn, this.halfMoveClock,
+                this.fullMoveNumber,
+                (this.timer == null ? null : this.timer.getDeepCopy())
+        );
     }
 
     // Getters
-    public Color getCurrentPlayer() { return currentPlayer; }
+    public Color getTurn() { return turn; }
     public int getHalfMoveClock() { return halfMoveClock; }
     public int getFullMoveNumber() { return fullMoveNumber; }
-    public Board getBoard() { return board; }
-    public GameResult getGameResult() { return gameResult; }
-    public boolean isGameInPlay() { return gameResult == GameResult.ON_GOING;}
+    public GameResult getResult() { return result; }
+    public boolean inPlay() { return result == GameResult.ON_GOING;}
     public Timer getTimer() { return timer; }
-
-    // Setter
-    private void setCurrentPlayer(Color currentPlayer) { this.currentPlayer = currentPlayer;}
-    private void setHalfMoveClock(int halfMoveClock) { this.halfMoveClock = halfMoveClock; }
-    private void setFullMoveNumber(int fullMoveNumber) { this.fullMoveNumber = fullMoveNumber; }
+    public MoveHistory getMoveHistory() { return moveHistory; }
 
     /**
-     * Gets legal moves for a piece at a given position.
+     * Switches the current player's turn in the game.
+     * Updates the `turn` field to the opposite player and, if a timer is present, switches the timer's turn as well.
+     * Ensures that the timer's turn remains consistent with the game's turn after the switch.
      *
-     * @param initialPosition The position of the piece to move.
-     * @return A list of legal positions the piece can move to.
+     * @throws IllegalStateException If the game's turn and the timer's turn are inconsistent after the switch.
+     */
+    private void switchTurn() {
+        // Switch Game Turn
+        this.turn = this.turn.inverse();
+
+        // Switch Timer Turn
+        if (this.timer != null) {
+            this.timer.switchTurn();
+            if (this.turn != timer.getTurn()) {
+                throw new IllegalStateException("Timer.turn did not equal Game.turn");
+            }
+        }
+    }
+
+    /**
+     * Retrieves all legal moves for the piece located at the specified position.
+     * Legal moves are calculated based on the current game state, including turn,
+     * board state, and rules like check and checkmate.
+     *
+     * @param initialPosition The position of the piece to calculate legal moves for.
+     * @return A list of positions the piece can legally move to.
      */
     public List<Position> getLegalMoves(Position initialPosition) {
         List<Position> positions = new ArrayList<>();
@@ -118,7 +149,7 @@ public class Game {
         }
 
         // If Wrong Color
-        if (pieceToMove.getColor() != currentPlayer) {
+        if (pieceToMove.getColor() != turn) {
             return positions;
         }
 
@@ -136,35 +167,44 @@ public class Game {
     }
 
     /**
-     * Checks if a move is safe for the current player's king.
+     * Validates whether a given move is safe for the current player's king.
+     * A move is considered safe if it does not leave the king in check after execution.
      *
-     * @param move The move to check.
-     * @return `true` if the move is safe; otherwise, `false`.
+     * @param move The move to evaluate.
+     * @return `true` if the move is safe for the king; otherwise, `false`.
      */
     public boolean isMoveSafe(Move move) {
         // Create a copy of the board
-        Board boardCopy = BoardUtils.getDeepCopy(board);
+        Board boardCopy = board.getDeepCopy();
 
         // Apply Move
-        BoardUtils.executeMove(move, boardCopy);
+        boardCopy.executeMove(move);
 
         // Check if the king is in check after the move
-        King king = boardCopy.getKing(currentPlayer);
-        Position kingPosition = boardCopy.getKingPosition(currentPlayer);
+        King king = boardCopy.getKing(turn);
+        Position kingPosition = boardCopy.getKingPosition(turn);
         return !king.isChecked(kingPosition, boardCopy);
     }
 
     /**
-     * Checks if a move is legal for the current game state.
+     * Validates whether a given move is legal in the current game state.
+     * A move is considered legal if it satisfies the following conditions:
+     * <ul>
+     *   <li>The game is ongoing.</li>
+     *   <li>The move corresponds to a non-null piece at the starting position.</li>
+     *   <li>The piece belongs to the current player.</li>
+     *   <li>The move is valid according to the piece's movement rules and the game state.</li>
+     *   <li>The move does not leave the king in check.</li>
+     * </ul>
      *
      * @param move The move to validate.
-     * @return `true` if the move is legal according to chess rules; otherwise, `false`.
+     * @return `true` if the move is legal; otherwise, `false`.
      */
     public boolean isMoveLegal(Move move) {
         Piece pieceToMove = board.getPieceAt(move.initialPosition());
 
         // Cannot move after game
-        if (getGameResult() != GameResult.ON_GOING) {
+        if (getResult() != GameResult.ON_GOING) {
             return false;
         }
 
@@ -174,7 +214,7 @@ public class Game {
         }
 
         // Cannot move wrong color
-        if (pieceToMove.getColor() != currentPlayer) {
+        if (pieceToMove.getColor() != turn) {
             return false;
         }
 
@@ -188,22 +228,32 @@ public class Game {
     }
 
     /**
-     * Checks if the current player is in checkmate.
+     * Determines whether the current player is in checkmate.
+     * A player is in checkmate if:
+     * <ul>
+     *   <li>The player's king is in check.</li>
+     *   <li>The player has no legal moves available.</li>
+     * </ul>
      *
-     * @return `true` if the player is in checkmate; otherwise, `false`.
+     * @return `true` if the current player is in checkmate; otherwise, `false`.
      */
     public boolean isCheckmate() {
-        Position kingPosition = board.getKingPosition(currentPlayer);
-        return isStalemate() && board.getKing(currentPlayer).isChecked(kingPosition, board);
+        Position kingPosition = board.getKingPosition(turn);
+        return isStalemate() && board.getKing(turn).isChecked(kingPosition, board);
     }
 
     /**
-     * Checks if the current player is in stalemate (no legal moves).
+     * Determines whether the current player is in stalemate.
+     * A player is in stalemate if:
+     * <ul>
+     *   <li>The player is not in check.</li>
+     *   <li>The player has no legal moves available.</li>
+     * </ul>
      *
-     * @return `true` if the player is in stalemate; otherwise, `false`.
+     * @return `true` if the current player is in stalemate; otherwise, `false`.
      */
     public boolean isStalemate() {
-        List<Position> pieces = board.getPiecePositionsByColor(currentPlayer);
+        List<Position> pieces = board.getPiecePositionsByColor(turn);
 
         for (Position pos : pieces) {
             if (!getLegalMoves(pos).isEmpty()) {
@@ -214,61 +264,95 @@ public class Game {
     }
 
     /**
-     * Updates the game's board history for tracking repetitions.
+     * Updates the game's board history by recording the current board state and turn
+     * in Forsyth-Edwards Notation (FEN) format. This information is used to track
+     * repetitions for enforcing the threefold repetition rule.
      */
-    public void updateBoardHistory() {
-        String fen = toFENObject().toFENBoardAndTurn(); // Convert board to FEN string
+    private void updateBoardHistory() {
+        String fen = FEN.getFENBoardAndTurn(this);
         boardHistory.put(fen, boardHistory.getOrDefault(fen, 0) + 1);
     }
 
     /**
-     * Checks and updates the game's result based on win conditions.
+     * Records the specified move in the game's move history.
+     *
+     * @param move The move to add to the move history.
      */
-    public void checkWinConditions() {
+    private void updateMoveHistory(Move move) {
+        moveHistory.addMove(move);
+    }
+
+    /**
+     * Evaluates and updates the game's result based on various win or draw conditions.
+     * The conditions include:
+     * <ul>
+     *   <li>Checkmate: A player has been checkmated.</li>
+     *   <li>Stalemate: The current player has no legal moves and is not in check.</li>
+     *   <li>Fifty-Move Rule: Neither player has moved a pawn or captured a piece for 50 moves.</li>
+     *   <li>Threefold Repetition: The board state has been repeated three or more times.</li>
+     *   <li>Timeout: One of the players has run out of time (if a timer is being used).</li>
+     * </ul>
+     */
+    private void checkWinConditions() {
         // Checkmated
         if (isCheckmate()) {
-            gameResult = (currentPlayer == Color.WHITE ? GameResult.BLACK_CHECKMATE : GameResult.WHITE_CHECKMATE);
+            result = (turn == Color.WHITE ? GameResult.BLACK_CHECKMATE : GameResult.WHITE_CHECKMATE);
             return;
         }
 
         // Stalemate
         if (isStalemate()) {
-            gameResult = GameResult.STALEMATE;
+            result = GameResult.STALEMATE;
             return;
         }
 
         // 50 Move Rule
         if (this.halfMoveClock >= 100) {
-            gameResult = GameResult.FIFTY_MOVE_RULE;
+            result = GameResult.FIFTY_MOVE_RULE;
+            return;
         }
 
         // Threefold Repetition
-        if (boardHistory.get(toFENObject().toFENBoardAndTurn()) >= 3) {
-            gameResult = GameResult.THREEFOLD_REPETITION;
+        if (boardHistory.get(FEN.getFENBoardAndTurn(this)) >= 3) {
+            result = GameResult.THREEFOLD_REPETITION;
+            return;
         }
 
         // Timer
-        if (this.timer.isOutOfTime(Color.WHITE)) {
-            gameResult = GameResult.TIME_WHITE_LOSS;
-        }
-        if (this.timer.isOutOfTime(Color.BLACK)) {
-            gameResult = GameResult.TIME_BLACK_LOSS;
+        if (this.timer != null){
+            if (this.timer.isOutOfTime(Color.WHITE)) {
+                result = GameResult.TIME_WHITE_LOSS;
+            }
+            if (this.timer.isOutOfTime(Color.BLACK)) {
+                result = GameResult.TIME_BLACK_LOSS;
+            }
         }
     }
 
+
     /**
-     * Executes a move, updates the board and game state, and switches turns.
+     * Executes a move, updates the game state, and switches turns.
+     * This method handles all necessary updates related to the move, including:
+     * <ul>
+     *   <li>Validating the legality of the move, throwing exceptions for invalid moves.</li>
+     *   <li>Updating the full-move counter if Black moves.</li>
+     *   <li>Resetting the half-move clock if a pawn moves or a capture occurs.</li>
+     *   <li>Making the move on the board and updating the history.</li>
+     *   <li>Checking for win conditions after the move.</li>
+     * </ul>
      *
      * @param move The move to execute.
+     * @throws RuntimeException If the game is already finished.
+     * @throws IllegalStateException If no piece exists at the starting position.
+     * @throws IllegalArgumentException If the move is either invalid or unsafe.
      */
     public void move(Move move) {
         // Convert Stuff
         Position initialPosition = move.initialPosition();
-        Position finalPosition = move.finalPosition();
         Piece pieceToMove = board.getPieceAt(initialPosition);
 
         // If Game is Over
-        if (getGameResult() != GameResult.ON_GOING) {
+        if (getResult() != GameResult.ON_GOING) {
             throw new RuntimeException("Cannot make move after game is finished.");
         }
 
@@ -278,8 +362,8 @@ public class Game {
         }
 
         // Wrong Color
-        if (pieceToMove.getColor() != currentPlayer) {
-            throw new IllegalArgumentException("'" + currentPlayer + "' Player cannot move this piece: '" + pieceToMove + "'.");
+        if (pieceToMove.getColor() != turn) {
+            throw new IllegalArgumentException("'" + turn + "' Player cannot move this piece: '" + pieceToMove + "'.");
         }
 
         // Move must be valid
@@ -293,44 +377,50 @@ public class Game {
         }
 
         // Update Full
-        if (this.currentPlayer == Color.BLACK) {
+        if (this.turn == Color.BLACK) {
             this.fullMoveNumber++;
         }
 
         // Update Half
-        if ((pieceToMove instanceof Pawn) || (this.board.getPieceAt(finalPosition) != null)) {
+        if ((pieceToMove instanceof Pawn) || (MoveUtils.isCapture(move, this))) {
             this.halfMoveClock = 0;
         } else {
             this.halfMoveClock++;
         }
 
         // Make Move on Board
-        BoardUtils.executeMove(move, board);
+        board.executeMove(move);
 
         // Switch Players
-        this.setCurrentPlayer(this.getCurrentPlayer().inverse());
-        this.timer.switchTurn();
-        if (this.currentPlayer != timer.getCurrentTurn()) {
-            throw new IllegalStateException("Timer.turn did not equal Game.currentPlayer");
-        }
+        this.switchTurn();
 
-        //  Update Board History
+        //  Update History
         this.updateBoardHistory();
+        this.updateMoveHistory(move);
 
         // Check for Win Condition
         this.checkWinConditions();
     }
 
     /**
-     * Returns a string representation of the game's current state.
+     * Returns a string representation of the game's current state, including:
+     * <ul>
+     *   <li>The board as a string.</li>
+     *   <li>The en passant position (if applicable).</li>
+     *   <li>The current game result (winning, draw, etc.).</li>
+     *   <li>The current player's turn.</li>
+     *   <li>Formatted remaining time for each player (if a timer is used).</li>
+     * </ul>
+     *
+     * @return A string representation of the game's current state.
      */
     @Override
     public String toString() {
         return board.toString() +
                 "\nEn Passant: " + board.getEnPassantPosition() +
-                "\nGame Result: " + getGameResult() +
-                "\nCurrent Player: " + getCurrentPlayer() +
-                "\nWhite Time: " + timer.getFormatedTimeLeft(Color.WHITE) +
-                "\nBlack Time: " + timer.getFormatedTimeLeft(Color.BLACK);
+                "\nGame Result: " + getResult() +
+                "\nCurrent Turn: " + getTurn() +
+                (this.timer == null ?
+                        "" : "\nWhite Time: " + timer.getFormatedTimeLeft(Color.WHITE) + "\nBlack Time: " + timer.getFormatedTimeLeft(Color.BLACK));
     }
 }

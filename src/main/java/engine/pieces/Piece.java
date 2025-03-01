@@ -2,10 +2,8 @@ package engine.pieces;
 
 import engine.game.Board;
 import engine.types.Position;
-
 import engine.types.Move;
 import engine.utils.PieceUtils;
-
 import utils.Color;
 
 
@@ -34,6 +32,21 @@ public abstract class Piece{
     @Override
     public String toString() { return String.valueOf(toChar()); }
     public char toChar() { return PieceUtils.pieceToChar(this); }
+
+    /**
+     * Executes special moves for the piece, such as "en passant", "castling", or "pawn promotion".
+     * This method is intended to apply modifications to the board state that are specific
+     * to these unique moves, which involve additional rules and behavior beyond standard piece movement.
+     * This method is designed to be overridden in subclasses for pieces that support special moves.
+     * For example:
+     * - Pawns handle "en passant" captures and promotion to another piece.
+     * - Kings handle "castling", which involves moving both the king and a rook.
+     * By default, this method does nothing in the base class, as not all pieces have special moves.
+     *
+     * @param move The move to execute, containing information about its starting and ending positions.
+     * @param board The current chess board state, which will be updated to reflect the special move.
+     */
+    public void specialMoveExecution(Move move, Board board) { board.setEnPassantPosition(null); }
 
     /**
      * Performs generic validations for a move applicable to all pieces.

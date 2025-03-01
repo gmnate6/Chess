@@ -2,9 +2,7 @@ package engine.pieces;
 
 import engine.game.Board;
 import engine.types.Position;
-
 import engine.types.Move;
-
 import utils.Color;
 
 /**
@@ -12,7 +10,6 @@ import utils.Color;
  * Implements movement logic specifically for the Knight.
  */
 public class Knight extends Piece {
-
     /**
      * Constructor to initialize a Knight with a specific color.
      *

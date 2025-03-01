@@ -2,7 +2,6 @@ package engine.types;
 
 import engine.game.Board;
 import engine.pieces.Rook;
-
 import utils.Color;
 
 /**

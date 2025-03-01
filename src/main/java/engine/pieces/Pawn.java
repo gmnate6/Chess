@@ -2,9 +2,8 @@ package engine.pieces;
 
 import engine.game.Board;
 import engine.types.Position;
-
 import engine.types.Move;
-
+import engine.utils.PieceUtils;
 import utils.Color;
 
 /**
@@ -18,6 +17,63 @@ public class Pawn extends Piece {
      * @param color The color of the Pawn (`Color.WHITE` or `Color.BLACK`).
      */
     public Pawn(Color color) { super(color); }
+
+    /**
+     * Executes special moves such as "en passant", "castling", or "pawn promotion".
+     * Updates the board to reflect the effects of these moves (e.g., removing a pawn during en passant
+     * or moving the rook during castling).
+     * Assumes `Board.enPassantPosition` is set to `null` before being called.
+     * This method does nothing in the base class and must be overridden by pieces
+     * with special move behavior (e.g., `Pawn`, `King`).
+     *
+     * @param move  The move to execute, containing origin and destination positions.
+     * @param board The chess board, updated to reflect the special move.
+     */
+    @Override
+    public void specialMoveExecution(Move move, Board board) {
+        // Collapse Move Obj
+        Position initialPosition = move.initialPosition();
+        Position finalPosition = move.finalPosition();
+
+        // If enPassant
+        if (isLegalEnPassant(move, board)) {
+            // Remove En Passanted Pawn
+            Position removedPawnPos = new Position(finalPosition.file(), initialPosition.rank());
+            board.setPieceAt(removedPawnPos, null);
+        }
+
+        // Update enPassantPosition
+        if (isLegalDouble(move, board)) {
+            Position newEnPassantPosition = initialPosition.move(0, this.getColor() == Color.WHITE ? 1 : -1);
+            board.setEnPassantPosition(newEnPassantPosition);
+        } else {
+            board.setEnPassantPosition(null);
+        }
+
+        // Promotion
+        if (isLegalPromotion(move, board)) {
+            board.setPieceAt(initialPosition, PieceUtils.charToPiece(move.promotionPiece(), getColor()));
+        }
+    }
+
+    /**
+     * Checks if the given move is a legal promotion for the Pawn.
+     * A legal promotion occurs when a Pawn reaches the 8th rank (for White) or the 1st rank (for Black).
+     *
+     * @param move  The move to validate.
+     * @param board The board to check for conditions related to promotion.
+     * @return `true` if the move results in a legal promotion, `false` otherwise.
+     */
+    public boolean isLegalPromotion(Move move, Board board) {
+        Position finalPosition = move.finalPosition();
+
+        // Must be Legal Single
+        if (!isLegalSingle(move, board) && !isLegalCapture(move, board)) {
+            return false;
+        }
+
+        return finalPosition.rank() == 0 || finalPosition.rank() == 7;
+    }
 
     /**
      * Validates whether a given move adheres to the Pawn's movement rules.
@@ -140,7 +196,6 @@ public class Pawn extends Piece {
         }
 
         // enPassant Position must be enPassantAble
-        Position enPassantPosition = new Position(finalPosition.file(), initialPosition.rank());
-        return enPassantPosition.equals(board.getEnPassantPosition());
+        return finalPosition.equals(board.getEnPassantPosition());
     }
 }

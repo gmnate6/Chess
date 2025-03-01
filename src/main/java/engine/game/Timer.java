@@ -3,21 +3,33 @@ package engine.game;
 import utils.Color;
 
 /**
- * The `Timer` class provides functionality to manage chess timers for both players.
- * It tracks the remaining time for White and Black players, handles time increments,
- * and manages the state of the timer during the game, including turn switching.
- * This class supports initializing timers with a specific starting time and increment,
- * switching turns, and checking if a player is out of time.
+ * Represents a chess game timer that tracks and manages time for both players.
+ * This class provides features such as time control per player, time increments after each move,
+ * and switching turns while tracking elapsed time.
  *
- * @author [Your Name]
+ * <p>Key Features:</p>
+ * <ul>
+ *   <li>Tracks individual time remaining for White and Black players in milliseconds.</li>
+ *   <li>Supports optional time increments added to the player's clock after each move.</li>
+ *   <li>Provides functionality to initialize timers with custom settings or intermediate game states.</li>
+ *   <li>Ensures accurate time tracking using system timestamps during active gameplay.</li>
+ *   <li>Allows switching turns, starting the timer, and checking if a player has run out of time.</li>
+ *   <li>Includes utility methods for retrieving formatted time (`MM:SS`) and creating a deep copy of the timer.</li>
+ * </ul>
+ *
+ * <p>This class assumes a standard chess game setup with two players, represented by `Color.WHITE` and
+ * `Color.BLACK`, and allows flexible initialization for various game states or time control systems.</p>
+ *
+ * <p>Typical usage includes starting the timer, switching turns, fetching remaining time,
+ * and checking time-related conditions during a game.</p>
  */
 public class Timer {
     private long whiteTime; // In milliseconds
     private long blackTime;
     private long lastMoveTimestamp;
-    private Color currentTurn;
+    private Color turn;
     private final long increment; // Time increment per move (if applicable)
-    boolean started = false;
+    private boolean started = false;
 
     /**
      * Constructs a Timer for a chess game with the specified initial time for both players
@@ -32,7 +44,7 @@ public class Timer {
         this.whiteTime = initialTime;
         this.blackTime = initialTime;
         this.increment = increment;
-        this.currentTurn = Color.WHITE;
+        this.turn = Color.WHITE;
     }
 
     /**
@@ -45,13 +57,30 @@ public class Timer {
      * @param blackTime    The remaining time (in milliseconds) for the Black player.
      * @param increment    The additional time (in milliseconds) added to a player's clock after each move.
      *                     For example, 10 seconds = 10,000 milliseconds.
-     * @param currentTurn  Specifies the player who starts the game, either `Color.WHITE` or `Color.BLACK`.
+     * @param turn  Specifies the player who starts the game, either `Color.WHITE` or `Color.BLACK`.
      */
-    public Timer(long whiteTime, long blackTime, long increment, Color currentTurn) {
+    public Timer(long whiteTime, long blackTime, long increment, Color turn) {
         this.whiteTime = whiteTime;
         this.blackTime = blackTime;
         this.increment = increment;
-        this.currentTurn = currentTurn;
+        this.turn = turn;
+    }
+
+    /**
+     * Creates and returns a deep copy of the current Timer object.
+     *
+     * <p>The deep copy ensures that all fields, including time values and
+     * game state (e.g., current turn, started state, etc.), are duplicated to
+     * create a completely independent Timer instance. Modifications to the
+     * copied Timer do not affect the original Timer and vice versa.</p>
+     *
+     * @return A new Timer instance that is a deep copy of this Timer.
+     */
+    public Timer getDeepCopy() {
+        Timer copy = new Timer(whiteTime, blackTime, increment, turn);
+        copy.lastMoveTimestamp = lastMoveTimestamp;
+        copy.started = started;
+        return copy;
     }
 
     /**
@@ -83,17 +112,22 @@ public class Timer {
      * and adds the increment time to their clock.
      */
     public void switchTurn() {
+        if (!started) { return; }
+
+        // Calc
         long now = System.currentTimeMillis();
         long elapsed = now - lastMoveTimestamp;
 
-        if (currentTurn == Color.WHITE) {
+        // Update Time Stamp
+        if (turn == Color.WHITE) {
             whiteTime = Math.max(0, whiteTime - elapsed + increment);
         } else {
             blackTime = Math.max(0, blackTime - elapsed + increment);
         }
-
         lastMoveTimestamp = now;
-        currentTurn = currentTurn.inverse();
+
+        // Switch Turn
+        turn = turn.inverse();
     }
 
     // Getters
@@ -104,5 +138,8 @@ public class Timer {
     public long getTimeLeft(Color player) {
         return player == Color.WHITE ? whiteTime : blackTime;
     }
-    public Color getCurrentTurn() { return currentTurn; }
+    public Color getTurn() { return turn; }
+
+    // Setters
+    public void setTurn(Color currentTurn) { this.turn = currentTurn; }
 }

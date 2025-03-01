@@ -13,8 +13,29 @@ public enum GameResult {
     RESIGN_BLACK,                  // Black resigns
     ON_GOING;                      // Game still in progress
 
-    /// Returns true if GameResult is a Checkmate
+    // Getters
+    public boolean whiteWon() {
+        return this == WHITE_CHECKMATE || this == RESIGN_WHITE;
+    }
+    public boolean blackWon() {
+        return this == BLACK_CHECKMATE || this == RESIGN_BLACK;
+    }
+
     public boolean isCheckmate() {
         return this == WHITE_CHECKMATE || this == BLACK_CHECKMATE;
+    }
+    public boolean isDraw() {
+        return this == STALEMATE || this == FIFTY_MOVE_RULE || this == THREEFOLD_REPETITION || this == DRAW_AGREEMENT;
+    }
+
+    public boolean isOnGoing() {
+        return this == ON_GOING;
+    }
+
+    public String getScore() {
+        if (whiteWon()) { return "1-0"; }
+        if (blackWon()) { return "0-1"; }
+        if (isDraw()) { return "1/2-1/2"; }
+        return "";
     }
 }

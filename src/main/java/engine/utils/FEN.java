@@ -1,49 +1,29 @@
 package engine.utils;
 
-import engine.pieces.Piece;
 import engine.game.Board;
-
+import engine.game.Game;
+import engine.game.Timer;
+import engine.pieces.Piece;
 import engine.types.CastlingRights;
 import engine.types.Position;
 import utils.Color;
 
-public final class FEN {
-    private final Board board;
-    private final Color currentPlayer;
-    private final CastlingRights castlingRights;
-    private final Position enPassantPosition;
-    private final int halfMoveClock;
-    private final int fullMoveNumber;
-
+/**
+ * Utility class for working with the Forsyth-Edwards Notation (FEN).
+ * FEN is a standard notation for representing a chessboard's current state,
+ * including board setup, turn, castling rights, en passant target, and more.
+ * This class provides methods to interpret FEN strings and convert game states
+ * into FEN format.
+ */
+public class FEN {
     /**
-     * Constructs a new FEN object with the given board state and additional details.
+     * Parses the board part of a FEN string and converts it into a <code>Board</code> object.
+     * Each rank in the FEN string is interpreted, and pieces are placed accordingly.
      *
-     * @param board The current state of the chess board.
-     * @param currentPlayer The player whose turn it is (White or Black).
-     * @param halfMoveClock The halfmove counter for the 50-move rule.
-     * @param fullMoveNumber The current full move number.
+     * @param boardFEN A part of a FEN string representing the board setup.
+     * @return A <code>Board</code> object populated based on the given FEN string.
      */
-    public FEN(Board board, Color currentPlayer, int halfMoveClock, int fullMoveNumber) {
-        this.board = board;
-        this.currentPlayer = currentPlayer;
-        this.castlingRights = board.getCastlingRights();
-        this.enPassantPosition = board.getEnPassantPosition();
-        this.halfMoveClock = halfMoveClock;
-        this.fullMoveNumber = fullMoveNumber;
-    }
-
-    /**
-     * Creates a `FEN` object by parsing the given FEN string.
-     *
-     * @param fen The FEN string representing the board state.
-     * @return A new `FEN` object representing the parsed board state.
-     * @throws RuntimeException If the FEN string is invalid, such as missing kings.
-     */
-    public static FEN fromFEN(String fen) {
-        String[] fenParts = fen.split(" ");
-
-        // Construct Board
-        String boardFEN = fenParts[0];
+    private static Board getBoard(String boardFEN) {
         String[] ranks = boardFEN.split("/");
         Board board = Board.getEmptyBoard();
 
@@ -61,39 +41,65 @@ public final class FEN {
         for (int rank = 0; rank < 8; rank++) {
             int file = 0;
             for (char c : ranks[7 - rank].toCharArray()) {
+                // Skip if number
                 if (Character.isDigit(c)) {
                     file += (c - '0');
-                } else {
-                    // Set Piece On Board
-                    Position pos = new Position(file, rank);
-                    board.setPieceAt(pos, PieceUtils.charToPiece(c));
-
-                    // No Pawns on edge
-                    if (rank == 0 || rank == 7) {
-                        if (c == 'P' || c == 'p') {
-                            throw new RuntimeException("Illegal FEN: Pawns cannot be placed on the edge of the board.");
-                        }
-                    }
-
-                    // Move to Next File
-                    file++;
+                    continue;
                 }
+
+                // Set Piece On Board
+                Position pos = new Position(file, rank);
+                board.setPieceAt(pos, PieceUtils.charToPiece(c));
+
+                // No Pawns on edge
+                if ((rank == 0 || rank == 7) && (c == 'P' || c == 'p')) {
+                    throw new RuntimeException("Illegal FEN: Pawns cannot be placed on the edge of the board.");
+                }
+
+                // Move to Next File
+                file++;
             }
         }
 
-        // Construct Current Player
+        // Return Board
+        return board;
+    }
+
+    /**
+     * Parses an entire FEN string and constructs a <code>Game</code> object.
+     * This includes information such as the board layout, current turn, castling rights,
+     * and en passant targets. Optionally includes a timer state if provided.
+     *
+     * @param fen The FEN string representing the game's current state.
+     * @param timer An optional <code>Timer</code> object for tracking elapsed time (can be null).
+     * @return A <code>Game</code> object reconstructed from the given FEN string.
+     */
+    public static Game getGame(String fen, Timer timer) {
+        Board board;
+        Color currentPlayer;
+        int halfMoveClock;
+        int fullMoveNumber;
+
+        // Break into parts
+        String[] fenParts = fen.split(" ");
+
+        /// Construct Board
+        String boardFEN = fenParts[0];
+        board = getBoard(boardFEN);
+
+        /// Construct Current Player
         String currentPlayerFEN = fenParts[1];
         if (!currentPlayerFEN.equalsIgnoreCase("w") && !currentPlayerFEN.equalsIgnoreCase("b")) {
             throw new RuntimeException("Illegal FEN: Current Player must either be 'w' or 'b'.");
         }
-        Color currentPlayer = currentPlayerFEN.equalsIgnoreCase("w") ? Color.WHITE : Color.BLACK;
+        currentPlayer = currentPlayerFEN.equalsIgnoreCase("w") ? Color.WHITE : Color.BLACK;
 
         // Cannot be left in check
         if (board.isKingInCheck(currentPlayer.inverse())) {
             throw new RuntimeException("Illegal FEN: Other Player cannot be left in check.");
         }
 
-        // Construct Castling Rights
+        /// Construct Castling Rights
         String castlingRightsFEN = fenParts[2];
         CastlingRights castlingRights = new CastlingRights();
 
@@ -109,7 +115,7 @@ public final class FEN {
         // Add Castling Rights to Board
         board.setCastlingRights(castlingRights);
 
-        // Construct En Passant Position
+        /// Construct En Passant Position
         String enPassantPositionFEN = fenParts[3];
         Position enPassantPosition;
         if (enPassantPositionFEN.equals("-")) {
@@ -125,18 +131,16 @@ public final class FEN {
         // Add enPassantPosition to Board
         board.setEnPassantPosition(enPassantPosition);
 
-        // Construct Half Move Clock
+        /// Construct Half Move Clock
         String halfMoveClockFEN = fenParts[4];
-        int halfMoveClock;
         try {
             halfMoveClock = Integer.parseInt(halfMoveClockFEN);
         } catch (NumberFormatException e) {
             halfMoveClock = 0;
         }
 
-        // Construct Full Move Number
+        /// Construct Full Move Number
         String fullMoveNumberFEN = fenParts[5];
-        int fullMoveNumber;
         try {
             fullMoveNumber = Integer.parseInt(fullMoveNumberFEN);
         } catch (NumberFormatException e) {
@@ -144,15 +148,18 @@ public final class FEN {
         }
 
         // Construct and return the FEN object.
-        return new FEN(board, currentPlayer, halfMoveClock, fullMoveNumber);
+        return new Game(board, currentPlayer, halfMoveClock, fullMoveNumber, timer);
     }
 
     /**
-     * Converts the current board to its FEN string representation.
+     * Generates the FEN string for a <code>Game</code>, which includes the board state
+     * and the player's turn. This method does not include additional details such as
+     * castling rights, en passant, or move counters.
      *
-     * @return The FEN string representing the board state.
+     * @param game The <code>Game</code> object to convert to FEN.
+     * @return A FEN string that includes the board state and the turn of the current player.
      */
-    public String toFENBoardAndTurn() {
+    public static String getFENBoardAndTurn(Game game) {
         StringBuilder fen = new StringBuilder();
 
         // Construct Board
@@ -162,7 +169,7 @@ public final class FEN {
             // Loop through files
             for (int file = 0; file < 8; file++) {
                 Position currentPosition = new Position(file, rank);
-                Piece currentPiece = board.getPieceAt(currentPosition);
+                Piece currentPiece = game.board.getPieceAt(currentPosition);
 
                 if (currentPiece == null) {
                     // Count Empty Spaces
@@ -175,7 +182,7 @@ public final class FEN {
                     }
 
                     // Append Piece Representation
-                    fen.append(currentPiece.toString());
+                    fen.append(currentPiece);
                 }
             }
 
@@ -184,32 +191,35 @@ public final class FEN {
                 fen.append(emptyCount);
             }
 
-            // Add '/' inbetween ranks
+            // Add '/' in between ranks
             if (rank > 0) {
                 fen.append('/');
             }
         }
 
         // Construct Current Player
-        fen.append(" ").append(this.currentPlayer == Color.WHITE ? "w" : "b");
-
+        fen.append(" ").append(game.getTurn() == Color.WHITE ? "w" : "b");
         return fen.toString();
     }
 
     /**
-     * Converts the current game state to its FEN string representation.
+     * Converts the entire state of a <code>Game</code> object into a full FEN string.
+     * The generated string includes board layout, active color, castling rights,
+     * en passant target square, halfmove clock, and fullmove number.
      *
-     * @return The FEN string representing the game state.
+     * @param game The <code>Game</code> object to convert to FEN.
+     * @return A complete FEN string representing the state of the given game.
      */
-    public String toFEN() {
+    public static String getFEN(Game game) {
         StringBuilder fen = new StringBuilder();
 
         // Construct Board
-        fen.append(this.toFENBoardAndTurn());
+        fen.append(getFENBoardAndTurn(game));
 
         // Construct Castling Rights
         fen.append(" ");
 
+        CastlingRights castlingRights = game.board.getCastlingRights();
         if (castlingRights.isWhiteKingSide()) { fen.append("K"); }
         if (castlingRights.isWhiteQueenSide()) { fen.append("Q"); }
         if (castlingRights.isBlackKingSide()) { fen.append("k"); }
@@ -218,6 +228,7 @@ public final class FEN {
         if (castlingRights.isNone()) { fen.append("-"); }
 
         // Construct En Passant Position
+        Position enPassantPosition = game.board.getEnPassantPosition();
         fen.append(" ");
         if (enPassantPosition == null) {
             fen.append("-");
@@ -226,20 +237,12 @@ public final class FEN {
         }
 
         // Construct Half Move Clock
-        fen.append(" ").append(halfMoveClock);
+        fen.append(" ").append(game.getHalfMoveClock());
 
         // Construct Full Move Number
-        fen.append(" ").append(fullMoveNumber);
+        fen.append(" ").append(game.getFullMoveNumber());
 
         // Return
         return fen.toString();
     }
-
-    // Getters
-    public Board getBoard() { return board; }
-    public Color getCurrentPlayer() { return currentPlayer; }
-    public CastlingRights getCastlingRights() { return castlingRights; }
-    public Position getEnPassantPosition() { return enPassantPosition; }
-    public int getHalfMoveClock() { return halfMoveClock; }
-    public int getFullMoveNumber() { return fullMoveNumber; }
 }

@@ -2,10 +2,8 @@ package engine.pieces;
 
 import engine.game.Board;
 import engine.types.Position;
-
 import engine.types.Move;
 import engine.utils.PieceUtils;
-
 import utils.Color;
 
 /**
@@ -13,7 +11,6 @@ import utils.Color;
  * Implements specific movement rules for the Bishop.
  */
 public class Bishop extends Piece {
-
     /**
      * Constructor to initialize a Bishop with a specific color.
      *

@@ -1,9 +1,11 @@
 package engine;
 
 import engine.game.Game;
-import engine.types.Position;
-import engine.types.Move;
 import engine.game.Timer;
+import engine.types.Move;
+import engine.types.Position;
+import engine.utils.FEN;
+import engine.utils.PGN;
 
 import java.util.Scanner;
 
@@ -26,7 +28,7 @@ public class CommandLineGame {
         System.out.println("\n");
 
         // Main game loop
-        while (game.isGameInPlay()) {
+        while (game.inPlay()) {
             displayGame(game); // Display the game state
 
             String input = getPlayerInput(game);
@@ -36,9 +38,8 @@ public class CommandLineGame {
         }
         System.out.println("\n");
         System.out.println("Game Over!");
-        if (!game.isGameInPlay()) {
-            System.out.println("Result: " + game.getGameResult());
-        }
+        System.out.println("Result: " + game.getResult());
+        System.out.println(PGN.getPGN(game));
     }
 
     /**
@@ -53,7 +54,7 @@ public class CommandLineGame {
         if (input.equalsIgnoreCase("y")) {
             System.out.print("Enter FEN: ");
             input = scanner.nextLine().trim();
-            return Game.fromFEN(input, timer);
+            return FEN.getGame(input, timer);
         }
         return new Game(timer); // Default game creation
     }
@@ -75,7 +76,7 @@ public class CommandLineGame {
      * @return The raw string input from the player.
      */
     private String getPlayerInput(Game game) {
-        System.out.print(game.getCurrentPlayer() + "'s Move: ");
+        System.out.print(game.getTurn() + "'s Move: ");
         return scanner.nextLine();
     }
 
@@ -133,7 +134,7 @@ public class CommandLineGame {
         try {
             Position initialPosition = Position.fromAlgebraic(positions[0]);
             Position finalPosition = Position.fromAlgebraic(positions[1]);
-            move = new Move(initialPosition, finalPosition, 'Q');
+            move = new Move(initialPosition, finalPosition, '\0');
         } catch (Exception e) {
             System.out.println("Error: A legal move looks like this: 'e2 e4'");
             return;
@@ -145,7 +146,7 @@ public class CommandLineGame {
             System.out.println("\n");
         } else {
             game.move(move);
-            System.out.println("FEN: " + game.toFEN());
+            System.out.println("FEN: " + FEN.getFEN(game));
             System.out.println("\n");
         }
     }

@@ -60,7 +60,7 @@ public record Position(int file, int rank) {
      * @return The position in algebraic notation.
      */
     public String toAlgebraic() {
-        return "" + (char) ('a' + file) + (rank + 1);
+        return "" + fileToChar() + rankToChar();
     }
 
     /**
@@ -69,6 +69,21 @@ public record Position(int file, int rank) {
     @Override
     public String toString() {
         return toAlgebraic();
+    }
+
+
+    /**
+     * @return The position's file as a char.
+     */
+    public char fileToChar() {
+        return (char) ('a' + file);
+    }
+
+    /**
+     * @return The position's rank as a char.
+     */
+    public char rankToChar() {
+        return (char) ('1' + rank);
     }
 
     /**

@@ -2,10 +2,8 @@ package engine.pieces;
 
 import engine.game.Board;
 import engine.types.Position;
-
 import engine.types.Move;
 import engine.utils.PieceUtils;
-
 import utils.Color;
 
 /**
@@ -13,7 +11,6 @@ import utils.Color;
  * Implements the specific movement logic for a Queen.
  */
 public class Queen extends Piece {
-
     /**
      * Constructor to initialize a Queen with a specific color.
      *
