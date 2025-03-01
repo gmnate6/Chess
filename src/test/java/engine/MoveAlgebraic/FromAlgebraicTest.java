@@ -1,15 +1,13 @@
-package tests.engine.utils.MoveUtils;
+package engine.MoveAlgebraic;
 
 import engine.game.Game;
-import engine.pieces.Pawn;
-import engine.pieces.Piece;
 import engine.types.Move;
 import engine.types.Position;
 import engine.utils.FEN;
 import engine.utils.MoveUtils;
 
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This class contains a suite of unit tests to validate the correctness of the

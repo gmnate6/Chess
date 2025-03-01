@@ -1,9 +1,10 @@
-package tests.engine.types;
+package engine;
 
 import engine.types.Position;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * <p><strong>Purpose:</strong></p>

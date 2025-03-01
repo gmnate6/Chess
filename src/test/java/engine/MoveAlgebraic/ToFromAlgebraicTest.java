@@ -1,4 +1,4 @@
-package tests.engine.utils.MoveUtils;
+package engine.MoveAlgebraic;
 
 import engine.ai.RandomAI;
 import engine.game.Game;
@@ -6,8 +6,8 @@ import engine.types.Move;
 import engine.utils.FEN;
 import engine.utils.MoveUtils;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.RepeatedTest;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This test ensures the correctness of the conversion between `Move` objects and their algebraic notation representation

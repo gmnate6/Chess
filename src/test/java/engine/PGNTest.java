@@ -1,12 +1,12 @@
-package tests.engine.utils;
+package engine;
 
 import engine.ai.RandomAI;
 import engine.game.Game;
 import engine.utils.FEN;
 import engine.utils.PGN;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This test verifies the consistency and accuracy of the PGN (Portable Game Notation) generator and parser in the game engine.
@@ -33,6 +33,6 @@ public class PGNTest {
         Game gameFromPGN = PGN.getGame(pgn);
 
         // Check if pgn reconstructed game using FEN
-        Assertions.assertEquals(FEN.getFEN(game), FEN.getFEN(gameFromPGN));
+        assertEquals(FEN.getFEN(game), FEN.getFEN(gameFromPGN));
     }
 }
