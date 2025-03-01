@@ -1,4 +1,4 @@
-package tests.engine.MoveUtils;
+package tests.engine.utils.MoveUtils;
 
 import engine.game.Game;
 import engine.pieces.Pawn;
@@ -11,7 +11,19 @@ import engine.utils.MoveUtils;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
+/**
+ * This class contains a suite of unit tests to validate the correctness of the
+ * `MoveUtils.fromAlgebraic` method, which parses algebraic notation and converts it back into
+ * corresponding `Move` objects.
+ *
+ * <p>The tests cover various chess scenarios such as pawn moves, promotions, castling, captures,
+ * and edge cases involving checks, checkmates, and ambiguity resolution. By testing these scenarios,
+ * the suite ensures the reliability of the algebraic notation parsing logic and its adherence to chess rules.</p>
+ */
 public class FromAlgebraicTest {
+    /**
+     * Verifies the correct parsing of pawn moves from algebraic notation.
+     */
     @Test
     public void testPawn() {
         // White
@@ -28,12 +40,15 @@ public class FromAlgebraicTest {
         assertEquals(move1, MoveUtils.fromAlgebraic("g6", game));
         assertEquals(move2, MoveUtils.fromAlgebraic("f5", game));
 
-        // Extra
+        // En Passant
         game = FEN.getGame("r3kb1r/pp2p1pp/3qb3/1PpPP3/4n3/1n1PBPPB/P1Q5/RN2K1NR w KQkq c6 0 16", null);
         move1 = new Move(Position.fromAlgebraic("b5"), Position.fromAlgebraic("c6"), '\0');
         assertEquals(move1, MoveUtils.fromAlgebraic("bxc6", game));
     }
 
+    /**
+     * Ensures that pawn promotions are parsed correctly from algebraic notation.
+     */
     @Test
     public void testPromotion() {
         // White
@@ -59,6 +74,9 @@ public class FromAlgebraicTest {
         assertEquals(move4, MoveUtils.fromAlgebraic("f1=B", game));
     }
 
+    /**
+     * Checks the accurate parsing of castling moves (kingside and queenside) from algebraic notation.
+     */
     @Test
     public void testCastling() {
         // White
@@ -76,6 +94,9 @@ public class FromAlgebraicTest {
         assertEquals(move2, MoveUtils.fromAlgebraic("O-O-O", game));
     }
 
+    /**
+     * Tests the resolution of ambiguity for algebraic notation when multiple pieces of the same type can move.
+     */
     @Test
     public void testAmbiguity() {
         // No Ambiguity
@@ -111,6 +132,9 @@ public class FromAlgebraicTest {
         assertEquals(move4, MoveUtils.fromAlgebraic("Qg6f5", game));
     }
 
+    /**
+     * Ensures that capturing moves are correctly parsed from algebraic notation.
+     */
     @Test
     public void testCapture() {
         // White
@@ -124,6 +148,9 @@ public class FromAlgebraicTest {
         assertEquals(move, MoveUtils.fromAlgebraic("Rxg3", game));
     }
 
+    /**
+     * Verifies that moves resulting in a check to the opposing king are correctly parsed from algebraic notation.
+     */
     @Test
     public void testChecks() {
         // White
@@ -137,6 +164,9 @@ public class FromAlgebraicTest {
         assertEquals(move, MoveUtils.fromAlgebraic("Rh1+", game));
     }
 
+    /**
+     * Checks that moves resulting in a checkmate are correctly parsed from algebraic notation.
+     */
     @Test
     public void testCheckmates() {
         // White
@@ -150,6 +180,9 @@ public class FromAlgebraicTest {
         assertEquals(move, MoveUtils.fromAlgebraic("Rg1#", game));
     }
 
+    /**
+     * Tests the parsing of a complex move involving promotion, capturing, and checkmate from algebraic notation.
+     */
     @Test
     public void testPromotion_Capture_Checkmate() {
         // White
@@ -163,6 +196,9 @@ public class FromAlgebraicTest {
         assertEquals(move, MoveUtils.fromAlgebraic("bxc1=R#", game));
     }
 
+    /**
+     * Verifies the correct parsing of castling moves that result in checkmate from algebraic notation.
+     */
     @Test
     public void testCastling_Checkmate() {
         Game game = FEN.getGame("8/8/8/8/8/8/7R/k3K2R w K - 0 1", null);

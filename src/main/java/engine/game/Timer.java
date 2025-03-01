@@ -3,13 +3,25 @@ package engine.game;
 import utils.Color;
 
 /**
- * The `Timer` class provides functionality to manage chess timers for both players.
- * It tracks the remaining time for White and Black players, handles time increments,
- * and manages the state of the timer during the game, including turn switching.
- * This class supports initializing timers with a specific starting time and increment,
- * switching turns, and checking if a player is out of time.
+ * Represents a chess game timer that tracks and manages time for both players.
+ * This class provides features such as time control per player, time increments after each move,
+ * and switching turns while tracking elapsed time.
  *
- * @author [Your Name]
+ * <p>Key Features:</p>
+ * <ul>
+ *   <li>Tracks individual time remaining for White and Black players in milliseconds.</li>
+ *   <li>Supports optional time increments added to the player's clock after each move.</li>
+ *   <li>Provides functionality to initialize timers with custom settings or intermediate game states.</li>
+ *   <li>Ensures accurate time tracking using system timestamps during active gameplay.</li>
+ *   <li>Allows switching turns, starting the timer, and checking if a player has run out of time.</li>
+ *   <li>Includes utility methods for retrieving formatted time (`MM:SS`) and creating a deep copy of the timer.</li>
+ * </ul>
+ *
+ * <p>This class assumes a standard chess game setup with two players, represented by `Color.WHITE` and
+ * `Color.BLACK`, and allows flexible initialization for various game states or time control systems.</p>
+ *
+ * <p>Typical usage includes starting the timer, switching turns, fetching remaining time,
+ * and checking time-related conditions during a game.</p>
  */
 public class Timer {
     private long whiteTime; // In milliseconds
@@ -18,20 +30,6 @@ public class Timer {
     private Color turn;
     private final long increment; // Time increment per move (if applicable)
     private boolean started = false;
-    private boolean isDisabled = false;
-
-    /**
-     * Initializes a Timer with default values:
-     * both players start with zero time, no increment, and White as the starting turn.
-     *
-     * <p>This constructor is useful for creating a Timer instance in scenarios where
-     * time settings are not immediately required, and additional configuration can
-     * be applied later.</p>
-     */
-    public Timer() {
-        this(0, 0);
-        this.isDisabled = true;
-    }
 
     /**
      * Constructs a Timer for a chess game with the specified initial time for both players
@@ -82,7 +80,6 @@ public class Timer {
         Timer copy = new Timer(whiteTime, blackTime, increment, turn);
         copy.lastMoveTimestamp = lastMoveTimestamp;
         copy.started = started;
-        copy.isDisabled = isDisabled;
         return copy;
     }
 
@@ -91,7 +88,6 @@ public class Timer {
      * Also marks the timer as started.
      */
     public void start() {
-        if (isDisabled) { return; }
         this.lastMoveTimestamp = System.currentTimeMillis();
         started = true;
     }
@@ -116,10 +112,7 @@ public class Timer {
      * and adds the increment time to their clock.
      */
     public void switchTurn() {
-        if (isDisabled) {
-            turn = turn.inverse();
-            return;
-        }
+        turn = turn.inverse();
         if (!started) { return; }
 
         // Calc
@@ -147,7 +140,6 @@ public class Timer {
         return player == Color.WHITE ? whiteTime : blackTime;
     }
     public Color getTurn() { return turn; }
-    public boolean isDisabled() { return isDisabled; }
 
     // Setters
     public void setTurn(Color currentTurn) { this.turn = currentTurn; }

@@ -10,7 +10,6 @@ import utils.Color;
  * Implements movement logic specifically for the Knight.
  */
 public class Knight extends Piece {
-
     /**
      * Constructor to initialize a Knight with a specific color.
      *

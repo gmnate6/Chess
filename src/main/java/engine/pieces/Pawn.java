@@ -56,6 +56,14 @@ public class Pawn extends Piece {
         }
     }
 
+    /**
+     * Checks if the given move is a legal promotion for the Pawn.
+     * A legal promotion occurs when a Pawn reaches the 8th rank (for White) or the 1st rank (for Black).
+     *
+     * @param move  The move to validate.
+     * @param board The board to check for conditions related to promotion.
+     * @return `true` if the move results in a legal promotion, `false` otherwise.
+     */
     public boolean isLegalPromotion(Move move, Board board) {
         Position finalPosition = move.finalPosition();
 

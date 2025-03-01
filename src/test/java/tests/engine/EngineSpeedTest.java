@@ -1,4 +1,4 @@
-package tests;
+package tests.engine;
 
 import engine.game.Game;
 import engine.types.Position;
@@ -28,7 +28,7 @@ public class EngineSpeedTest {
         List<Position> positions = game.getLegalMoves(Position.fromAlgebraic("b4"));
         long endTime = System.nanoTime();
 
-        // Sout
+        // Print
         System.out.println(positions);
         System.out.println("Execution time (ms): " + (endTime - startTime) / 1_000_000.0);
     }

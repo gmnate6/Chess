@@ -11,7 +11,6 @@ import utils.Color;
  * Implements specific movement rules for the Bishop.
  */
 public class Bishop extends Piece {
-
     /**
      * Constructor to initialize a Bishop with a specific color.
      *

@@ -8,7 +8,21 @@ import engine.types.CastlingRights;
 import engine.types.Position;
 import utils.Color;
 
+/**
+ * Utility class for working with the Forsyth-Edwards Notation (FEN).
+ * FEN is a standard notation for representing a chessboard's current state,
+ * including board setup, turn, castling rights, en passant target, and more.
+ * This class provides methods to interpret FEN strings and convert game states
+ * into FEN format.
+ */
 public class FEN {
+    /**
+     * Parses the board part of a FEN string and converts it into a <code>Board</code> object.
+     * Each rank in the FEN string is interpreted, and pieces are placed accordingly.
+     *
+     * @param boardFEN A part of a FEN string representing the board setup.
+     * @return A <code>Board</code> object populated based on the given FEN string.
+     */
     private static Board getBoard(String boardFEN) {
         String[] ranks = boardFEN.split("/");
         Board board = Board.getEmptyBoard();
@@ -51,6 +65,15 @@ public class FEN {
         return board;
     }
 
+    /**
+     * Parses an entire FEN string and constructs a <code>Game</code> object.
+     * This includes information such as the board layout, current turn, castling rights,
+     * and en passant targets. Optionally includes a timer state if provided.
+     *
+     * @param fen The FEN string representing the game's current state.
+     * @param timer An optional <code>Timer</code> object for tracking elapsed time (can be null).
+     * @return A <code>Game</code> object reconstructed from the given FEN string.
+     */
     public static Game getGame(String fen, Timer timer) {
         Board board;
         Color currentPlayer;
@@ -128,6 +151,14 @@ public class FEN {
         return new Game(board, currentPlayer, halfMoveClock, fullMoveNumber, timer);
     }
 
+    /**
+     * Generates the FEN string for a <code>Game</code>, which includes the board state
+     * and the player's turn. This method does not include additional details such as
+     * castling rights, en passant, or move counters.
+     *
+     * @param game The <code>Game</code> object to convert to FEN.
+     * @return A FEN string that includes the board state and the turn of the current player.
+     */
     public static String getFENBoardAndTurn(Game game) {
         StringBuilder fen = new StringBuilder();
 
@@ -171,6 +202,14 @@ public class FEN {
         return fen.toString();
     }
 
+    /**
+     * Converts the entire state of a <code>Game</code> object into a full FEN string.
+     * The generated string includes board layout, active color, castling rights,
+     * en passant target square, halfmove clock, and fullmove number.
+     *
+     * @param game The <code>Game</code> object to convert to FEN.
+     * @return A complete FEN string representing the state of the given game.
+     */
     public static String getFEN(Game game) {
         StringBuilder fen = new StringBuilder();
 

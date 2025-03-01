@@ -67,13 +67,13 @@ public class King extends Piece {
         }
     }
 
-        /**
-         * Validates if a move is valid for the King, specific to its movement rules.
-         *
-         * @param move  The move to validate.
-         * @param board The current state of the chess board.
-         * @return `true` if the move is valid for a King; otherwise, `false`.
-         */
+    /**
+     * Validates if a move is valid for the King, specific to its movement rules.
+     *
+     * @param move  The move to validate.
+     * @param board The current state of the chess board.
+     * @return `true` if the move is valid for a King; otherwise, `false`.
+     */
     @Override
     public boolean isPieceSpecificMoveValid(Move move, Board board) {
         Position initial = move.initialPosition();

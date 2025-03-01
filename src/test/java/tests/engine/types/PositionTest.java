@@ -1,13 +1,36 @@
-package tests.engine;
+package tests.engine.types;
 
 import engine.types.Position;
 
 import org.junit.*;
 import static org.junit.Assert.*;
 
+/**
+ * <p><strong>Purpose:</strong></p>
+ * <p>This class contains a suite of unit tests for the <code>Position</code> class, which represents
+ * a position on the chessboard using file and rank coordinates.</p>
+ *
+ * <p><strong>Functionalities Tested:</strong></p>
+ * <ul>
+ *   <li><strong>Instantiation:</strong> Validates the proper instantiation of <code>Position</code> objects,
+ *   including testing with both valid and invalid inputs.</li>
+ *   <li><strong>Algebraic Notation:</strong> Ensures correct conversion between algebraic notation
+ *   (e.g., "a1", "h8") and the internal representation of positions.</li>
+ *   <li><strong>Character Conversion:</strong> Tests the conversion of file and rank values
+ *   to their respective characters (e.g., 'a', '1').</li>
+ *   <li><strong>Position Movement:</strong> Validates offsets applied to a position to simulate
+ *   movement on the chessboard.</li>
+ *   <li><strong>Equality Testing:</strong> Confirms the correctness of equality checks between
+ *   <code>Position</code> objects.</li>
+ * </ul>
+ *
+ * <p><strong>Significance:</strong></p>
+ * <p>These tests ensure the reliability and robustness of the <code>Position</code> class, verifying its
+ * functionality in critical operations essential for chessboard representation and manipulation.</p>
+ */
 public class PositionTest {
     @Test
-    public void Constructor() {
+    public void constructorTest() {
         // Correct Constructor
         int file = 5;
         int rank = 3;

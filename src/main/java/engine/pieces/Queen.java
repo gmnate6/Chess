@@ -11,7 +11,6 @@ import utils.Color;
  * Implements the specific movement logic for a Queen.
  */
 public class Queen extends Piece {
-
     /**
      * Constructor to initialize a Queen with a specific color.
      *

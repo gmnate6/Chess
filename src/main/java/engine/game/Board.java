@@ -10,8 +10,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents the chess board with a 8x8 grid containing pieces.
- * Handles board setup and deep copying for game state management.
+ * Represents the chessboard in an 8x8 grid containing pieces.
+ * Provides functionality for managing board state, applying game rules, and performing deep copies.
+ *
+ * <p>Key Responsibilities:</p>
+ * <ul>
+ *   <li>Initializes standard or empty board configurations.</li>
+ *   <li>Manages the state of pieces, castling rights, and en passant moves.</li>
+ *   <li>Retrieves information about pieces, their positions, and the state of the board.</li>
+ *   <li>Handles special chess rules, such as en passant, castling, and pawn promotion.</li>
+ *   <li>Executes moves and updates the board accordingly while ensuring rule enforcement.</li>
+ *   <li>Provides a deep copy mechanism for preserving board state independently.</li>
+ * </ul>
  */
 public class  Board {
     private final Piece[][] board = new Piece[8][8];
@@ -19,16 +29,19 @@ public class  Board {
     private CastlingRights castlingRights = new CastlingRights();
 
     /**
-     * Default constructor: initializes a standard chessboard setup.
+     * Default constructor for the `Board` class.
+     * Initializes a chessboard with the standard starting position
+     * for all pieces on both sides.
      */
     public Board() {
         this.setup();
     }
 
     /**
-     * Creates an empty board with no pieces.
+     * Creates and returns an empty chessboard with all squares cleared.
+     * This can be used for custom game setups or testing purposes.
      *
-     * @return A new board instance with all squares cleared.
+     * @return A new `Board` instance with no pieces on the board.
      */
     public static Board getEmptyBoard() {
         Board board = new Board();
@@ -48,8 +61,8 @@ public class  Board {
     }
 
     /**
-     * Sets up the board to a standard initial chess game configuration.
-     * Places all pieces for both players in their initial positions.
+     * Configures the board for the standard initial chess game state.
+     * Places all pieces for both White and Black players in their starting positions.
      */
     public void setup() {
         // Clear
@@ -83,15 +96,17 @@ public class  Board {
     }
 
     /**
-     * Creates a deep copy of the board, preserving the state of the board including:
-     * - The positions and states of all pieces.
-     * - Castling rights for both players.
-     * - The en passant position (if available).
-     * The resulting deep copy is independent of the original board, meaning changes
-     * made to one will not affect the other.
+     * Creates an independent, deep copy of the current board state.
+     * Ensures all mutable attributes, such as:
+     * <ul>
+     *   <li>The positions and states of all pieces.</li>
+     *   <li>Castling rights for both players.</li>
+     *   <li>En passant state (if applicable).</li>
+     * </ul>
+     * are duplicated in the new instance. Changes made to the copied board
+     * do not affect the original.
      *
-     * @return A new `Board` object that is a deep copy of the provided board, including
-     *         all the pieces, castling rights, and en passant state.
+     * @return A deep copy of the board as a new `Board` instance.
      */
     public Board getDeepCopy() {
         Board copy = Board.getEmptyBoard();
@@ -110,11 +125,11 @@ public class  Board {
     }
 
     /**
-     * Finds the position of the King of a given color.
+     * Finds and returns the position of the King of the specified color.
      *
-     * @param color The color of the King to locate.
-     * @return The position of the King.
-     * @throws RuntimeException If no King of the specified color is found.
+     * @param color The color of the King to locate (Color.WHITE or Color.BLACK).
+     * @return The `Position` of the King on the board.
+     * @throws RuntimeException If no King of the specified color is found on the board.
      */
     public Position getKingPosition(Color color) {
         for (int file = 0; file < 8; file++) {
@@ -130,10 +145,10 @@ public class  Board {
     }
 
     /**
-     * Retrieves the King piece of a specific color.
+     * Retrieves the King piece of the specified color.
      *
-     * @param color The color of the King.
-     * @return The King piece.
+     * @param color The color of the King to retrieve (Color.WHITE or Color.BLACK).
+     * @return The `King` piece object for the given color.
      */
     public King getKing(Color color) {
         Position kingPosition = getKingPosition(color);
@@ -141,10 +156,11 @@ public class  Board {
     }
 
     /**
-     * Returns if the King of a given color is checked.
+     * Checks whether the King of the specified color is currently in check.
+     * A King is in check if it is under attack by any opposing pieces.
      *
-     * @param color The color of the King.
-     * @return true if King is in check.
+     * @param color The color of the King to check (Color.WHITE or Color.BLACK).
+     * @return `true` if the King is in check; otherwise, `false`.
      */
     public boolean isKingInCheck(Color color) {
         Position kingPosition = getKingPosition(color);
@@ -152,10 +168,10 @@ public class  Board {
     }
 
     /**
-     * Retrieves all positions occupied by pieces of a specific color.
+     * Retrieves all positions on the board that are occupied by pieces of the specified color.
      *
-     * @param color The color to filter by.
-     * @return A list of positions occupied by pieces of the given color.
+     * @param color The color to filter by (Color.WHITE or Color.BLACK).
+     * @return A list of `Position` objects representing the positions of the pieces.
      */
     public List<Position> getPiecePositionsByColor(Color color) {
         List<Position> pieces = new ArrayList<>();
@@ -175,10 +191,10 @@ public class  Board {
     }
 
     /**
-     * Retrieves all pieces of a specific color.
+     * Retrieves all pieces of the specified color currently on the board.
      *
-     * @param color The color to filter by.
-     * @return A list of pieces of the given color.
+     * @param color The color of the pieces to retrieve (Color.WHITE or Color.BLACK).
+     * @return A list of `Piece` objects for the specified color.
      */
     public List<Piece> getPiecesByColor(Color color) {
         List<Piece> pieces = new ArrayList<>();
@@ -198,19 +214,18 @@ public class  Board {
     }
 
     /**
-     * Executes a specified chess move on the given board, making all relevant changes
-     * to the board state. This includes handling the following special chess rules:
-     * - **En Passant**: Captures en passant pawns and updates the en passant position.
-     * - **Pawn Promotion**: Promotes pawns to a specified piece (default: Queen).
-     * - **Castling**: Moves the rook in addition to the king and updates castling rights.
-     * - **Castling Rights**: Updates castling rights when rooks or the king move.
-     * It updates the board state accordingly and ensures the integrity of rules at every step.
+     * Executes a specified chess move on the board and updates the board state.
+     * This method handles standard and special chess rules, including:
+     * <ul>
+     *   <li><b>En Passant</b>: Captures the pawn and updates the en passant position.</li>
+     *   <li><b>Pawn Promotion</b>: Promotes the pawn to a specified piece (default: Queen).</li>
+     *   <li><b>Castling</b>: Moves the rook along with the king and updates castling rights.</li>
+     *   <li><b>Castling Rights</b>: Updates castling rights when a king or rook moves.</li>
+     * </ul>
      *
-     * @param move  The `Move` object that describes the chess move to execute. It contains:
-     *              - The initial position of the moving piece.
-     *              - The final position of the moving piece.
-     *              - Optional promotion details if the move involves pawn promotion.
-     * @throws IllegalStateException If there is no piece at the specified initial position.
+     * @param move The `Move` object describing the chess move to execute.
+     *             The move must already be validated as legal and safe.
+     * @throws IllegalArgumentException If the move is invalid or violates chess rules.
      */
     public void executeMove(Move move) {
         // Collapse Move Obj
@@ -244,7 +259,7 @@ public class  Board {
 
     /**
      * Converts the board to a multi-line string for visualization.
-     * Empty squares are represented by spaces, and pieces are represented by their symbols.
+     * Empty squares are represented by '.', and pieces are represented by their symbols.
      *
      * @return A string representation of the board.
      */
