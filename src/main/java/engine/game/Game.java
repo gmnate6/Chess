@@ -33,7 +33,7 @@ public class Game {
     private Color turn = Color.WHITE;
     private int halfMoveClock = 0;
     private int fullMoveNumber = 1;
-    private final Timer timer;
+    private Timer timer;
     private GameResult result = GameResult.ON_GOING;
     private final HashMap<String, Integer> boardHistory = new HashMap<>();
     private final MoveHistory moveHistory = new MoveHistory();
@@ -109,6 +109,17 @@ public class Game {
     public boolean inPlay() { return result == GameResult.ON_GOING;}
     public Timer getTimer() { return timer; }
     public MoveHistory getMoveHistory() { return moveHistory; }
+
+    /**
+     * Removes the timer from the game.
+     *
+     * <p>This method sets the game's timer to `null`, effectively disabling
+     * time tracking for the rest of the game. Use this when time management
+     * is no longer required or to transition the game to a non-timed format.</p>
+     */
+    public void removeTimer() {
+        this.timer = null;
+    }
 
     /**
      * Switches the current player's turn in the game.
@@ -329,14 +340,41 @@ public class Game {
         // Timer
         if (this.timer != null){
             if (this.timer.isOutOfTime(Color.WHITE)) {
-                result = GameResult.TIME_WHITE_LOSS;
+                result = GameResult.BLACK_WON_ON_TIME;
+                return;
             }
             if (this.timer.isOutOfTime(Color.BLACK)) {
-                result = GameResult.TIME_BLACK_LOSS;
+                result = GameResult.WHITE_WON_ON_TIME;
+                return;
             }
         }
     }
 
+    /**
+     * Updates the game result to reflect a resignation by the specified player.
+     *
+     * <p>The method sets the game result based on the color of the player
+     * who resigns. If the White player resigns, the result is set to
+     * `RESIGN_WHITE`, indicating that Black wins. Similarly, if the
+     * Black player resigns, the result is set to `RESIGN_BLACK`, indicating that
+     * White wins.</p>
+     *
+     * @param color The color of the player resigning (Color.WHITE or Color.BLACK).
+     */
+    public void resign(Color color) {
+        this.result = color == Color.WHITE ? GameResult.RESIGN_WHITE : GameResult.RESIGN_BLACK;
+    }
+
+    /**
+     * Updates the game result to indicate a draw by mutual agreement.
+     *
+     * <p>This method sets the game result to `DRAW_AGREEMENT`, signifying that
+     * both players have agreed to end the game in a draw. This is one of the
+     * standard methods to conclude a chess game without a decisive winner.</p>
+     */
+    public void drawAgreement() {
+        this.result = GameResult.DRAW_AGREEMENT;
+    }
 
     /**
      * Executes a move, updates the game state, and switches turns.

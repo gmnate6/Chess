@@ -48,6 +48,10 @@ public class FEN {
                     continue;
                 }
 
+                if (file >= 8) {
+                    throw new IllegalNotationException("Illegal FEN: Board must be 8 ranks wide.");
+                }
+
                 // Set Piece On Board
                 Position pos = new Position(file, rank);
                 try {
@@ -170,12 +174,22 @@ public class FEN {
             throw new IllegalNotationException("Illegal FEN: Invalid half move clock '" + halfMoveClockFEN + "'.");
         }
 
+        // Constrain Half Move Clock
+        if (halfMoveClock < 0 || halfMoveClock > 100) {
+            throw new IllegalNotationException("Illegal FEN: Half move clock must be between 0 and 100.");
+        }
+
         /// Construct Full Move Number
         String fullMoveNumberFEN = fenParts[5];
         try {
             fullMoveNumber = Integer.parseInt(fullMoveNumberFEN);
         } catch (NumberFormatException e) {
             throw new IllegalNotationException("Illegal FEN: Invalid full move number '" + fullMoveNumberFEN + "'.");
+        }
+
+        // Constrain Full Move Number
+        if (fullMoveNumber <= 0) {
+            throw new IllegalNotationException("Illegal FEN: Full move number must be greater than 0.");
         }
 
         // Construct and return the FEN object.

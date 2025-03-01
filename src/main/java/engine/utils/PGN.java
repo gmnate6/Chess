@@ -1,9 +1,8 @@
 package engine.utils;
 
-import engine.exceptions.IllegalMoveException;
 import engine.exceptions.IllegalNotationException;
-import engine.exceptions.IllegalPositionException;
 import engine.game.Game;
+import engine.game.Timer;
 import engine.types.Move;
 import utils.Color;
 
@@ -69,32 +68,64 @@ public class PGN {
      * Parses a PGN notation string and reconstructs the corresponding <code>Game</code> object by simulating its moves.
      *
      * @param pgn The PGN string to be parsed into a <code>Game</code>.
+     * @param timer The timer object to be used by <code>Game</code>.
      * @return A <code>Game</code> object reconstructed from the provided PGN.
      */
-    public static Game getGame(String pgn) {
-        Game game = new Game(null);
+    public static Game getGame(String pgn, Timer timer) {
+        Game game = new Game(timer);
 
         // Early Throw
         if (pgn == null || pgn.isEmpty()) {
-            throw new IllegalNotationException("Illegal PGN Notation: " + pgn);
+            throw new IllegalNotationException("Illegal PGN Notation: '" + pgn + "'");
         }
 
         // Split PGN into moves, excluding metadata or headers
+        String gameResult = "";
         String[] movesArray = pgn.replaceAll("\\n", " ").split("\\s+");
         for (String moveNotation : movesArray) {
             if (moveNotation.isEmpty()) { continue; }
-            if (moveNotation.matches("^\\d.*")) { continue; } // Skip turn numbers and results
+            // Skip turn numbers and results
+            if (moveNotation.matches("^\\d.*")) {
+                gameResult = moveNotation.trim();
+                continue;
+            }
 
             try {
                 Move move = MoveUtils.fromAlgebraic(moveNotation, game);
                 game.move(move);
             } catch (Exception e) {
                 throw new IllegalNotationException(
-                        "Illegal PGN Notation: " + pgn +
+                        "Illegal PGN Notation: '" + pgn + "'" +
                         "\nException occurred on move: " + game.getFullMoveNumber() + ". " + moveNotation +
                         "\n" + e.getMessage());
             }
         }
+
+        // Check Game Result
+        boolean notationSaysGameOver = (
+                gameResult.equals("1-0") ||
+                gameResult.equals("0-1") ||
+                gameResult.equals("1/2-1/2")
+        );
+
+        // If notation says it's over, it's over
+        if (notationSaysGameOver && game.inPlay()) {
+            if (gameResult.equals("1-0")) {
+                game.resign(Color.BLACK);
+            } else if (gameResult.equals("0-1")) {
+                game.resign(Color.WHITE);
+            } else {
+                game.drawAgreement();
+            }
+            game.removeTimer();
+        }
+
+        // If game says it's over, but notation does not
+        if (!notationSaysGameOver && !game.inPlay()) {
+            throw new IllegalNotationException("Illegal PGN Notation: '" + pgn + "'. Game result does not match notation.");
+        }
+
+        // Return
         return game;
     }
 }

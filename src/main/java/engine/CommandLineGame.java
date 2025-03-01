@@ -75,7 +75,7 @@ public class CommandLineGame {
                 System.out.print("Enter PGN: ");
                 input = scanner.nextLine().trim();
                 try {
-                    return PGN.getGame(input);
+                    return PGN.getGame(input, timer);
                 } catch (Exception e) {
                     System.out.println("Not a valid PGN string.");
                 }
