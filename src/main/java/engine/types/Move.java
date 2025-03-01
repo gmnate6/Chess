@@ -21,10 +21,10 @@ public record Move(Position initialPosition, Position finalPosition, char promot
     public Move(Position initialPosition, Position finalPosition, char promotionPiece) {
         this.initialPosition = initialPosition;
         this.finalPosition = finalPosition;
-        if (Character.toUpperCase(promotionPiece) != 'K') {
-            throw new IllegalMoveException("Illegal Move: Cannot promote to King.");
-        }
         this.promotionPiece = Character.toUpperCase(promotionPiece);
+        if ("QRBN".indexOf(this.promotionPiece) == -1) {
+            throw new IllegalMoveException("Illegal Move: Promotion Piece must be a Queen, Rook, Bishop, or Knight.");
+        }
     }
 
     /**

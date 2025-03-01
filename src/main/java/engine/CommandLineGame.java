@@ -160,13 +160,19 @@ public class CommandLineGame {
         try {
             move = MoveUtils.fromLongAlgebraic(moveNotation, game);
         } catch (Exception e) {
-            System.out.println("Error: A legal move looks like this: 'e2e4'");
+            System.err.println("Error: A legal move looks like this: 'e2e4'");
+            System.err.println("Error Message: " + e.getMessage());
             return;
         }
 
         // Try to make move
         if (!game.isMoveLegal(move)) {
-            System.out.println("Error: Move '" + moveNotation + "' is not legal.");
+            System.err.println("Error: Move '" + moveNotation + "' is not legal.");
+            if (game.isMoveSafe(move)) {
+                System.err.println(moveNotation + " leaves king in check.");
+            } else if (game.board.getPieceAt(move.initialPosition()) == null) {
+                System.err.println("No piece at the initial position to move.");
+            }
             System.out.println("\n");
         } else {
             game.move(move);

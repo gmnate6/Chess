@@ -410,14 +410,19 @@ public class MoveUtils {
             Move move = new Move(initialPosition, finalPosition, promotion);
 
             // Check for promotion
-            if (causesPromotion(move, game) && promotion == '\0') {
-                throw new IllegalNotationException("Invalid Long Algebraic Notation: '" + notation + "'. Move causes promotion and no promotion piece not specified.");
+            if (promotion == '\0' && causesPromotion(move, game)) {
+                throw new IllegalNotationException("Invalid Long Algebraic Notation: '" + notation + "'. Move causes promotion and no promotion piece not specified.\n" +
+                        "To specify a promotion piece, just add the piece char after the destination square. (e.g., a7a8Q)");
+            }
+            if (promotion != '\0' && !causesPromotion(move, game)) {
+                throw new IllegalNotationException("Invalid Long Algebraic Notation: '" + notation + "'. Move does not cause promotion but a promotion piece was specified.\n" +
+                        "To remove a promotion piece, just omit the piece char after the destination square. (e.g., a7a8)");
             }
 
             // Make and Return Move
             return new Move(initialPosition, finalPosition, promotion);
         } catch (Exception e) {
-            throw new IllegalNotationException("Invalid Long Algebraic Notation: " + notation);
+            throw new IllegalNotationException("Invalid Long Algebraic Notation: " + notation + "\nError Message: " + e.getMessage());
         }
     }
 

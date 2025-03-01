@@ -175,16 +175,20 @@ public class Game {
      * @return `true` if the move is safe for the king; otherwise, `false`.
      */
     public boolean isMoveSafe(Move move) {
-        // Create a copy of the board
-        Board boardCopy = board.getDeepCopy();
+        try {
+            // Create a copy of the board
+            Board boardCopy = board.getDeepCopy();
 
-        // Apply Move
-        boardCopy.executeMove(move);
+            // Apply Move
+            boardCopy.executeMove(move);
 
-        // Check if the king is in check after the move
-        King king = boardCopy.getKing(turn);
-        Position kingPosition = boardCopy.getKingPosition(turn);
-        return !king.isChecked(kingPosition, boardCopy);
+            // Check if the king is in check after the move
+            King king = boardCopy.getKing(turn);
+            Position kingPosition = boardCopy.getKingPosition(turn);
+            return !king.isChecked(kingPosition, boardCopy);
+        } catch (IllegalMoveException e) {
+            return false;
+        }
     }
 
     /**
@@ -343,7 +347,6 @@ public class Game {
      * </ul>
      *
      * @param move The move to execute.
-     * @throws IllegalStateException If the game is already finished.
      * @throws IllegalMoveException If the move is illegal.
      */
     public void move(Move move) {
