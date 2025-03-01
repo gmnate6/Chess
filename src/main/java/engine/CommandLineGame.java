@@ -5,6 +5,7 @@ import engine.game.Timer;
 import engine.types.Move;
 import engine.types.Position;
 import engine.utils.FEN;
+import engine.utils.MoveUtils;
 import engine.utils.PGN;
 
 import java.util.Scanner;
@@ -135,6 +136,9 @@ public class CommandLineGame {
             Position initialPosition = Position.fromAlgebraic(positions[0]);
             Position finalPosition = Position.fromAlgebraic(positions[1]);
             move = new Move(initialPosition, finalPosition, '\0');
+            if (MoveUtils.causesPromotion(move, game)) {
+                move = new Move(initialPosition, finalPosition, 'Q');
+            }
         } catch (Exception e) {
             System.out.println("Error: A legal move looks like this: 'e2 e4'");
             return;
@@ -142,7 +146,7 @@ public class CommandLineGame {
 
         // Try to make move
         if (!game.isMoveLegal(move)) {
-            System.out.println("Error: Move '" + move + "' is not legal.");
+            System.out.println("Error: Move '" + MoveUtils.toLongAlgebraic(move) + "' is not legal.");
             System.out.println("\n");
         } else {
             game.move(move);
