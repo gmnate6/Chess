@@ -112,22 +112,21 @@ public class Timer {
      * and adds the increment time to their clock.
      */
     public void switchTurn() {
-        turn = turn.inverse();
         if (!started) { return; }
 
         // Calc
         long now = System.currentTimeMillis();
         long elapsed = now - lastMoveTimestamp;
 
-        // Switch
+        // Update Time Stamp
         if (turn == Color.WHITE) {
             whiteTime = Math.max(0, whiteTime - elapsed + increment);
         } else {
             blackTime = Math.max(0, blackTime - elapsed + increment);
         }
-
-        // Update Time Stamp
         lastMoveTimestamp = now;
+
+        // Switch Turn
         turn = turn.inverse();
     }
 

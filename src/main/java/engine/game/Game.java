@@ -117,7 +117,10 @@ public class Game {
      * @throws IllegalStateException If the game's turn and the timer's turn are inconsistent after the switch.
      */
     private void switchTurn() {
+        // Switch Game Turn
         this.turn = this.turn.inverse();
+
+        // Switch Timer Turn
         if (this.timer != null) {
             this.timer.switchTurn();
             if (this.turn != timer.getTurn()) {
