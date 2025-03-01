@@ -1,5 +1,6 @@
 package engine.game;
 
+import engine.exceptions.IllegalMoveException;
 import engine.types.Move;
 import engine.types.Position;
 import engine.types.CastlingRights;
@@ -225,7 +226,7 @@ public class  Board {
      *
      * @param move The `Move` object describing the chess move to execute.
      *             The move must already be validated as legal and safe.
-     * @throws IllegalArgumentException If the move is invalid or violates chess rules.
+     * @throws IllegalMoveException If the move is illegal.
      */
     public void executeMove(Move move) {
         // Collapse Move Obj
@@ -235,7 +236,7 @@ public class  Board {
 
         // No Piece To Move
         if (pieceToMove == null) {
-            throw new IllegalStateException("No piece at initial position: " + initialPosition);
+            throw new IllegalMoveException("Illegal Move: No piece at the initial position to move.");
         }
 
         // Execute Piece To Move Weirdness

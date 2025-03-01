@@ -1,5 +1,6 @@
 package engine.game;
 
+import engine.exceptions.IllegalMoveException;
 import engine.types.Move;
 import engine.utils.*;
 import engine.types.Position;
@@ -157,7 +158,10 @@ public class Game {
         for (int file = 0; file < 8; file++) {
             for (int rank = 0; rank < 8; rank++) {
                 Position finalPosition = new Position(file, rank);
-                Move currentMove = new Move(initialPosition, finalPosition, 'q');
+                Move currentMove = new Move(initialPosition, finalPosition, '\0');
+                if (MoveUtils.causesPromotion(currentMove, this)) {
+                    currentMove = new Move(initialPosition, finalPosition, 'q');
+                }
                 if (isMoveLegal(currentMove)) {
                     positions.add(finalPosition);
                 }
@@ -174,16 +178,20 @@ public class Game {
      * @return `true` if the move is safe for the king; otherwise, `false`.
      */
     public boolean isMoveSafe(Move move) {
-        // Create a copy of the board
-        Board boardCopy = board.getDeepCopy();
+        try {
+            // Create a copy of the board
+            Board boardCopy = board.getDeepCopy();
 
-        // Apply Move
-        boardCopy.executeMove(move);
+            // Apply Move
+            boardCopy.executeMove(move);
 
-        // Check if the king is in check after the move
-        King king = boardCopy.getKing(turn);
-        Position kingPosition = boardCopy.getKingPosition(turn);
-        return !king.isChecked(kingPosition, boardCopy);
+            // Check if the king is in check after the move
+            King king = boardCopy.getKing(turn);
+            Position kingPosition = boardCopy.getKingPosition(turn);
+            return !king.isChecked(kingPosition, boardCopy);
+        } catch (IllegalMoveException e) {
+            return false;
+        }
     }
 
     /**
@@ -342,9 +350,7 @@ public class Game {
      * </ul>
      *
      * @param move The move to execute.
-     * @throws RuntimeException If the game is already finished.
-     * @throws IllegalStateException If no piece exists at the starting position.
-     * @throws IllegalArgumentException If the move is either invalid or unsafe.
+     * @throws IllegalMoveException If the move is illegal.
      */
     public void move(Move move) {
         // Convert Stuff
@@ -353,27 +359,27 @@ public class Game {
 
         // If Game is Over
         if (getResult() != GameResult.ON_GOING) {
-            throw new RuntimeException("Cannot make move after game is finished.");
+            throw new IllegalMoveException("Illegal Move: Cannot make move after game is finished.");
         }
 
         // Make sure there is a pieceToMove
         if (pieceToMove == null) {
-            throw new IllegalStateException("No piece at the initial position to move.");
+            throw new IllegalMoveException("Illegal Move: No piece at the initial position to move.");
         }
 
         // Wrong Color
         if (pieceToMove.getColor() != turn) {
-            throw new IllegalArgumentException("'" + turn + "' Player cannot move this piece: '" + pieceToMove + "'.");
+            throw new IllegalMoveException("Illegal Move: '" + pieceToMove + "' cannot move this turn.");
         }
 
         // Move must be valid
         if (!pieceToMove.isMoveValid(move, board)) {
-            throw new IllegalArgumentException("Illegal move for '" + pieceToMove + "': " + move);
+            throw new IllegalMoveException("Illegal Move: " + move);
         }
 
         // Is Move Safe?
         if (!isMoveSafe(move)) {
-            throw new IllegalArgumentException("Move puts king in check: " + move);
+            throw new IllegalMoveException("Illegal Move: " + move + " leaves king in check.");
         }
 
         // Update Full

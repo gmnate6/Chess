@@ -1,5 +1,6 @@
 package engine.utils;
 
+import engine.exceptions.IllegalNotationException;
 import engine.game.Board;
 import engine.pieces.*;
 import engine.types.Move;
@@ -64,14 +65,14 @@ public class PieceUtils {
      *
      * @param symbol the character that represents a chess piece ('K', 'Q', 'R', 'B', 'N', 'P' or their lowercase forms)
      * @return a Piece object of the correct type and color determined by the symbol's case
-     * @throws IllegalArgumentException if the symbol is invalid
+     * @throws IllegalNotationException if the symbol is invalid
      * @throws RuntimeException         if reflection fails to create the Piece object
      */
     public static Piece charToPiece(char symbol) {
         Class<? extends Piece> pieceClass = charToPiece.get(Character.toUpperCase(symbol));
         if (pieceClass == null) {
             // Invalid input handling
-            throw new IllegalArgumentException("Invalid character for piece: " + symbol + ". Valid characters are: K, Q, R, B, N, P.");
+            throw new IllegalNotationException("Invalid character for piece: " + symbol + ". Valid characters are: K, Q, R, B, N, P.");
         }
         try {
             Color color = Character.isUpperCase(symbol) ? Color.WHITE : Color.BLACK;
@@ -97,14 +98,14 @@ public class PieceUtils {
      *               Case is ignored when determining the piece type.
      * @param color  the color of the resulting piece (e.g., Color.WHITE, Color.BLACK)
      * @return a Piece object of the correct type and specified color
-     * @throws IllegalArgumentException if the symbol is invalid
+     * @throws IllegalNotationException if the symbol is invalid
      * @throws RuntimeException         if reflection fails to create the Piece object
      */
     public static Piece charToPiece(char symbol, Color color) {
         Class<? extends Piece> pieceClass = charToPiece.get(Character.toUpperCase(symbol));
         if (pieceClass == null) {
             // Invalid input handling
-            throw new IllegalArgumentException("Invalid character for piece: " + symbol + ". Valid characters are: K, Q, R, B, N, P.");
+            throw new IllegalNotationException("Invalid character for piece: " + symbol + ". Valid characters are: K, Q, R, B, N, P.");
         }
         try {
             return pieceClass.getDeclaredConstructor(Color.class).newInstance(color);

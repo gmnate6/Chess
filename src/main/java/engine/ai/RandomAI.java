@@ -39,6 +39,6 @@ public class RandomAI {
         }
 
         // No moves available
-        throw new RuntimeException("Error: No Moves Available");
+        throw new IllegalStateException("Error: No Moves Available");
     }
 }

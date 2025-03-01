@@ -1,5 +1,7 @@
 package engine;
 
+import engine.exceptions.IllegalNotationException;
+import engine.exceptions.IllegalPositionException;
 import engine.types.Position;
 
 import org.junit.jupiter.api.Test;
@@ -41,12 +43,12 @@ public class PositionTest {
         assertEquals(rank, pos.rank());
 
         // Incorrect Constructor
-        assertThrows(IllegalArgumentException.class, () -> new Position(8, 0));
-        assertThrows(IllegalArgumentException.class, () -> new Position(0, 8));
-        assertThrows(IllegalArgumentException.class, () -> new Position(8, 8));
-        assertThrows(IllegalArgumentException.class, () -> new Position(-1, 0));
-        assertThrows(IllegalArgumentException.class, () -> new Position(0, -1));
-        assertThrows(IllegalArgumentException.class, () -> new Position(-1, -1));
+        assertThrows(IllegalPositionException.class, () -> new Position(8, 0));
+        assertThrows(IllegalPositionException.class, () -> new Position(0, 8));
+        assertThrows(IllegalPositionException.class, () -> new Position(8, 8));
+        assertThrows(IllegalPositionException.class, () -> new Position(-1, 0));
+        assertThrows(IllegalPositionException.class, () -> new Position(0, -1));
+        assertThrows(IllegalPositionException.class, () -> new Position(-1, -1));
     }
 
     @Test
@@ -59,6 +61,10 @@ public class PositionTest {
         // Check To Algebraic
         Position pos3 = Position.fromAlgebraic("h8");
         assertEquals("h8", pos3.toAlgebraic());
+
+        // Incorrect Constructor
+        assertThrows(IllegalNotationException.class, () -> Position.fromAlgebraic("q1"));
+        assertThrows(IllegalNotationException.class, () -> Position.fromAlgebraic("a0"));
     }
 
     @ Test public void toCharTest() {

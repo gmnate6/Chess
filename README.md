@@ -1,126 +1,135 @@
-# Chess Engine and Command-Line Interface
+# Chess Engine with Command-Line Interface
 
-This project is a chess engine built in Java featuring core functionalities for simulating chess games, including move validation, special rules handling (castling, en passant, etc.), and game state management via Forsyth–Edwards Notation (FEN). Additionally, it includes a basic command-line interface (CLI) for human players to interact with the engine.
+Welcome to the **Chess Engine with Command-Line Interface**, an advanced chess engine built entirely in Java. This program allows users to play a competitive game of chess directly from the command line and provides advanced features for analyzing and managing gameplay.
 
 ## Features
-
-- **Core Chess Engine**: Implements chess rules, piece movement, and game logic.
-- **FEN Support**: Import and export game states using FEN strings.
-- **Position Validation**: Ensures that moves are legal and blocks invalid moves.
-- **Turn-Based Time Control**: A chess timer with time increments per move.
-- **Special Chess Rules**:
-    - Castling
-    - En passant
-    - Pawn promotion
-- **Game State Management**: Handles draw conditions, resignation, and checkmate.
-- **Command-Line Interface**: Play games interactively via the console by entering moves in algebraic notation (e.g., `e2 e4`).
-
-## Modules and Classes
-
-### Core Engine
-- **`Game`**: Manages the overall game state, turn control, and win conditions.
-- **`Board`**: Represents the 8x8 chessboard and handles piece placement, movement, and validation.
-- **`Piece`**: An abstract class used to represent all chess pieces (e.g., `King`, `Queen`, `Rook`).
-- **`Position`**: Represents files (columns) and ranks (rows) of the board, with utilities to convert between integer coordinates and algebraic notation (e.g., `e4`).
-- **`Move`**: Represents a single move, encapsulating the initial and final positions and promotion (if applicable).
-
-### Utilities
-- **`Timer`**: Implements a turn-based timer with optional increments per move.
-- **`FEN`**: Parses Forsyth–Edwards Notation strings and converts board states into FEN.
-- **`PieceUtils`**: Utility for converting between characters (e.g., `K`, `q`) and piece objects, ensuring flexible piece handling.
-- **`CastlingRights`**: Manages castling rights for both players and validates castling legality.
-
-### Command-Line Interface
-- **`CommandLineGame`**: A CLI-driven implementation for playing chess games. Allows users to:
-    - Import a board state using FEN.
-    - Play moves interactively in real-time.
-    - Display the current game board and timer state.
-
-## Getting Started
-
-### Requirements
-- **Java 21** or later.
-- A terminal or IDE to run the command-line application.
-
-### Running the Game
-1. Compile the project:
-    ```bash
-    javac -d out src/**/*.java
-    ```
-2. Run the command-line application:
-    ```bash
-    java -cp out engine.CommandLineGame
-    ```
-
-### Usage Instructions
-1. **Starting a New Game**: When prompted, choose whether to start with a new game or load an existing position using a FEN string.
-2. **Playing Moves**: Enter moves in algebraic notation (e.g., `e2 e4`) during your turn. To view all possible moves for a piece, enter its position (e.g., `e2`).
-3. **Ending the Session**: Press Enter without typing a move.
-
-### Example Game
-```text
-Import FEN? (y, n): n
-
-  r   .   b   q   k   b   n   r
-  p   p   p   p   .   p   p   p
-  .   .   .   .   .   .   .   .
-  .   .   .   .   p   .   .   .
-  .   .   .   .   P   .   .   .
-  .   .   .   .   .   .   .   .
-  P   P   P   P   .   P   P   P
-  R   N   B   Q   K   B   N   R
-
-White's Move: e2 e4
-```
-
-### Chess Notation
-This implementation uses standard **algebraic chess notation** to describe board positions:
-- Files (columns) are labeled `a` to `h`.
-- Ranks (rows) are labeled `1` to `8`.
-  For example:
-- The starting position of White's king is `e1`.
-- A pawn move from row 2 to row 4 in column `e` is represented as `e2 e4`.
-
-## Project Structure
-
-```plaintext
-src/
-├── engine/
-│   ├── board/                 (Board and Position logic)
-│   ├── pieces/                (Abstract and concrete classes for chess pieces)
-│   ├── utils/                 (Utility classes like CastlingRights, FEN, Timer, etc.)
-│   └── Game.java              (Core game logic)
-├── tests/                     (Command-line game implementation)
-├── utils/Color.java           (Enum for player colors: WHITE / BLACK)
-```
-
-## Example Code Highlights
-
-### Position Class
-Represents a square on the board. Includes conversion between coordinate-based and algebraic formats.
-```java
-Position a1 = new Position(0, 0); // 0th column, 0th row
-System.out.println(a1.toAlgebraic()); // Output: "a1"
-
-Position fromNotation = Position.fromAlgebraic("e4"); // "e4" -> (4, 3)
-```
-
-### FEN Utility
-Provides easy board state saving and loading.
-```java
-FEN fen = FEN.fromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-```
-
-## Future Features
-- Implement GUI for easier interaction.
-- Add support for PGN (Portable Game Notation) to save and replay games.
-- Introduce advanced AI with selectable difficulty levels.
-
-## License
-
-This project is licensed under the **MIT License**. Feel free to use, modify, and distribute it for personal or educational purposes.
+- **Command-Line Chess Gameplay**: Play chess against another player on a text-based interface.
+- **Chess Engine Logic**: Implements full chess rules, including special moves such as castling, en passant, promotion, and checkmate conditions.
+- **Game AI**: Includes a `RandomAI` to generate moves for basic automated gameplay or testing.
+- **Move History Tracking**: Tracks full move history throughout the game and allows undos/redos.
+- **Timer Support**: Optional timer configurations for timed games.
+- **FEN and PGN Utilities**: Save and load game states with the Forsyth-Edwards Notation (FEN) and Portable Game Notation (PGN).
+- **Custom Piece Logic**: Full implementation of all chess pieces (Pawn, King, etc.) with their respective rules and movement capabilities.
+- **Chessboard Visualization**: Displays a text-based visualization of the board for ease of play.
 
 ---
 
-### Contributing
-Contributions are welcome! If you find a bug, have suggestions, or want to improve this project, please feel free to open an issue or submit a pull request.
+## Getting Started
+
+### Prerequisites
+- **Java Development Kit (JDK)**: This project requires JDK 21 or later.
+- A command-line terminal for running the program.
+
+---
+
+### Build and Run
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd <repository-folder>
+   ```
+2. Build the project using the Maven Wrapper:
+   ```bash
+   mvnw clean install
+   ```
+3. Run the main application:
+   ```bash
+   mvnw exec:java -Dexec.mainClass="engine.CommandLineGame"
+   ```
+
+---
+
+## Usage
+
+1. Start the game by running the main program.
+2. Players take turns entering moves in standard algebraic long notation (e.g., `e2e4`).
+3. View the chessboard state and get feedback for illegal moves.
+4. Save or load your game using FEN or PGN as needed.
+
+
+**Controls**:
+- Enter a valid move using standard algebraic notation.
+- Press Enter with no input to exit the game.
+
+---
+
+## Key Classes
+
+### Gameplay Core
+- **`Game`**: Encapsulates the chess game logic, including rules enforcement and game state management.
+- **`Board`**: Represents the chessboard. Manages all pieces, castling rights, en passant, and other board states.
+- **`Piece` (Abstract)**: Base class for all chess pieces, including `King`, `Queen`, `Pawn`, etc.
+
+### Input/Output
+- **`CommandLineGame`**: Manages the game loop, user input, and board display.
+
+### Utilities
+- **`FEN`**: Used for saving or restoring game states in Forsyth-Edwards Notation.
+- **`PGN`**: Used to record and replay games in Portable Game Notation.
+- **`MoveUtils`**: Includes functionality for move validation, algebraic notation conversion, and more.
+
+### AI
+- **`RandomAI`**: Generates random, valid moves for automated gameplay or testing.
+
+---
+
+## Notable Features
+
+### Move Validation
+- Ensures moves follow chess rules, including specific logic for each type of piece.
+- Supports special moves like castling, en passant, and pawn promotion.
+
+### Time Management
+- **`Timer`**: Implements time tracking for both players, including optional per-move increments.
+
+### Save and Load
+- Save or restore game states using FEN or fully record games with PGN, ensuring seamless resumption or analysis.
+
+---
+
+## Sample Code
+
+### Creating a Chess Game
+```java
+// Initialize a new game with a timer
+Timer timer = new Timer(10 * 60 * 1000, 5 * 1000); // 10 minutes + 5 sec increment
+Game game = new Game(timer);
+
+// Display the game state
+System.out.println(game);
+
+// Making a move
+Position start = Position.fromAlgebraic("e2");
+Position end = Position.fromAlgebraic("e4");
+char promotionChar = '\0'; // No Promotion
+Move move = new Move(start, end, '\0');
+
+if (game.isMoveLegal(move)) {
+    game.move(move);
+}
+```
+
+### Using FEN
+```java
+// Save game to FEN
+String fen = FEN.getFEN(game);
+System.out.println("FEN: " + fen);
+
+// Load FEN into a game
+Game restoredGame = FEN.getGame(fen, null);
+System.out.println(restoredGame.board);
+```
+
+---
+
+## Future Enhancements
+- **Smart AI**: Upgrade the AI to implement advanced chess engines like Stockfish-like logic.
+- **GUI Version**: Extend the application with a graphical chess interface.
+- **Multiplayer Mode**: Support online multiplayer gameplay.
+
+---
+
+## Acknowledgments
+This project follows standard chess rules and integrates concepts from chess notation standards like FEN and PGN to provide a rich chess-playing experience.
+
+Happy Chess Playing! ♟️
