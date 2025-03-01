@@ -22,7 +22,7 @@ public record Move(Position initialPosition, Position finalPosition, char promot
         this.initialPosition = initialPosition;
         this.finalPosition = finalPosition;
         this.promotionPiece = Character.toUpperCase(promotionPiece);
-        if ("QRBN".indexOf(this.promotionPiece) == -1) {
+        if ("QRBN".indexOf(this.promotionPiece) == -1 && this.promotionPiece != '\0') {
             throw new IllegalMoveException("Illegal Move: Promotion Piece must be a Queen, Rook, Bishop, or Knight.");
         }
     }

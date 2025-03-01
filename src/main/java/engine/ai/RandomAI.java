@@ -39,6 +39,6 @@ public class RandomAI {
         }
 
         // No moves available
-        throw new IllegalStateException("No legal moves available for current player.");
+        throw new IllegalStateException("Error: No Moves Available");
     }
 }
