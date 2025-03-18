@@ -1,8 +1,8 @@
 package frontend;
 
+import frontend.controller.GameController;
 import frontend.model.GameModel;
 import frontend.view.game.BoardPanel;
-import frontend.controller.GameController;
 
 import utils.Color;
 
@@ -16,9 +16,9 @@ public class ClientApplication {
     public ClientApplication(Color color) {
         boardPanel = new BoardPanel();
         gameModel = new GameModel();
-        gameController = new GameController(boardPanel, gameModel);
+        gameController = new GameController(boardPanel, null);
 
-        gameController.startGame(color, 600_000, 0);
+        gameController.startGame(color, null);
         boardPanel.createJFrame();
     }
 

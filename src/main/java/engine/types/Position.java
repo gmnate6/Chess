@@ -105,6 +105,23 @@ public record Position(int file, int rank) {
         return new Position(newFile, newRank);
     }
 
+
+    /**
+     * Flips the position as if the chessboard is turned 180 degrees.
+     * The file (column) and rank (row) are both inverted relative to
+     * the center of the chessboard.
+     *
+     * For example:
+     * - Position "a1" (file = 0, rank = 0) is inverted to "h8" (file = 7, rank = 7).
+     * - Position "h8" (file = 7, rank = 7) is inverted to "a1" (file = 0, rank = 0).
+     * - Position "c3" (file = 2, rank = 2) is inverted to "f6" (file = 5, rank = 5).
+     *
+     * @return A new `Position` object representing the flipped coordinates.
+     */
+    public Position inverse() {
+        return new Position(7 - file, 7 - rank);
+    }
+
     // Equality & Hashing
     @Override
     public boolean equals(Object obj) {

@@ -52,11 +52,9 @@ public class Game {
             return;
         }
 
-        // Set Timer
+        // Set and Start Timer
         this.timer = timer;
-        if (!this.timer.isStarted()) {
-            this.timer.start();
-        }
+        this.timer.start();
     }
 
     /**
@@ -316,24 +314,28 @@ public class Game {
         // Checkmated
         if (isCheckmate()) {
             result = (turn == Color.WHITE ? GameResult.BLACK_CHECKMATE : GameResult.WHITE_CHECKMATE);
+            timer.stop();
             return;
         }
 
         // Stalemate
         if (isStalemate()) {
             result = GameResult.STALEMATE;
+            timer.stop();
             return;
         }
 
         // 50 Move Rule
         if (this.halfMoveClock >= 100) {
             result = GameResult.FIFTY_MOVE_RULE;
+            timer.stop();
             return;
         }
 
         // Threefold Repetition
         if (boardHistory.get(FEN.getFENBoardAndTurn(this)) >= 3) {
             result = GameResult.THREEFOLD_REPETITION;
+            timer.stop();
             return;
         }
 
@@ -341,10 +343,12 @@ public class Game {
         if (this.timer != null){
             if (this.timer.isOutOfTime(Color.WHITE)) {
                 result = GameResult.BLACK_WON_ON_TIME;
+                timer.stop();
                 return;
             }
             if (this.timer.isOutOfTime(Color.BLACK)) {
                 result = GameResult.WHITE_WON_ON_TIME;
+                timer.stop();
                 return;
             }
         }
@@ -363,6 +367,7 @@ public class Game {
      */
     public void resign(Color color) {
         this.result = color == Color.WHITE ? GameResult.RESIGN_WHITE : GameResult.RESIGN_BLACK;
+        timer.stop();
     }
 
     /**
@@ -374,6 +379,7 @@ public class Game {
      */
     public void drawAgreement() {
         this.result = GameResult.DRAW_AGREEMENT;
+        timer.stop();
     }
 
     /**

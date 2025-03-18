@@ -1,200 +1,166 @@
 package frontend.controller;
 
-import engine.ai.*;
+import engine.ai.StockfishAI;
 import engine.game.Game;
-import engine.pieces.Pawn;
-import engine.types.Position;
-import engine.pieces.Piece;
 import engine.game.Timer;
+import engine.pieces.Piece;
 import engine.types.Move;
 
+import engine.types.Position;
 import engine.utils.MoveUtils;
-import engine.utils.PGN;
 import frontend.view.game.BoardPanel;
-import frontend.view.game.SquareButton;
 import frontend.model.GameModel;
 
 import utils.Color;
 
-import java.util.List;
 import javax.swing.*;
-import java.util.concurrent.ExecutionException;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class GameController {
+    // private final GamePanel gamePanel;
     private final BoardPanel boardPanel;
     private final GameModel gameModel;
     private Game game;
-
     private Color color;
-    private Position selectedPosition = null;
 
-    public GameController(BoardPanel boardPanel, GameModel gameModel) {
-        this.boardPanel = boardPanel;
+    // State Vars
+    private Position selectedPosition = null;
+    private Move preMove = null;
+
+    public GameController(BoardPanel gamePanel, GameModel gameModel) {
+        // this.gamePanel = gamePanel;
+        this.boardPanel = gamePanel;
         this.gameModel = gameModel;
     }
 
-    // Creates New Game
-    public void startGame(Color color, long initialTime, long increment) {
-        game = new Game(new Timer(initialTime, increment));
+    public void startGame(Color color, Timer timer) {
+        this.game = new Game(timer);
         this.color = color;
-
-        // TODO
-        if (!StockfishAI.doesStockfishExist()) {
-            JOptionPane.showMessageDialog(null, "Stockfish is missing, you will play against randomAI.", "Missing Dependencies", JOptionPane.INFORMATION_MESSAGE);
-        }
-        if (color == Color.BLACK) {
-            aiMove();
-        }
-        // AI vs AI
-        if (color == null) {
-            new SwingWorker<Void, Void>() {
-                @Override
-                protected Void doInBackground() {
-                    while (game.inPlay()) {
-                        makeMove(StockfishAI.getMove(game));
-                    }
-                    return null;
-                }
-            }.execute();
-            color = Color.WHITE;
-        }
-
-        // Initialize
-        boardPanel.initializeBoard(color);
-        initializeSquareButtons();
-
-        // Load Board
-        boardPanel.loadFromBoard(game.board);
+        setPerspective(color);
     }
 
-    // Initializes Square Button Listeners
-    private void initializeSquareButtons() {
-        for (int file = 0; file < BoardPanel.SIZE; file++) {
-            for (int rank = 0; rank < BoardPanel.SIZE; rank++) {
-                final int f = file;
-                final int r = rank;
+    public void setPerspective(Color color) {
+        this.color = color;
+        boardPanel.setPerspective(color);
+        boardPanel.loadPieces(game);
 
-                SquareButton squareButton = boardPanel.getSquareButton(file, rank);
-                squareButton.addActionListener(e -> handleSquareClick(new Position(f, r)));
-            }
-        }
-    }
-
-    // Select Piece
-    private void selectPiece(Position position) {
-        if (position == null) {
-            throw new NullPointerException("Cannot Select Null Piece Position");
-        }
-
-        // Clear Piece Overlays
-        boardPanel.clearPieceOverlays();
-
-        // Unselect Piece
-        if (position.equals(selectedPosition)) {
-            selectedPosition = null;
-            return;
-        }
-
-        // Get Selected Piece
-        Piece selectedPiece = game.board.getPieceAt(position);
-
-        // Empty Click
-        if (selectedPiece == null) {
-            selectedPosition = null;
-            return;
-        }
-
-        // Wrong Color
-        if (selectedPiece.getColor() != this.color) {
-            selectedPosition = null;
-            return;
-        }
-
-        // Get SquareButton
-        SquareButton squareButton = boardPanel.getSquareButton(position.file(), position.rank());
-
-        // Select Square
-        squareButton.setHighLight(true);
-        selectedPosition = position;
-
-        // Show Move Hints
-        List<Position> finalPositions = game.getLegalMoves(position);
-        for (Position pos : finalPositions) {
-            boardPanel.getSquareButton(pos.file(), pos.rank()).setHint(true);
-        }
-    }
-
-    // Black's Move TODO
-    public void aiMove() {
-        if (!game.inPlay()) { return; }
-        new SwingWorker<Move, Void>() {
+        // Add SquareButton Listeners
+        boardPanel.addMouseListener(new MouseAdapter() {
             @Override
-            protected Move doInBackground() {
-                return StockfishAI.getMove(game); // Runs in a background thread
+            public void mousePressed(MouseEvent e) {
+                Position pressedPosition = boardPanel.getSquarePosition(e.getPoint());
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    onSquareButtonLeftDown(pressedPosition);
+                } else if (SwingUtilities.isRightMouseButton(e)) {
+                    onSquareButtonRightDown(pressedPosition);
+                }
             }
 
             @Override
-            protected void done() {
-                try {
-                    Move bestMove = get(); // Retrieve the computed move
-                    makeMove(bestMove);
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
+            public void mouseReleased(MouseEvent e) {
+                Position releasePosition = boardPanel.getSquarePosition(e.getPoint());
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    onSquareButtonLeftUp(releasePosition);
+                } else if (SwingUtilities.isRightMouseButton(e)) {
+                    onSquareButtonRightUp(releasePosition);
                 }
+            }
+        });
+    }
+
+    public void onSquareButtonLeftDown(Position position) {
+        System.out.println("Down at: " + position);
+
+        // Select Piece
+        Piece piece = game.board.getPieceAt(position);
+        if (piece != null && piece.getColor() == color) {
+            selectedPosition = position;
+
+            // Add Highlight
+            boardPanel.setHighlight(position, true);
+
+            // Add Hints
+            for (Position pos : game.getLegalMoves(position)) {
+                boardPanel.setHint(pos, true);
+            }
+
+            return;
+        }
+
+        // Piece must be selected
+        if (selectedPosition == null) { return; }
+
+        // Process Move
+        Move move = new Move(selectedPosition, position, '\0');
+        processPlayerMove(move);
+    }
+
+    public void onSquareButtonLeftUp(Position position) {
+        System.out.println("Up at: " + position);
+
+        // Early Return
+        if (selectedPosition == null) { return; }
+        if (selectedPosition == position) { return; }
+
+        // Process Move
+        Move move = new Move(selectedPosition, position, '\0');
+        processPlayerMove(move);
+    }
+
+    public void onSquareButtonRightDown(Position position) {
+        // Ignore for now
+    }
+
+    public void onSquareButtonRightUp(Position position) {
+        // Ignore for now
+    }
+
+    public void processPlayerMove(Move move) {
+        // Remove Highlights and Hints
+        selectedPosition = null;
+        boardPanel.setHighlight(move.initialPosition(), false);
+        boardPanel.clearHints();
+
+        // Remove Premove
+        if (preMove != null) {
+            boardPanel.setHighlight(preMove.initialPosition(), false);
+            boardPanel.setHighlight(preMove.finalPosition(), false);
+            preMove = null;
+        }
+
+        // Not your move / set preMove
+        if (game.getTurn() != color) {
+            preMove = move;
+            return;
+        }
+
+        // If move is promotion
+        if (MoveUtils.causesPromotion(move, game)) {
+            move = new Move(move.initialPosition(), move.finalPosition(), 'Q'); // TODO: Ask player for promotion piece
+        }
+
+        // Move must be legal
+        if (!game.isMoveLegal(move)) { return; }
+
+        // Execute Move
+        executeMove(move);
+
+        ///
+        processServerMove(null);
+    }
+    public void processServerMove(Move move) {
+        new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() {
+                executeMove(StockfishAI.getMove(game));
+                return null;
             }
         }.execute();
     }
 
-    // Make Move
-    public void makeMove(Move move) {
-        // Make Move
+    public void executeMove(Move move) {
         game.move(move);
-
-        // Update BoardPanel
-        boardPanel.loadFromBoard(game.board);
-
-        // Add High lights
-        Position initialPosition = move.initialPosition();
-        Position finalPosition = move.finalPosition();
-        boardPanel.getSquareButton(initialPosition.file(), initialPosition.rank()).setHighLight(true);
-        boardPanel.getSquareButton(finalPosition.file(), finalPosition.rank()).setHighLight(true);
-
-        // Print PGN
-        if (!game.inPlay()) {
-            String pgn = PGN.getPGN(game);
-            String result = game.getResult().toString().replace("_", " ");
-            String message =
-                    "<html><body style='width: 300px;'>" + pgn + "</body></html>";
-            JOptionPane.showMessageDialog(null, message, result, JOptionPane.INFORMATION_MESSAGE);
-            System.exit(0);
-        }
-    }
-
-    // Handle Promotion
-    private Move handlePromotion(Move move) {
-        Piece pieceToMove = game.board.getPieceAt(move.initialPosition());
-        if (move.promotionPiece() != '\0') { return move;}
-        if (!(pieceToMove instanceof Pawn pawn)) { return move; }
-        if (!pawn.isLegalPromotion(move, game.board)) { return move; }
-        return new Move(move.initialPosition(), move.finalPosition(), 'Q');
-    }
-
-    // Square Button Listeners
-    private void handleSquareClick(Position clickedPosition) {
-        if (!game.inPlay()) { return; }
-
-        // Try to make move
-        if (selectedPosition != null) {
-            Move move = new Move(selectedPosition, clickedPosition, '\0');
-            move = handlePromotion(move);
-            if (game.isMoveLegal(move)) {
-                makeMove(move);
-                aiMove(); // TODO
-                return;
-            }
-        }
-
-        // Handle Selected Piece Position
-        selectPiece(clickedPosition);
+        boardPanel.loadPieces(game);
     }
 }

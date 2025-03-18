@@ -29,7 +29,7 @@ public class Timer {
     private long lastMoveTimestamp;
     private Color turn;
     private final long increment; // Time increment per move (if applicable)
-    private boolean started = false;
+    private boolean active = false;
 
     /**
      * Constructs a Timer for a chess game with the specified initial time for both players
@@ -79,7 +79,7 @@ public class Timer {
     public Timer getDeepCopy() {
         Timer copy = new Timer(whiteTime, blackTime, increment, turn);
         copy.lastMoveTimestamp = lastMoveTimestamp;
-        copy.started = started;
+        copy.active = active;
         return copy;
     }
 
@@ -88,8 +88,27 @@ public class Timer {
      * Also marks the timer as started.
      */
     public void start() {
+        if (active) { return; }
         this.lastMoveTimestamp = System.currentTimeMillis();
-        started = true;
+        active = true;
+    }
+
+    /**
+     * Stops the timer by halting the time tracking process.
+     * This method can be used to pause or end the timer, ensuring no further
+     * time calculations are performed until the timer is restarted.
+     *
+     * <p>Key Details:</p>
+     * <ul>
+     *   <li>Typically called to pause the game or at the end of a player's turn.</li>
+     *   <li>No further updates to `lastMoveTimestamp` occur while the timer is stopped.</li>
+     *   <li>The timer can be safely resumed using the `start` method.</li>
+     * </ul>
+     */
+    public void stop() {
+        // Last Update
+        updateTimeStamp();
+        active = false;
     }
 
     /**
@@ -108,11 +127,21 @@ public class Timer {
     }
 
     /**
-     * Switches the timer to the next player's turn, deducts elapsed time from the current player,
-     * and adds the increment time to their clock.
+     * Updates the timestamp and adjusts the remaining time for the current player.
+     * This method should be called whenever a move is made to reflect the elapsed time
+     * and apply any applicable increment to the player's time.
+     *
+     * <p>Key Details:</p>
+     * <ul>
+     *   <li>Ensures the timer is only updated when it is active.</li>
+     *   <li>Calculates the elapsed time since the last move using the system clock.</li>
+     *   <li>Updates the time for the current player (White or Black) and applies the increment.</li>
+     *   <li>Prevents negative time values by capping the time at 0.</li>
+     *   <li>Records the current timestamp for use in the next update.</li>
+     * </ul>
      */
-    public void switchTurn() {
-        if (!started) { return; }
+    private void updateTimeStamp() {
+        if (!active) { return; }
 
         // Calc
         long now = System.currentTimeMillis();
@@ -125,13 +154,24 @@ public class Timer {
             blackTime = Math.max(0, blackTime - elapsed + increment);
         }
         lastMoveTimestamp = now;
+    }
+
+    /**
+     * Switches the timer to the next player's turn, deducts elapsed time from the current player,
+     * and adds the increment time to their clock.
+     */
+    public void switchTurn() {
+        if (!active) { return; }
+
+        // Update Time Stamp
+        updateTimeStamp();
 
         // Switch Turn
         turn = turn.inverse();
     }
 
     // Getters
-    public boolean isStarted() { return started; }
+    public boolean isActived() { return active; }
     public boolean isOutOfTime(Color player) {
         return (player == Color.WHITE ? whiteTime : blackTime) <= 0;
     }

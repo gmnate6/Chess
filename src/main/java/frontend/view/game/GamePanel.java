@@ -1,12 +1,16 @@
 package frontend.view.game;
 
+import frontend.view.utils.SquareLayoutManager;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class GamePanel extends JPanel {
-    BoardPanel boardPanel;
-    PlayerPanel topPlayerPanel;
-    PlayerPanel bottomPlayerPanel;
+    public BoardPanel boardPanel;
+    public BannerPanel topBannerPanel;
+    public BannerPanel bottomBannerPanel;
 
     public GamePanel() {
         /// Setup
@@ -14,38 +18,42 @@ public class GamePanel extends JPanel {
         setBackground(Color.red);
 
         /// Left Panel
-        JPanel leftPanel = new JPanel();
-        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+        JPanel leftPanel = new JPanel(new BorderLayout());
         leftPanel.setBackground(Color.BLUE);
 
         // Top Player Panel
-        topPlayerPanel = new PlayerPanel();
-        topPlayerPanel.setBackground(Color.green);
-        topPlayerPanel.add(new JLabel("Top Player Panel")); // TODO: Remove
+        topBannerPanel = new BannerPanel();
+        topBannerPanel.setBackground(Color.green);
+        topBannerPanel.add(new JLabel("Top Player Panel")); // TODO: Remove
+
+        // Board Buffer Panel
+        JPanel boardBufferPanel = new JPanel(new SquareLayoutManager());
+        boardBufferPanel.setOpaque(false);
 
         // Board Panel
         boardPanel = new BoardPanel();
-        boardPanel.initializeBoard(utils.Color.WHITE);
+        boardBufferPanel.add(boardPanel);
 
         // Bottom Player Panel
-        bottomPlayerPanel = new PlayerPanel();
-        bottomPlayerPanel.setBackground(Color.green);
-        bottomPlayerPanel.add(new JLabel("Bottom Player Panel")); // TODO: Remove
+        bottomBannerPanel = new BannerPanel();
+        bottomBannerPanel.setBackground(Color.green);
+        bottomBannerPanel.add(new JLabel("Bottom Player Panel")); // TODO: Remove
 
         // Add
-        leftPanel.add(topPlayerPanel);
-        leftPanel.add(boardPanel);
-        leftPanel.add(bottomPlayerPanel);
+        leftPanel.add(topBannerPanel, BorderLayout.NORTH);
+        leftPanel.add(boardBufferPanel, BorderLayout.CENTER);
+        leftPanel.add(bottomBannerPanel, BorderLayout.SOUTH);
 
         /// Right Panel
         JPanel rightPanel = new JPanel();
         rightPanel.setBackground(Color.WHITE);
+        rightPanel.setPreferredSize(new Dimension(300, 600));
 
         // Title
         // History
         // Buttons
 
-        add(leftPanel, BorderLayout.WEST); // Add left panel to the WEST
+        add(leftPanel, BorderLayout.CENTER); // Add left panel to the WEST
         add(rightPanel, BorderLayout.EAST); // Add right panel to the EAST
     }
 
@@ -63,10 +71,11 @@ public class GamePanel extends JPanel {
 
     public void createJFrame() {
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Chess - BoardPanel");
+            JFrame frame = new JFrame("Chess - GamePanel");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(new Dimension(900, 600));
-            frame.setResizable(false);
+            frame.setMinimumSize(new Dimension(900, 600));
+            //frame.setResizable(false);
 
             // Add the BoardPanel to the frame
             frame.add(this);

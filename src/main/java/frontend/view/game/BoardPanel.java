@@ -1,73 +1,82 @@
 package frontend.view.game;
 
-import engine.game.Board;
+import engine.exceptions.IllegalPositionException;
+import engine.game.Game;
+import engine.types.Move;
 import engine.types.Position;
 import engine.pieces.Piece;
 
-import frontend.view.utils.PieceImageLoader;
+import frontend.view.utils.AssetManager;
 import utils.Color;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 
 public class BoardPanel extends JPanel{
-    private final SquareButton[][] squares = new SquareButton[SIZE][SIZE];
+    private final SquarePanel[][] squares = new SquarePanel[SIZE][SIZE];
     public static int SIZE = 8;
-    public boolean isInitialized = false;
+    private Color perspective;
+    private Move lastMove;
 
     public BoardPanel() {
         // Setup
         setLayout(new GridLayout(SIZE, SIZE, 0, 0));
-
-        // Background
         setBackground(new java.awt.Color(0xE5E5E5));
+        setPerspective(Color.WHITE);
     }
 
-    public void initializeBoard(Color perspective) {
-        // Cannot Initialize Twice
-        if (isInitialized) {
-            throw new RuntimeException("Error: BoardPanel.initializeBoard() must be called only once.");
-        }
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        // Draw Board
+        int width = getWidth();
+        int height = getHeight();
+        if (width == 0 || height == 0) { return; }
+        g.drawImage(AssetManager.getInstance().getImage("board"), 0, 0, width, height, this);
+    }
+
+    public void setPerspective(Color perspective) {
+        if (perspective == null) { throw new NullPointerException("Perspective cannot be null."); }
+
+        // Update Perspective
+        this.perspective = perspective;
+
+        // Remove Old Squares
+        removeAll();
 
         // Initialize Squares
-        PieceImageLoader pieceImageLoader = new PieceImageLoader();
         if (perspective == Color.WHITE) {
             // White
             for (int rank = SIZE - 1; rank >= 0; rank--) {
                 for (int file = 0; file < SIZE; file++) {
-                    squares[file][rank] = new SquareButton((file + rank) % 2 == 0 ? Color.BLACK : Color.WHITE, pieceImageLoader);
-                    add(squares[file][rank]);
+                    SquarePanel square = new SquarePanel();
+                    squares[file][rank] = square;
+                    add(square);
                 }
             }
         } else if (perspective == Color.BLACK) {
             // Black
             for (int rank = 0; rank < SIZE; rank++) {
                 for (int file = SIZE - 1; file >= 0; file--) {
-                    squares[file][rank] = new SquareButton((file + rank) % 2 == 0 ? Color.BLACK : Color.WHITE, pieceImageLoader);
-                    add(squares[file][rank]);
+                    SquarePanel square = new SquarePanel();
+                    squares[file][rank] = square;
+                    add(square);
                 }
             }
         }
-        isInitialized = true;
     }
 
-    public SquareButton getSquareButton(int file, int rank) {
-        if (file < 0 || file >= SIZE || rank < 0 || rank >= SIZE) {
-            throw new IllegalArgumentException("Cannot get SquareButton at Invalid Position: " + file + ", " + rank + ". Valid range for file and rank is 0-7.");
-        }
-
-        if (!isInitialized) {
-            throw new RuntimeException("Error: BoardPanel.initializeBoard() must be called before getting SquareButton.");
-        }
-        return squares[file][rank];
+    public SquarePanel getSquare(Position position) {
+        return squares[position.file()][position.rank()];
     }
 
-    public void loadFromBoard(Board board) {
+    public void loadPieces(Game game) {
+        // Load Board
         for (int file = 0; file < SIZE; file++) {
             for (int rank = 0; rank < SIZE; rank++) {
-                Piece currentPiece = board.getPieceAt(new Position(file, rank));
+                Position position = new Position(file, rank);
+                Piece currentPiece = game.board.getPieceAt(position);
 
                 // Set Current Piece Char
                 Character currentPieceChar = null;
@@ -75,26 +84,85 @@ public class BoardPanel extends JPanel{
                     currentPieceChar = currentPiece.toChar();
                 }
 
-                // Get Square Button
-                SquareButton squareButton = getSquareButton(file, rank);
+                // Get Square
+                SquarePanel square = getSquare(position);
 
                 // Set Piece
-                squareButton.setPiece(currentPieceChar);
+                square.setPiece(currentPieceChar);
 
                 // Clear Layovers
-                squareButton.clearOverlays();
+                square.clearOverlays();
+            }
+        }
+
+        // Set Last Move
+        setLastMove(game.getMoveHistory().getLastMove());
+    }
+
+    public Position getSquarePosition(Point mousePoint) {
+        int widthCellSize = getWidth() / SIZE;
+        int heightCellSize = getHeight() / SIZE;
+
+        // Get File and Rank
+        int min = 0;
+        int max = SIZE - 1;
+        int file = Math.max(min, Math.min(max, mousePoint.x / widthCellSize));
+        int rank = Math.max(min, Math.min(max, max - (mousePoint.y / heightCellSize)));
+
+        // Get Position
+        try {
+            Position pos = new Position(file, rank);
+
+            // Inverse Position if black's perspective
+            if (perspective == Color.WHITE) { return pos; }
+            return pos.inverse();
+        } catch (IllegalPositionException e) {
+            System.err.println("IllegalNotationException: getSquarePosition click not recognized.");
+        }
+        return null;
+    }
+
+    public void setLastMove(Move move) {
+        // Remove Old Last Move
+        if (lastMove != null) {
+            SquarePanel initialSquare = getSquare(lastMove.initialPosition());
+            SquarePanel finalSquare = getSquare(lastMove.finalPosition());
+            initialSquare.setHighLight(false);
+            finalSquare.setHighLight(false);
+        }
+
+        // Add New Last Move
+        lastMove = move;
+        if (move == null) { return; }
+        SquarePanel newInitialSquare = getSquare(move.initialPosition());
+        SquarePanel newFinalSquare = getSquare(move.finalPosition());
+        newInitialSquare.setHighLight(true);
+        newFinalSquare.setHighLight(true);
+    }
+
+    public void setHighlight(Position position, boolean isHighlighted) {
+        SquarePanel square = getSquare(position);
+        if (square != null) {
+            square.setHighLight(isHighlighted);
+        }
+    }
+
+    public void setHint(Position position, boolean isHinted) {
+        SquarePanel square = getSquare(position);
+        if (square != null) {
+            square.setHint(isHinted);
+        }
+    }
+
+    public void clearHints() {
+        for (int file = 0; file < SIZE; file++) {
+            for (int rank = 0; rank < SIZE; rank++) {
+                setHint(new Position(file, rank), false);
             }
         }
     }
 
-    public void clearPieceOverlays() {
-        for (int file = 0; file < SIZE; file++) {
-            for (int rank = 0; rank < SIZE; rank++) {
-                SquareButton currentSquare = getSquareButton(file, rank);
-                currentSquare.clearOverlays();
-            }
-        }
-    }
+
 
 
 
@@ -119,10 +187,5 @@ public class BoardPanel extends JPanel{
             frame.add(this, BorderLayout.CENTER);
             frame.setVisible(true);
         });
-    }
-    public static void main(String[] args) {
-        BoardPanel boardPanel = new BoardPanel();
-        boardPanel.createJFrame();
-        boardPanel.initializeBoard(Color.WHITE);
     }
 }
