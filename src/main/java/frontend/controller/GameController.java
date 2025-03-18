@@ -75,6 +75,13 @@ public class GameController {
         // Select Piece
         Piece piece = game.board.getPieceAt(position);
         if (piece != null && piece.getColor() == color) {
+            // Remove Old Highlights
+            if (selectedPosition != null) {
+                boardPanel.setHighlight(selectedPosition, false);
+            }
+            boardPanel.clearHints();
+
+            // Update Selected Position
             selectedPosition = position;
 
             // Add Highlight
@@ -84,7 +91,6 @@ public class GameController {
             for (Position pos : game.getLegalMoves(position)) {
                 boardPanel.setHint(pos, true);
             }
-
             return;
         }
 
@@ -101,7 +107,9 @@ public class GameController {
 
         // Early Return
         if (selectedPosition == null) { return; }
-        if (selectedPosition == position) { return; }
+        if (selectedPosition.equals(position)) {
+            return;
+        }
 
         // Process Move
         Move move = new Move(selectedPosition, position, '\0');
@@ -146,7 +154,7 @@ public class GameController {
         // Execute Move
         executeMove(move);
 
-        ///
+        /// Temp
         processServerMove(null);
     }
     public void processServerMove(Move move) {
@@ -160,6 +168,7 @@ public class GameController {
     }
 
     public void executeMove(Move move) {
+        System.out.println("Move: " + move);
         game.move(move);
         boardPanel.loadPieces(game);
     }
