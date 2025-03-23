@@ -81,6 +81,12 @@ public class GameController {
             }
             boardPanel.clearHints();
 
+            // Unselect if square is clicked twice
+            if (position.equals(selectedPosition)) {
+                selectedPosition = null;
+                return;
+            }
+
             // Update Selected Position
             selectedPosition = position;
 
@@ -95,8 +101,6 @@ public class GameController {
         }
 
         // Piece must be selected
-        if (selectedPosition == null) { return; }
-
         // Process Move
         Move move = new Move(selectedPosition, position, '\0');
         processPlayerMove(move);

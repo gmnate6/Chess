@@ -15,7 +15,18 @@ public class SquareLayoutManager implements LayoutManager {
 
     @Override
     public Dimension preferredLayoutSize(Container parent) {
-        return parent.getPreferredSize();
+        // Calculate preferred size based on the first (and only) component
+        if (parent.getComponentCount() == 0) {
+            return new Dimension(0, 0); // No components, so return zero size
+        }
+
+        // Get the preferred size of the child component
+        Component child = parent.getComponent(0);
+        Dimension childPreferredSize = child.getPreferredSize();
+
+        // Make the size square by taking the largest dimension
+        int size = Math.max(childPreferredSize.width, childPreferredSize.height);
+        return new Dimension(size, size); // Return a square dimension
     }
 
     @Override

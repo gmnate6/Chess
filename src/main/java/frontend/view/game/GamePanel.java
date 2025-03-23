@@ -3,6 +3,7 @@ package frontend.view.game;
 import frontend.view.utils.SquareLayoutManager;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -15,16 +16,18 @@ public class GamePanel extends JPanel {
     public GamePanel() {
         /// Setup
         setLayout(new BorderLayout());
-        setBackground(Color.red);
+        setBackground(Color.orange);
 
         /// Left Panel
         JPanel leftPanel = new JPanel(new BorderLayout());
-        leftPanel.setBackground(Color.BLUE);
+        leftPanel.setOpaque(false);
 
         // Top Player Panel
+        JPanel topBufferPanel = new JPanel(new BorderLayout());
+        topBufferPanel.setOpaque(false);
+        topBufferPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         topBannerPanel = new BannerPanel();
-        topBannerPanel.setBackground(Color.green);
-        topBannerPanel.add(new JLabel("Top Player Panel")); // TODO: Remove
+        topBufferPanel.add(topBannerPanel, BorderLayout.CENTER);
 
         // Board Buffer Panel
         JPanel boardBufferPanel = new JPanel(new SquareLayoutManager());
@@ -35,14 +38,16 @@ public class GamePanel extends JPanel {
         boardBufferPanel.add(boardPanel);
 
         // Bottom Player Panel
+        JPanel bottomBufferPanel = new JPanel(new BorderLayout());
+        bottomBufferPanel.setOpaque(false);
+        bottomBufferPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         bottomBannerPanel = new BannerPanel();
-        bottomBannerPanel.setBackground(Color.green);
-        bottomBannerPanel.add(new JLabel("Bottom Player Panel")); // TODO: Remove
+        bottomBufferPanel.add(bottomBannerPanel, BorderLayout.CENTER);
 
         // Add
-        leftPanel.add(topBannerPanel, BorderLayout.NORTH);
+        leftPanel.add(topBufferPanel, BorderLayout.NORTH);
         leftPanel.add(boardBufferPanel, BorderLayout.CENTER);
-        leftPanel.add(bottomBannerPanel, BorderLayout.SOUTH);
+        leftPanel.add(bottomBufferPanel, BorderLayout.SOUTH);
 
         /// Right Panel
         JPanel rightPanel = new JPanel();

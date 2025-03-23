@@ -15,8 +15,10 @@ public class StockfishAI {
 
         if (os.contains("win")) {
             stockfishPath += "windows/stockfish.exe";
-        } else if (os.contains("nix") || os.contains("nux") || os.contains("mac")) {
+        } else if (os.contains("nix") || os.contains("nux")) {
             stockfishPath += "linux/stockfish";
+        } else if (os.contains("mac")) {
+            stockfishPath += "mac/stockfish";
         }
         return stockfishPath;
     }
