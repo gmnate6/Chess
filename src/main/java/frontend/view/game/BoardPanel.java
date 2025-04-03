@@ -7,33 +7,25 @@ import engine.types.Position;
 import engine.pieces.Piece;
 
 import frontend.view.utils.AssetManager;
+import frontend.view.utils.DynamicImagedPanel;
 import utils.Color;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class BoardPanel extends JPanel{
+public class BoardPanel extends DynamicImagedPanel {
     private final SquarePanel[][] squares = new SquarePanel[SIZE][SIZE];
     public static int SIZE = 8;
     private Color perspective;
     private Move lastMove;
 
     public BoardPanel() {
+        super(AssetManager.getInstance().getImage("board"));
+
         // Setup
         setLayout(new GridLayout(SIZE, SIZE, 0, 0));
         setBackground(new java.awt.Color(0xE5E5E5));
         setPerspective(Color.WHITE);
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
-        // Draw Board
-        int width = getWidth();
-        int height = getHeight();
-        if (width == 0 || height == 0) { return; }
-        g.drawImage(AssetManager.getInstance().getImage("board"), 0, 0, width, height, this);
     }
 
     public void setPerspective(Color perspective) {

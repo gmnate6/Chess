@@ -1,6 +1,7 @@
 package frontend.view.game;
 
 import frontend.view.utils.AssetManager;
+import frontend.view.utils.DynamicImagedPanel;
 import frontend.view.utils.ImageLoader;
 import frontend.view.utils.SquareLayoutManager;
 
@@ -26,9 +27,9 @@ public class BannerPanel extends JPanel {
         avatarBufferPanel.setOpaque(false);
 
         // Avatar Panel
-        AvatarPanel avatarPanel = new AvatarPanel();
+        DynamicImagedPanel avatarPanel = new DynamicImagedPanel();
         avatarPanel.setPreferredSize(new Dimension(50, 50));
-        avatarPanel.setImage(ImageLoader.loadBufferedImage("avatars/bot.svg"));
+        avatarPanel.setImage(ImageLoader.loadBufferedImage("avatars/bot.png"));
         avatarBufferPanel.add(avatarPanel);
 
         // Add
