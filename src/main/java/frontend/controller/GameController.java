@@ -49,7 +49,7 @@ public class GameController {
         boardPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                Position pressedPosition = boardPanel.getSquarePosition(e.getPoint());
+                Position pressedPosition = boardPanel.pointToPosition(e.getPoint());
                 if (SwingUtilities.isLeftMouseButton(e)) {
                     onSquareButtonLeftDown(pressedPosition);
                 } else if (SwingUtilities.isRightMouseButton(e)) {
@@ -59,7 +59,7 @@ public class GameController {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                Position releasePosition = boardPanel.getSquarePosition(e.getPoint());
+                Position releasePosition = boardPanel.pointToPosition(e.getPoint());
                 if (SwingUtilities.isLeftMouseButton(e)) {
                     onSquareButtonLeftUp(releasePosition);
                 } else if (SwingUtilities.isRightMouseButton(e)) {
@@ -71,9 +71,9 @@ public class GameController {
 
     public void onSquareButtonLeftDown(Position position) {
         System.out.println("Down at: " + position);
+        Piece piece = game.board.getPieceAt(position);
 
         // Select Piece
-        Piece piece = game.board.getPieceAt(position);
         if (piece != null && piece.getColor() == color) {
             // Remove Old Highlights
             if (selectedPosition != null) {
@@ -89,14 +89,17 @@ public class GameController {
 
             // Update Selected Position
             selectedPosition = position;
-
-            // Add Highlight
             boardPanel.setHighlight(position, true);
 
             // Add Hints
             for (Position pos : game.getLegalMoves(position)) {
                 boardPanel.setHint(pos, true);
             }
+            return;
+        }
+
+        // Not a move attempt and not selectable piece
+        if (selectedPosition == null && (piece == null || piece.getColor() != color)) {
             return;
         }
 

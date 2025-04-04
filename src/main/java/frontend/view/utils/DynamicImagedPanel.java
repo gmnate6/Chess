@@ -9,17 +9,14 @@ public class DynamicImagedPanel extends JPanel {
     private int cachedWidth = -1;
     private int cachedHeight = -1;
 
-    public DynamicImagedPanel() {
-        super();
-        this.originalImage = null;
-        setOpaque(false);
-        this.repaint();
-    }
     public DynamicImagedPanel(Image image) {
         super();
         this.originalImage = image;
         setOpaque(false);
         this.repaint();
+    }
+    public DynamicImagedPanel() {
+        this(null);
     }
 
     @Override
@@ -32,12 +29,18 @@ public class DynamicImagedPanel extends JPanel {
         if (originalImage == null) { return; }
 
         // Update cachedImage if size changed
-        if (cachedImage == null || width != cachedWidth || height != cachedHeight) {
+        if (hasChangedSize()) {
             cachedImage = originalImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
             cachedWidth = width;
             cachedHeight = height;
         }
         g.drawImage(cachedImage, 0, 0, width, height, this);
+    }
+
+    protected boolean hasChangedSize() {
+        int width = getWidth();
+        int height = getHeight();
+        return (cachedImage == null || width != cachedWidth || height != cachedHeight);
     }
 
     public void setImage(Image image) {

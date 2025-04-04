@@ -110,9 +110,8 @@ public class AssetManager {
         colors.put("text", getColorFromProperty(propertiesLoader, "text"));
     }
 
-    public BufferedImage getImage(String key) {
-        return images.get(key);
-    }
+    public BufferedImage getImage(String key) { return images.get(key); }
+    public BufferedImage getImage(Character key) { return getImage(key.toString()); }
 
     public Color getColor(String key) {
         return colors.get(key);
