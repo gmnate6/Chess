@@ -11,7 +11,9 @@ import frontend.view.utils.DynamicImagedPanel;
 import utils.Color;
 
 import javax.swing.*;
+import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 public class BoardPanel extends DynamicImagedPanel {
@@ -19,6 +21,10 @@ public class BoardPanel extends DynamicImagedPanel {
     public static int SIZE = 8;
     private Color perspective;
     private Move lastMove;
+
+    // Dragging Pieces
+    private Position pickedUpPosition;
+    private Point mousePosition;
 
     public BoardPanel() {
         super(AssetManager.getInstance().getImage("board"));
@@ -33,25 +39,80 @@ public class BoardPanel extends DynamicImagedPanel {
                 squares[file][rank] = new Square();
             }
         }
+
+        // Mouse Listener
+        addMouseListener(new MouseInputAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                onMouseInteraction(e.getPoint());
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                onMouseInteraction(e.getPoint());
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                onMouseInteraction(e.getPoint());
+            }
+        });
+        addMouseMotionListener(new MouseInputAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                onMouseInteraction(e.getPoint());
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                onMouseInteraction(e.getPoint());
+            }
+        });
+    }
+
+    private void onMouseInteraction(Point point) {
+        mousePosition = point;
+        if (pickedUpPosition == null) { return; }
+        repaint();
     }
 
     @Override
     protected void paintComponent(Graphics g) {
+        try {
+            Thread.sleep(50); // Simulate a 50ms delay
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         // Draw Board
         super.paintComponent(g);
 
         // Paint Squares
         paintSquares(g);
+
+        // Draw PickedUpPiece
+        int squareWidth = getWidth() / SIZE;
+        int squareHeight = getHeight() / SIZE;
+        AssetManager assetManager = AssetManager.getInstance();
+        if (pickedUpPosition != null && mousePosition != null) {
+            Square square = getSquare(pickedUpPosition);
+            BufferedImage pieceImage = assetManager.getImage(square.getPiece());
+            // Draw piece at mouse
+            int x = mousePosition.x - (squareWidth / 2);
+            int y = mousePosition.y - (squareHeight / 2);
+            g.drawImage(pieceImage, x, y, squareWidth, squareHeight, this);
+        }
     }
 
     public void paintSquares(Graphics g) {
         int squareWidth = getWidth() / SIZE;
         int squareHeight = getHeight() / SIZE;
+        AssetManager assetManager = AssetManager.getInstance();
 
         // Draw Piece / Overlays
         for (int rank = 0; rank < SIZE; rank++) {
             for (int file = 0; file < SIZE; file++) {
-                AssetManager assetManager = AssetManager.getInstance();
+
                 Position position = new Position(file, rank);
                 Point point = positionToPoint(position);
                 Square square = getSquare(position);
@@ -71,14 +132,18 @@ public class BoardPanel extends DynamicImagedPanel {
                 // Draw Piece
                 if (square.getPiece() != null) {
                     BufferedImage pieceImage = assetManager.getImage(square.getPiece());
-                    g.drawImage(pieceImage, point.x, point.y, squareWidth, squareHeight, this);
+
+                    // Skip PickUpPiece
+                    if (!position.equals(pickedUpPosition)) {
+                        g.drawImage(pieceImage, point.x, point.y, squareWidth, squareHeight, this);
+                    }
                 }
 
                 // Hint
                 if (square.isHinted()) {
                     g.drawImage(square.getPiece() == null ?
-                            assetManager.getImage("hint") :
-                            assetManager.getImage("capture_hint"),
+                                    assetManager.getImage("hint") :
+                                    assetManager.getImage("capture_hint"),
                             point.x, point.y, squareWidth, squareHeight, this);
                 }
             }
@@ -203,6 +268,16 @@ public class BoardPanel extends DynamicImagedPanel {
                 setHint(new Position(file, rank), false);
             }
         }
+        repaint();
+    }
+
+    public void pickUpPiece(Position position) {
+        if (position == null) { return; }
+        pickedUpPosition = position;
+        repaint();
+    }
+    public void dropPiece() {
+        pickedUpPosition = null;
         repaint();
     }
 

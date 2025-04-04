@@ -81,15 +81,12 @@ public class GameController {
             }
             boardPanel.clearHints();
 
-            // Unselect if square is clicked twice
-            if (position.equals(selectedPosition)) {
-                selectedPosition = null;
-                return;
-            }
-
             // Update Selected Position
             selectedPosition = position;
             boardPanel.setHighlight(position, true);
+
+            // Pick up piece
+            boardPanel.pickUpPiece(position);
 
             // Add Hints
             for (Position pos : game.getLegalMoves(position)) {
@@ -112,9 +109,19 @@ public class GameController {
     public void onSquareButtonLeftUp(Position position) {
         System.out.println("Up at: " + position);
 
+        // Drop Piece
+        boardPanel.dropPiece();
+
+        // Unselect if square is clicked twice
+        if (position.equals(selectedPosition)) {
+            boardPanel.setHighlight(selectedPosition, false);
+            boardPanel.clearHints();
+            selectedPosition = null;
+            return;
+        }
+
         // Early Return
-        if (selectedPosition == null) { return; }
-        if (selectedPosition.equals(position)) {
+        if (selectedPosition == null) {
             return;
         }
 
