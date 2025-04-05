@@ -42,22 +42,6 @@ public class BoardPanel extends DynamicImagedPanel {
         }
 
         // Mouse Listener
-        addMouseListener(new MouseInputAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                onMouseInteraction(e.getPoint());
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                onMouseInteraction(e.getPoint());
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                onMouseInteraction(e.getPoint());
-            }
-        });
         addMouseMotionListener(new MouseInputAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
@@ -76,7 +60,7 @@ public class BoardPanel extends DynamicImagedPanel {
         updateCursor(point);
 
         // Update positions when not holding piece
-        if (pickedUpPosition == null || mousePosition == null) {
+        if (pickedUpPosition == null) {
             mousePosition = point;
             return;
         }
@@ -148,6 +132,7 @@ public class BoardPanel extends DynamicImagedPanel {
     private void paintPieces(Graphics g) {
         int squareWidth = getWidth() / SIZE;
         int squareHeight = getHeight() / SIZE;
+        squareWidth++; squareHeight++;
         AssetManager assetManager = AssetManager.getInstance();
 
         // Draw Piece / Overlays
@@ -155,17 +140,12 @@ public class BoardPanel extends DynamicImagedPanel {
             for (int file = 0; file < SIZE; file++) {
                 Position position = new Position(file, rank);
                 Point point = positionToPoint(position);
+                point.x--; point.y--;
                 Square square = getSquare(position);
 
                 // Highlight
                 if (square.isHighlighted()) {
                     g.setColor(assetManager.getColor("highlight"));
-                    g.fillRect(point.x, point.y, squareWidth, squareHeight);
-                }
-
-                // Marked Red
-                if (square.isMarkedRed()) {
-                    g.setColor(assetManager.getColor("markedRed"));
                     g.fillRect(point.x, point.y, squareWidth, squareHeight);
                 }
 
@@ -177,6 +157,12 @@ public class BoardPanel extends DynamicImagedPanel {
                     if (!position.equals(pickedUpPosition)) {
                         g.drawImage(pieceImage, point.x, point.y, squareWidth, squareHeight, this);
                     }
+                }
+
+                // Marked Red
+                if (square.isMarkedRed()) {
+                    g.setColor(assetManager.getColor("markedRed"));
+                    g.fillRect(point.x, point.y, squareWidth, squareHeight);
                 }
 
                 // Hint
@@ -312,6 +298,17 @@ public class BoardPanel extends DynamicImagedPanel {
         repaint();
     }
 
+    public void setMarkedRed(Position position, boolean isMarkedRed) {
+        if (position == null) {
+            throw new IllegalArgumentException("Error: Position is null.");
+        }
+        Square square = getSquare(position);
+        if (square != null) {
+            square.setMarkedRed(isMarkedRed);
+        }
+        repaint();
+    }
+
     public void clearHints() {
         for (int file = 0; file < SIZE; file++) {
             for (int rank = 0; rank < SIZE; rank++) {
@@ -321,13 +318,24 @@ public class BoardPanel extends DynamicImagedPanel {
         repaint();
     }
 
+    public void clearMarkedRed() {
+        for (int file = 0; file < SIZE; file++) {
+            for (int rank = 0; rank < SIZE; rank++) {
+                setMarkedRed(new Position(file, rank), false);
+            }
+        }
+    }
+
     public void grabPiece(Position position) {
         if (position == null) { return; }
         pickedUpPosition = position;
+        updateCursor(mousePosition);
         repaint();
     }
+
     public void dropPiece() {
         pickedUpPosition = null;
+        updateCursor(mousePosition);
         repaint();
     }
 

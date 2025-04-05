@@ -11,6 +11,7 @@ import engine.utils.MoveUtils;
 import frontend.view.game.BoardPanel;
 import frontend.model.GameModel;
 
+import frontend.view.game.Square;
 import utils.Color;
 
 import javax.swing.*;
@@ -27,6 +28,7 @@ public class GameController {
     // State Vars
     private boolean isPieceSelected = false; // Updated only during the up click event
     private Position selectedPosition = null;
+    private Position markedPosition = null;
     private Move preMove = null;
 
     public GameController(BoardPanel gamePanel, GameModel gameModel) {
@@ -101,7 +103,6 @@ public class GameController {
         if (selectedPosition == null) { return; }
         Move move = new Move(selectedPosition, position, '\0');
         processPlayerMove(move);
-        deselect();
     }
 
     public void onSquareButtonLeftUp(Position position) {
@@ -117,7 +118,6 @@ public class GameController {
         if (!selectedPosition.equals(position)) {
             Move move = new Move(selectedPosition, position, '\0');
             processPlayerMove(move);
-            deselect();
             return;
         }
 
@@ -135,6 +135,9 @@ public class GameController {
         if (position == null) {
             throw new IllegalArgumentException("Error: Selected Position is null.");
         }
+
+        // Clear Marked Red
+        boardPanel.clearMarkedRed();
 
         // Update Selected Position
         selectedPosition = position;
@@ -162,14 +165,25 @@ public class GameController {
     }
 
     public void onSquareButtonRightDown(Position position) {
-        // Ignore for now
+        if (position == null) { return; }
+        markedPosition = position;
     }
 
     public void onSquareButtonRightUp(Position position) {
-        // Ignore for now
+        if (position == null || markedPosition == null) { return; }
+
+        // Mark Red
+        if (position.equals(markedPosition)) {
+            Square square = boardPanel.getSquare(position);
+            boardPanel.setMarkedRed(position, !square.isMarkedRed());
+        }
+        markedPosition = null;
     }
 
     public void processPlayerMove(Move move) {
+        // Deselect
+        deselect();
+
         // Remove Premove
         if (preMove != null) {
             boardPanel.setHighlight(preMove.initialPosition(), false);

@@ -115,8 +115,8 @@ public class AssetManager {
 
     private void loadCursors() {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Cursor grabCursor = toolkit.createCustomCursor(ImageLoader.renderSVGToBufferedImage("cursors/grab.svg", 32, 32), new Point(0, 0), "Grab Cursor");
-        Cursor grabbingCursor = toolkit.createCustomCursor(ImageLoader.renderSVGToBufferedImage("cursors/grabbing.svg", 32, 32), new Point(0, 0), "Grabbing Cursor");
+        Cursor grabCursor = toolkit.createCustomCursor(ImageLoader.renderSVGToBufferedImage("cursors/grab.svg", 32, 32), new Point(16, 16), "Grab Cursor");
+        Cursor grabbingCursor = toolkit.createCustomCursor(ImageLoader.renderSVGToBufferedImage("cursors/grabbing.svg", 32, 32), new Point(16, 16), "Grabbing Cursor");
 
         cursors.put("grab-cursor", grabCursor);
         cursors.put("grabbing-cursor", grabbingCursor);
