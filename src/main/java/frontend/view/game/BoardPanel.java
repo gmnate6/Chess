@@ -72,6 +72,10 @@ public class BoardPanel extends DynamicImagedPanel {
     }
 
     private void onMouseInteraction(Point point) {
+        // Update Cursor
+        updateCursor(point);
+
+        // Update positions when not holding piece
         if (pickedUpPosition == null || mousePosition == null) {
             mousePosition = point;
             return;
@@ -92,6 +96,25 @@ public class BoardPanel extends DynamicImagedPanel {
         x = mousePosition.x - (squareWidth / 2);
         y = mousePosition.y - (squareHeight / 2);
         repaint(new Rectangle(x, y, squareWidth, squareHeight));
+    }
+
+    private void updateCursor(Point point) {
+        Square square = getSquare(pointToPosition(point));
+
+        // Closed Grab
+        if (pickedUpPosition != null) {
+            setCursor(AssetManager.getInstance().getCursor("grabbing-cursor"));
+            return;
+        }
+
+        // Open Grab
+        if (square.getPiece() != null) {
+            setCursor(AssetManager.getInstance().getCursor("grab-cursor"));
+            return;
+        }
+
+        // Normal
+        setCursor(Cursor.getDefaultCursor());
     }
 
     @Override

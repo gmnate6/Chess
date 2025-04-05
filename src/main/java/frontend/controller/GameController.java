@@ -7,7 +7,6 @@ import engine.pieces.Piece;
 import engine.types.Move;
 
 import engine.types.Position;
-import engine.utils.FEN;
 import engine.utils.MoveUtils;
 import frontend.view.game.BoardPanel;
 import frontend.model.GameModel;
@@ -40,18 +39,18 @@ public class GameController {
         this.game = new Game(timer);
         this.color = color;
         setPerspective(color);
-    }
 
-    public void setPerspective(Color color) {
-        this.color = color;
-        boardPanel.setPerspective(color);
-        boardPanel.loadPieces(game);
-
-        // Add SquareButton Listeners
+        // Add Listeners
         boardPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+                // Get Position
                 Position pressedPosition = boardPanel.pointToPosition(e.getPoint());
+                if (color == Color.BLACK) {
+                    pressedPosition = pressedPosition.inverse();
+                }
+
+                // Call method
                 if (SwingUtilities.isLeftMouseButton(e)) {
                     onSquareButtonLeftDown(pressedPosition);
                 } else if (SwingUtilities.isRightMouseButton(e)) {
@@ -61,7 +60,13 @@ public class GameController {
 
             @Override
             public void mouseReleased(MouseEvent e) {
+                // Get Position
                 Position releasePosition = boardPanel.pointToPosition(e.getPoint());
+                if (color == Color.BLACK) {
+                    releasePosition = releasePosition.inverse();
+                }
+
+                // Call method
                 if (SwingUtilities.isLeftMouseButton(e)) {
                     onSquareButtonLeftUp(releasePosition);
                 } else if (SwingUtilities.isRightMouseButton(e)) {
@@ -69,6 +74,11 @@ public class GameController {
                 }
             }
         });
+    }
+
+    public void setPerspective(Color color) {
+        boardPanel.setPerspective(color);
+        boardPanel.loadPieces(game);
     }
 
     public void onSquareButtonLeftDown(Position position) {
@@ -187,6 +197,7 @@ public class GameController {
         /// Temp
         processServerMove(null);
     }
+
     public void processServerMove(Move move) {
         new SwingWorker<Void, Void>() {
             @Override

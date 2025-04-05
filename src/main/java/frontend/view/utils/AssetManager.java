@@ -9,11 +9,13 @@ public class AssetManager {
     private static AssetManager instance;
     private final Map<String, BufferedImage> images;
     private final Map<String, Color> colors;
+    private final Map<String, Cursor> cursors;
 
     private AssetManager() {
         images = new HashMap<>();
         colors = new HashMap<>();
-        loadTheme("metal");
+        cursors = new HashMap<>();
+        loadTheme("default");
     }
 
     public static AssetManager getInstance() {
@@ -32,7 +34,8 @@ public class AssetManager {
 
         // Load Theme
         clearAssets();
-        loadAssets(theme);
+        loadThemedAssets(theme);
+        loadCursors();
     }
 
     private void clearAssets() {
@@ -75,7 +78,7 @@ public class AssetManager {
         return Color.ORANGE;
     }
 
-    private void loadAssets(String theme) {
+    private void loadThemedAssets(String theme) {
         if (!doesThemeExist(theme)) {
             throw new RuntimeException("Theme does not exist: " + theme);
         }
@@ -110,10 +113,21 @@ public class AssetManager {
         colors.put("text", getColorFromProperty(propertiesLoader, "text"));
     }
 
+    private void loadCursors() {
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Cursor grabCursor = toolkit.createCustomCursor(ImageLoader.renderSVGToBufferedImage("cursors/grab.svg", 32, 32), new Point(0, 0), "Grab Cursor");
+        Cursor grabbingCursor = toolkit.createCustomCursor(ImageLoader.renderSVGToBufferedImage("cursors/grabbing.svg", 32, 32), new Point(0, 0), "Grabbing Cursor");
+
+        cursors.put("grab-cursor", grabCursor);
+        cursors.put("grabbing-cursor", grabbingCursor);
+    }
+
     public BufferedImage getImage(String key) { return images.get(key); }
     public BufferedImage getImage(Character key) { return getImage(key.toString()); }
 
     public Color getColor(String key) {
         return colors.get(key);
     }
+
+    public Cursor getCursor(String key) { return cursors.get(key); }
 }

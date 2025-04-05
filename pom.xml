@@ -25,7 +25,12 @@
     </dependency>
 
 
-    <!-- Add other dependencies here -->
+    <!-- Batik for SVG files -->
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-all</artifactId>
+      <version>1.18</version>
+    </dependency>
   </dependencies>
 
   <build>
