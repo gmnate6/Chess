@@ -131,11 +131,11 @@ public class Game {
         this.turn = this.turn.inverse();
 
         // Switch Timer Turn
-        if (this.timer != null) {
-            this.timer.switchTurn();
-            if (this.turn != timer.getTurn()) {
-                throw new IllegalStateException("Timer.turn did not equal Game.turn");
-            }
+
+        if (this.timer == null) { return; }
+        this.timer.switchTurn();
+        if (this.turn != timer.getTurn()) {
+            throw new IllegalStateException("Timer.turn did not equal Game.turn");
         }
     }
 
@@ -314,28 +314,28 @@ public class Game {
         // Checkmated
         if (isCheckmate()) {
             result = (turn == Color.WHITE ? GameResult.BLACK_CHECKMATE : GameResult.WHITE_CHECKMATE);
-            timer.stop();
+            stopTimer();
             return;
         }
 
         // Stalemate
         if (isStalemate()) {
             result = GameResult.STALEMATE;
-            timer.stop();
+            stopTimer();
             return;
         }
 
         // 50 Move Rule
         if (this.halfMoveClock >= 100) {
             result = GameResult.FIFTY_MOVE_RULE;
-            timer.stop();
+            stopTimer();
             return;
         }
 
         // Threefold Repetition
         if (boardHistory.get(FEN.getFENBoardAndTurn(this)) >= 3) {
             result = GameResult.THREEFOLD_REPETITION;
-            timer.stop();
+            stopTimer();
             return;
         }
 
@@ -343,14 +343,20 @@ public class Game {
         if (this.timer != null){
             if (this.timer.isOutOfTime(Color.WHITE)) {
                 result = GameResult.BLACK_WON_ON_TIME;
-                timer.stop();
+                stopTimer();
                 return;
             }
             if (this.timer.isOutOfTime(Color.BLACK)) {
                 result = GameResult.WHITE_WON_ON_TIME;
-                timer.stop();
+                stopTimer();
                 return;
             }
+        }
+    }
+
+    public void stopTimer() {
+        if (timer != null) {
+            timer.stop();
         }
     }
 
@@ -367,7 +373,7 @@ public class Game {
      */
     public void resign(Color color) {
         this.result = color == Color.WHITE ? GameResult.RESIGN_WHITE : GameResult.RESIGN_BLACK;
-        timer.stop();
+        stopTimer();
     }
 
     /**
@@ -379,7 +385,7 @@ public class Game {
      */
     public void drawAgreement() {
         this.result = GameResult.DRAW_AGREEMENT;
-        timer.stop();
+        stopTimer();
     }
 
     /**

@@ -11,6 +11,7 @@ import engine.utils.MoveUtils;
 import frontend.view.game.BoardPanel;
 import frontend.model.GameModel;
 
+import frontend.view.game.GamePanel;
 import frontend.view.game.Square;
 import utils.Color;
 
@@ -19,7 +20,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class GameController {
-    // private final GamePanel gamePanel;
+    private final GamePanel gamePanel;
     private final BoardPanel boardPanel;
     private final GameModel gameModel;
     private Game game;
@@ -31,9 +32,9 @@ public class GameController {
     private Position markedPosition = null;
     private Move preMove = null;
 
-    public GameController(BoardPanel gamePanel, GameModel gameModel) {
-        // this.gamePanel = gamePanel;
-        this.boardPanel = gamePanel;
+    public GameController(GamePanel gamePanel, GameModel gameModel) {
+        this.gamePanel = gamePanel;
+        this.boardPanel = gamePanel.boardPanel;
         this.gameModel = gameModel;
     }
 
@@ -164,9 +165,27 @@ public class GameController {
         isPieceSelected = false;
     }
 
+    private void setPreMove(Move move) {
+        if (move == null && preMove == null) { return; }
+
+        // Remove
+        if (move == null) {
+            boardPanel.setMarkedRed(preMove.initialPosition(), false);
+            boardPanel.setMarkedRed(preMove.finalPosition(), false);
+            preMove = null;
+            return;
+        }
+
+        // Set
+        boardPanel.setMarkedRed(move.initialPosition(), true);
+        boardPanel.setMarkedRed(move.finalPosition(), true);
+        preMove = move;
+    }
+
     public void onSquareButtonRightDown(Position position) {
         if (position == null) { return; }
         markedPosition = position;
+        setPreMove(null);
     }
 
     public void onSquareButtonRightUp(Position position) {
@@ -186,14 +205,12 @@ public class GameController {
 
         // Remove Premove
         if (preMove != null) {
-            boardPanel.setHighlight(preMove.initialPosition(), false);
-            boardPanel.setHighlight(preMove.finalPosition(), false);
-            preMove = null;
+            setPreMove(null);
         }
 
-        // Not your move / set preMove
+        // Not your move -> set preMove
         if (game.getTurn() != color) {
-            preMove = move;
+            setPreMove(move);
             return;
         }
 
@@ -217,6 +234,9 @@ public class GameController {
             @Override
             protected Void doInBackground() {
                 executeMove(StockfishAI.getMove(game));
+                if (preMove != null) {
+                    processPlayerMove(preMove);
+                }
                 return null;
             }
         }.execute();

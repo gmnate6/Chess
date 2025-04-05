@@ -1,22 +1,22 @@
 package frontend.view.game;
 
+import frontend.view.assets.AssetManager;
+import frontend.view.utils.BackgroundImagedPanel;
 import frontend.view.utils.SquareLayoutManager;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 
-public class GamePanel extends JPanel {
+public class GamePanel extends BackgroundImagedPanel {
     public BoardPanel boardPanel;
     public BannerPanel topBannerPanel;
     public BannerPanel bottomBannerPanel;
 
     public GamePanel() {
         /// Setup
+        super(AssetManager.getInstance().getImage("background"));
         setLayout(new BorderLayout());
-        setBackground(Color.orange);
 
         /// Left Panel
         JPanel leftPanel = new JPanel(new BorderLayout());
@@ -50,11 +50,22 @@ public class GamePanel extends JPanel {
         leftPanel.add(bottomBufferPanel, BorderLayout.SOUTH);
 
         /// Right Panel
-        JPanel rightPanel = new JPanel();
-        rightPanel.setBackground(Color.WHITE);
+        JPanel rightPanel = new JPanel(new BorderLayout());
+        rightPanel.setOpaque(false);
         rightPanel.setPreferredSize(new Dimension(300, 600));
+        rightPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        // Right Content Panel
+        JPanel rightContentPanel = new JPanel(new BorderLayout());
+        rightContentPanel.setBackground(AssetManager.getInstance().getColor("panel"));
+        rightPanel.add(rightContentPanel, BorderLayout.CENTER);
 
         // Title
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        JLabel titleLabel = new JLabel("Chess");
+        titlePanel.add(titleLabel, BorderLayout.CENTER);
+        rightContentPanel.add(titlePanel, BorderLayout.NORTH);
+
         // History
         // Buttons
 

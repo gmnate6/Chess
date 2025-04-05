@@ -1,8 +1,8 @@
 package frontend.view.game;
 
-import frontend.view.utils.AssetManager;
+import frontend.view.assets.AssetManager;
 import frontend.view.utils.DynamicImagedPanel;
-import frontend.view.utils.ImageLoader;
+import frontend.view.assets.ImageLoader;
 import frontend.view.utils.SquareLayoutManager;
 
 import javax.swing.*;

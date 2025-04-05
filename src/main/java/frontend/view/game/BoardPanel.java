@@ -6,7 +6,7 @@ import engine.types.Move;
 import engine.types.Position;
 import engine.pieces.Piece;
 
-import frontend.view.utils.AssetManager;
+import frontend.view.assets.AssetManager;
 import frontend.view.utils.DynamicImagedPanel;
 import frontend.view.utils.SquareLayoutManager;
 import utils.Color;
@@ -19,7 +19,7 @@ import java.awt.image.BufferedImage;
 
 public class BoardPanel extends DynamicImagedPanel {
     private final Square[][] squares = new Square[SIZE][SIZE];
-    public static int SIZE = 8;
+    public final static int SIZE = 8;
     private Color perspective;
     private Move lastMove;
 
@@ -47,7 +47,6 @@ public class BoardPanel extends DynamicImagedPanel {
             public void mouseMoved(MouseEvent e) {
                 onMouseInteraction(e.getPoint());
             }
-
             @Override
             public void mouseDragged(MouseEvent e) {
                 onMouseInteraction(e.getPoint());
@@ -83,6 +82,7 @@ public class BoardPanel extends DynamicImagedPanel {
     }
 
     private void updateCursor(Point point) {
+        if (point == null) { return; }
         Square square = getSquare(pointToPosition(point));
 
         // Closed Grab
@@ -219,6 +219,9 @@ public class BoardPanel extends DynamicImagedPanel {
         // Set Last Move
         setLastMove(game.getMoveHistory().getLastMove());
         repaint();
+
+        // Update Cursor
+        updateCursor(mousePosition);
     }
 
     public Position pointToPosition(Point point) {
@@ -335,7 +338,6 @@ public class BoardPanel extends DynamicImagedPanel {
 
     public void dropPiece() {
         pickedUpPosition = null;
-        updateCursor(mousePosition);
         repaint();
     }
 

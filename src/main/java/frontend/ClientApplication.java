@@ -4,22 +4,23 @@ import frontend.controller.GameController;
 import frontend.model.GameModel;
 import frontend.view.game.BoardPanel;
 
+import frontend.view.game.GamePanel;
 import utils.Color;
 
 import javax.swing.*;
 
 public class ClientApplication {
     GameModel gameModel;
-    BoardPanel boardPanel;
+    GamePanel gamePanel;
     GameController gameController;
 
     public ClientApplication(Color color) {
-        boardPanel = new BoardPanel();
+        gamePanel = new GamePanel();
         gameModel = new GameModel();
-        gameController = new GameController(boardPanel, null);
+        gameController = new GameController(gamePanel, null);
 
         gameController.startGame(color, null);
-        boardPanel.createJFrame();
+        gamePanel.createJFrame();
     }
 
     public static void main(String[] args) {
