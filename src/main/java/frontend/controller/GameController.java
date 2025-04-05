@@ -7,6 +7,7 @@ import engine.pieces.Piece;
 import engine.types.Move;
 
 import engine.types.Position;
+import engine.utils.FEN;
 import engine.utils.MoveUtils;
 import frontend.view.game.BoardPanel;
 import frontend.model.GameModel;

@@ -2,6 +2,7 @@ package frontend.view.utils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class DynamicImagedPanel extends JPanel {
     private Image originalImage;

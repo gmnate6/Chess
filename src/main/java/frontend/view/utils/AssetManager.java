@@ -13,7 +13,7 @@ public class AssetManager {
     private AssetManager() {
         images = new HashMap<>();
         colors = new HashMap<>();
-        loadTheme("icy");
+        loadTheme("metal");
     }
 
     public static AssetManager getInstance() {
