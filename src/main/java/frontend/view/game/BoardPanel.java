@@ -72,7 +72,7 @@ public class BoardPanel extends DynamicImagedPanel {
     }
 
     private void onMouseInteraction(Point point) {
-        if (pickedUpPosition == null) {
+        if (pickedUpPosition == null || mousePosition == null) {
             mousePosition = point;
             return;
         }
@@ -173,6 +173,11 @@ public class BoardPanel extends DynamicImagedPanel {
     }
 
     public Square getSquare(Position position) {
+        if (position == null) {
+            throw new IllegalArgumentException("Error: Position is null.");
+        }
+
+        // Get Square
         if (perspective == Color.BLACK) {
             position = position.inverse();
         }
@@ -263,6 +268,9 @@ public class BoardPanel extends DynamicImagedPanel {
     }
 
     public void setHighlight(Position position, boolean isHighlighted) {
+        if (position == null) {
+            throw new IllegalArgumentException("Error: Position is null.");
+        }
         Square square = getSquare(position);
         if (square != null) {
             square.setHighLight(isHighlighted);
@@ -271,6 +279,9 @@ public class BoardPanel extends DynamicImagedPanel {
     }
 
     public void setHint(Position position, boolean isHinted) {
+        if (position == null) {
+            throw new IllegalArgumentException("Error: Position is null.");
+        }
         Square square = getSquare(position);
         if (square != null) {
             square.setHint(isHinted);
@@ -287,14 +298,14 @@ public class BoardPanel extends DynamicImagedPanel {
         repaint();
     }
 
-    public void pickUpPiece(Position position) {
+    public void grabPiece(Position position) {
         if (position == null) { return; }
         pickedUpPosition = position;
         repaint();
     }
     public void dropPiece() {
         pickedUpPosition = null;
-        mousePosition = null;
+        repaint();
     }
 
 

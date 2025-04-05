@@ -26,6 +26,7 @@ public class GameController {
     private Color color;
 
     // State Vars
+    private boolean isPieceSelected = false; // Updated only during the up click event
     private Position selectedPosition = null;
     private Move preMove = null;
 
@@ -71,64 +72,83 @@ public class GameController {
     }
 
     public void onSquareButtonLeftDown(Position position) {
-        System.out.println("Down at: " + position);
+        if (position == null) {
+            throw new IllegalArgumentException("Error: Position is null.");
+        }
         Piece piece = game.board.getPieceAt(position);
 
-        // Select Piece
+        // Select
         if (piece != null && piece.getColor() == color) {
-            // Remove Old Highlights
-            if (selectedPosition != null) {
-                boardPanel.setHighlight(selectedPosition, false);
+            // Deselect if already selecting and selecting different piece
+            if (selectedPosition != null && !selectedPosition.equals(position)) {
+                deselect();
             }
-            boardPanel.clearHints();
-
-            // Update Selected Position
-            selectedPosition = position;
-            boardPanel.setHighlight(position, true);
-
-            // Pick up piece
-            boardPanel.pickUpPiece(position);
-
-            // Add Hints
-            for (Position pos : game.getLegalMoves(position)) {
-                boardPanel.setHint(pos, true);
-            }
+            select(position);
             return;
         }
 
-        // Not a move attempt and not selectable piece
-        if (selectedPosition == null && (piece == null || piece.getColor() != color)) {
-            return;
-        }
-
-        // Piece must be selected
         // Process Move
+        if (selectedPosition == null) { return; }
         Move move = new Move(selectedPosition, position, '\0');
         processPlayerMove(move);
+        deselect();
     }
 
     public void onSquareButtonLeftUp(Position position) {
-        System.out.println("Up at: " + position);
+        if (position == null) {
+            throw new IllegalArgumentException("Error: Position is null.");
+        }
+        if (selectedPosition == null) { return; }
 
         // Drop Piece
         boardPanel.dropPiece();
 
-        // Unselect if square is clicked twice
-        if (position.equals(selectedPosition)) {
+        // Dragged Move
+        if (!selectedPosition.equals(position)) {
+            Move move = new Move(selectedPosition, position, '\0');
+            processPlayerMove(move);
+            deselect();
+            return;
+        }
+
+        // Update isPieceSelected
+        if (!isPieceSelected) {
+            isPieceSelected = true;
+            return;
+        }
+
+        // Deselect if selected already selected piece
+        deselect();
+    }
+
+    private void select(Position position) {
+        if (position == null) {
+            throw new IllegalArgumentException("Error: Selected Position is null.");
+        }
+
+        // Update Selected Position
+        selectedPosition = position;
+
+        // Add Highlight
+        boardPanel.setHighlight(position, true);
+
+        // Add Hints
+        for (Position pos : game.getLegalMoves(position)) {
+            boardPanel.setHint(pos, true);
+        }
+
+        // Grab Piece
+        boardPanel.grabPiece(position);
+    }
+
+    private void deselect() {
+        if (selectedPosition != null) {
             boardPanel.setHighlight(selectedPosition, false);
-            boardPanel.clearHints();
-            selectedPosition = null;
-            return;
         }
-
-        // Early Return
-        if (selectedPosition == null) {
-            return;
-        }
-
-        // Process Move
-        Move move = new Move(selectedPosition, position, '\0');
-        processPlayerMove(move);
+        boardPanel.clearHints();
+        boardPanel.dropPiece();
+        selectedPosition = null;
+        isPieceSelected = false;
     }
 
     public void onSquareButtonRightDown(Position position) {
@@ -140,11 +160,6 @@ public class GameController {
     }
 
     public void processPlayerMove(Move move) {
-        // Remove Highlights and Hints
-        selectedPosition = null;
-        boardPanel.setHighlight(move.initialPosition(), false);
-        boardPanel.clearHints();
-
         // Remove Premove
         if (preMove != null) {
             boardPanel.setHighlight(preMove.initialPosition(), false);
@@ -183,7 +198,7 @@ public class GameController {
     }
 
     public void executeMove(Move move) {
-        System.out.println("Move: " + move);
+        System.out.println("Move: " + MoveUtils.toAlgebraic(move, game));
         game.move(move);
         boardPanel.loadPieces(game);
     }
