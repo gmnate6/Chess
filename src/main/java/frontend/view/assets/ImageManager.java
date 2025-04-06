@@ -6,7 +6,6 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -19,11 +18,7 @@ public class ImageManager {
         setRGB(0, 0, 0xe64100);
     }};
 
-    private static BufferedImage loadRasterImage(String path) {
-        if (path.endsWith(".svg")) {
-            throw new IllegalArgumentException("Use loadSVGBufferedImage for SVG files");
-        }
-
+    public static BufferedImage loadRasterImage(String path) {
         try (InputStream imageStream = ImageLoader.class.getClassLoader().getResourceAsStream(path))
         {
             assert imageStream != null;
@@ -37,10 +32,6 @@ public class ImageManager {
     }
 
     public static BufferedImage renderSvgImage(String path, int width, int height) {
-        if (!path.endsWith(".svg")) {
-            throw new IllegalArgumentException("Path must end with .svg");
-        }
-
         final BufferedImage[] imagePointer = new BufferedImage[1]; // To store the rendered image
 
         try (InputStream svgInputStream = ImageLoader.class.getClassLoader().getResourceAsStream(path)) {
@@ -87,8 +78,14 @@ public class ImageManager {
     }
 
     public void loadImage(String key, String path) {
-
+        images.put(key, loadRasterImage(path));
     }
 
-    public BufferedImage getImage(String key) { return images.get(key); }
+    public void loadSVG(String key, String path, int width, int height) {
+        images.put(key, renderSvgImage(path, width, height));
+    }
+
+    public BufferedImage getImage(String key) {
+        return images.get(key);
+    }
 }
