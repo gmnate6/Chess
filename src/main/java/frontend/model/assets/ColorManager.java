@@ -1,12 +1,10 @@
 package frontend.model.assets;
 
-import com.google.gson.Gson;
+import frontend.model.json.ColorsJsonHandler;
 
 import java.awt.*;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class ColorManager {
     private final Map<String, Color> colors = new HashMap<>();
@@ -37,20 +35,14 @@ public class ColorManager {
     public void loadColor(String key, String hex) {
         colors.put(key, parseColor(hex));
     }
+    public void loadColor(String key, Color color) {
+        colors.put(key, color);
+    }
 
     public void loadColors(String path) {
-        try (InputStreamReader reader = new InputStreamReader(
-                Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(path)))
-        ) {
-
-            Gson gson = new Gson();
-            Map<String, String> colorMap = gson.fromJson(reader, Map.class);
-
-            for (Map.Entry<String, String> entry : colorMap.entrySet()) {
-                loadColor(entry.getKey(), entry.getValue());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        Map<String, String> rawColorMap = ColorsJsonHandler.load(path);
+        for (Map.Entry<String, String> entry : rawColorMap.entrySet()) {
+            loadColor(entry.getKey(), entry.getValue());
         }
     }
 

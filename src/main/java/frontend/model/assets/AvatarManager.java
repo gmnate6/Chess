@@ -2,6 +2,7 @@ package frontend.model.assets;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Map;
 import java.util.Objects;
 
 public class AvatarManager {
@@ -48,7 +49,6 @@ public class AvatarManager {
                     avatars.loadImage(key, filePath);
                 }
 
-                System.out.println("Loaded: " + fileName);
             } catch (Exception e) {
                 System.err.println("Failed to load image: " + fileName);
                 e.printStackTrace();
@@ -66,5 +66,9 @@ public class AvatarManager {
 
     public BufferedImage getAvatar(String key) {
         return avatars.getImage(key);
+    }
+
+    public Map<String, BufferedImage> getAvatars() {
+        return avatars.getImages();
     }
 }

@@ -12,7 +12,7 @@ public class BannerPanel extends JPanel {
     public BannerPanel() {
         /// Setup Banner Panel
         setLayout(new BorderLayout());
-        setBackground(AssetManager.getInstance().getThemeManager().getCurrentTheme().getColor("panel"));
+        setBackground(AssetManager.getInstance().getThemeColor("panel"));
         setPreferredSize(new Dimension(100, 50));
         setMinimumSize(new Dimension(100, 50));
 

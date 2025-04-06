@@ -88,4 +88,8 @@ public class ImageManager {
     public BufferedImage getImage(String key) {
         return images.get(key);
     }
+
+    public Map<String, BufferedImage> getImages() {
+        return images;
+    }
 }

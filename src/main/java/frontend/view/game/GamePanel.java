@@ -15,7 +15,7 @@ public class GamePanel extends BackgroundImagedPanel {
 
     public GamePanel() {
         /// Setup
-        super(AssetManager.getInstance().getThemeManager().getImage("background"));
+        super(AssetManager.getInstance().getThemeImage("background"));
         setLayout(new BorderLayout());
 
         /// Left Panel
@@ -57,7 +57,7 @@ public class GamePanel extends BackgroundImagedPanel {
 
         // Right Content Panel
         JPanel rightContentPanel = new JPanel(new BorderLayout());
-        rightContentPanel.setBackground(AssetManager.getInstance().getThemeManager().getColor("panel"));
+        rightContentPanel.setBackground(AssetManager.getInstance().getThemeColor("panel"));
         rightPanel.add(rightContentPanel, BorderLayout.CENTER);
 
         // Title

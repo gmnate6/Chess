@@ -26,7 +26,7 @@ public class BoardPanel extends DynamicImagedPanel {
     private Point mousePosition;
 
     public BoardPanel() {
-        super(AssetManager.getInstance().getThemeManager().getCurrentTheme().getImage("board"));
+        super(AssetManager.getInstance().getThemeImage("board"));
 
         // Setup
         setBackground(new java.awt.Color(0xE5E5E5));
@@ -85,13 +85,13 @@ public class BoardPanel extends DynamicImagedPanel {
 
         // Closed Grab
         if (pickedUpPosition != null) {
-            setCursor(AssetManager.getInstance().getCursorManager().getCursor("grabbing-cursor"));
+            setCursor(AssetManager.getInstance().getCursor("grabbing"));
             return;
         }
 
         // Open Grab
         if (square.getPiece() != null) {
-            setCursor(AssetManager.getInstance().getCursorManager().getCursor("grab-cursor"));
+            setCursor(AssetManager.getInstance().getCursor("grab"));
             return;
         }
 
@@ -119,7 +119,7 @@ public class BoardPanel extends DynamicImagedPanel {
         int squareHeight = getHeight() / SIZE;
         AssetManager assetManager = AssetManager.getInstance();
         Square square = getSquare(pickedUpPosition);
-        BufferedImage pieceImage = assetManager.getThemeManager().getImage(square.getPiece());
+        BufferedImage pieceImage = assetManager.getThemeImage(square.getPiece());
 
         // Draw piece at mouse
         int x = mousePosition.x - (squareWidth / 2);
@@ -143,13 +143,13 @@ public class BoardPanel extends DynamicImagedPanel {
 
                 // Highlight
                 if (square.isHighlighted()) {
-                    g.setColor(assetManager.getThemeManager().getColor("highlight"));
+                    g.setColor(assetManager.getThemeColor("highlight"));
                     g.fillRect(point.x, point.y, squareWidth, squareHeight);
                 }
 
                 // Draw Piece
                 if (square.getPiece() != null) {
-                    BufferedImage pieceImage = assetManager.getThemeManager().getImage(square.getPiece());
+                    BufferedImage pieceImage = assetManager.getThemeImage(square.getPiece());
 
                     // Skip PickUpPiece
                     if (!position.equals(pickedUpPosition)) {
@@ -159,15 +159,15 @@ public class BoardPanel extends DynamicImagedPanel {
 
                 // Marked Red
                 if (square.isMarkedRed()) {
-                    g.setColor(assetManager.getThemeManager().getColor("markedRed"));
+                    g.setColor(assetManager.getThemeColor("markedRed"));
                     g.fillRect(point.x, point.y, squareWidth, squareHeight);
                 }
 
                 // Hint
                 if (square.isHinted()) {
                     g.drawImage(square.getPiece() == null ?
-                                    assetManager.getThemeManager().getImage("hint") :
-                                    assetManager.getThemeManager().getImage("capture_hint"),
+                                    assetManager.getThemeImage("hint") :
+                                    assetManager.getThemeImage("capture_hint"),
                             point.x, point.y, squareWidth, squareHeight, this);
                 }
             }

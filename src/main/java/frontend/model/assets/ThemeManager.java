@@ -1,13 +1,11 @@
 package frontend.model.assets;
 
-import com.google.gson.Gson;
+import frontend.model.json.ThemeJsonHandler;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class ThemeManager {
     private String default_theme;
@@ -15,18 +13,12 @@ public class ThemeManager {
     private Map<String, String> theme_names;
     private Theme currentTheme;
 
-    public static ThemeManager getInstance() {
-        try (InputStreamReader reader = new InputStreamReader(
-                Objects.requireNonNull(ThemeManager.class.getClassLoader().getResourceAsStream("themes/themes.json")))
-        ) {
-            Gson gson = new Gson();
-            ThemeManager themeManager = gson.fromJson(reader, ThemeManager.class);
-            themeManager.loadDefaultTheme();
-            return themeManager;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Failed to load themes", e);
-        }
+    public ThemeManager() {
+        ThemeJsonHandler themeJsonHandler = ThemeJsonHandler.load("themes/themes.json");
+        setDefault_theme(themeJsonHandler.getDefault_theme());
+        setAvailable_themes(themeJsonHandler.getAvailable_themes());
+        setTheme_names(themeJsonHandler.getTheme_names());
+        loadDefaultTheme();
     }
 
     public void setDefault_theme(String default_theme) { this.default_theme = default_theme; }
