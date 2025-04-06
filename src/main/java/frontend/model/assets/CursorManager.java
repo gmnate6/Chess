@@ -1,4 +1,4 @@
-package frontend.view.assets;
+package frontend.model.assets;
 
 import java.awt.*;
 import java.util.HashMap;

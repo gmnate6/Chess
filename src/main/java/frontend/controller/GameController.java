@@ -9,7 +9,7 @@ import engine.types.Move;
 import engine.types.Position;
 import engine.utils.MoveUtils;
 import frontend.view.game.BoardPanel;
-import frontend.model.GameModel;
+import frontend.model.server.GameServerManager;
 
 import frontend.view.game.GamePanel;
 import frontend.view.game.Square;
@@ -22,7 +22,7 @@ import java.awt.event.MouseEvent;
 public class GameController {
     private final GamePanel gamePanel;
     private final BoardPanel boardPanel;
-    private final GameModel gameModel;
+    private final GameServerManager gameServerManager;
     private Game game;
     private Color color;
 
@@ -32,10 +32,10 @@ public class GameController {
     private Position markedPosition = null;
     private Move preMove = null;
 
-    public GameController(GamePanel gamePanel, GameModel gameModel) {
+    public GameController(GamePanel gamePanel, GameServerManager gameServerManager) {
         this.gamePanel = gamePanel;
         this.boardPanel = gamePanel.boardPanel;
-        this.gameModel = gameModel;
+        this.gameServerManager = gameServerManager;
     }
 
     public void startGame(Color color, Timer timer) {

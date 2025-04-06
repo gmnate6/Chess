@@ -1,8 +1,7 @@
 package frontend.view.game;
 
-import frontend.view.assets.AssetManager;
+import frontend.model.assets.AssetManager;
 import frontend.view.utils.DynamicImagedPanel;
-import frontend.view.assets.ImageLoader;
 import frontend.view.utils.SquareLayoutManager;
 
 import javax.swing.*;
@@ -13,7 +12,7 @@ public class BannerPanel extends JPanel {
     public BannerPanel() {
         /// Setup Banner Panel
         setLayout(new BorderLayout());
-        setBackground(AssetManager.getInstance().getColor("panel"));
+        setBackground(AssetManager.getInstance().getThemeManager().getCurrentTheme().getColor("panel"));
         setPreferredSize(new Dimension(100, 50));
         setMinimumSize(new Dimension(100, 50));
 
@@ -29,7 +28,7 @@ public class BannerPanel extends JPanel {
         // Avatar Panel
         DynamicImagedPanel avatarPanel = new DynamicImagedPanel();
         avatarPanel.setPreferredSize(new Dimension(50, 50));
-        avatarPanel.setImage(ImageLoader.loadBufferedImage("avatars/bot.png"));
+        // avatarPanel.setImage(ImageLoader.loadBufferedImage("avatars/bot.png"));
         avatarBufferPanel.add(avatarPanel);
 
         // Add

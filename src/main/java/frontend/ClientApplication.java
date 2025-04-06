@@ -1,19 +1,19 @@
 package frontend;
 
 import frontend.controller.GameController;
-import frontend.model.GameModel;
+import frontend.model.server.GameServerManager;
 import frontend.view.game.GamePanel;
 
 import utils.Color;
 
 public class ClientApplication {
-    GameModel gameModel;
+    GameServerManager gameServerManager;
     GamePanel gamePanel;
     GameController gameController;
 
     public ClientApplication(Color color) {
         gamePanel = new GamePanel();
-        gameModel = new GameModel();
+        gameServerManager = new GameServerManager();
         gameController = new GameController(gamePanel, null);
 
         gameController.startGame(color, null);

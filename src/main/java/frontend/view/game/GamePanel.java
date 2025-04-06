@@ -1,6 +1,6 @@
 package frontend.view.game;
 
-import frontend.view.assets.AssetManager;
+import frontend.model.assets.AssetManager;
 import frontend.view.utils.BackgroundImagedPanel;
 import frontend.view.utils.SquareLayoutManager;
 
@@ -15,7 +15,7 @@ public class GamePanel extends BackgroundImagedPanel {
 
     public GamePanel() {
         /// Setup
-        super(AssetManager.getInstance().getImage("background"));
+        super(AssetManager.getInstance().getThemeManager().getImage("background"));
         setLayout(new BorderLayout());
 
         /// Left Panel
@@ -57,7 +57,7 @@ public class GamePanel extends BackgroundImagedPanel {
 
         // Right Content Panel
         JPanel rightContentPanel = new JPanel(new BorderLayout());
-        rightContentPanel.setBackground(AssetManager.getInstance().getColor("panel"));
+        rightContentPanel.setBackground(AssetManager.getInstance().getThemeManager().getColor("panel"));
         rightPanel.add(rightContentPanel, BorderLayout.CENTER);
 
         // Title

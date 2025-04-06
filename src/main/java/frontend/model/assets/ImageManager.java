@@ -1,4 +1,4 @@
-package frontend.view.assets;
+package frontend.model.assets;
 
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
@@ -19,7 +19,7 @@ public class ImageManager {
     }};
 
     public static BufferedImage loadRasterImage(String path) {
-        try (InputStream imageStream = ImageLoader.class.getClassLoader().getResourceAsStream(path))
+        try (InputStream imageStream = ImageManager.class.getClassLoader().getResourceAsStream(path))
         {
             assert imageStream != null;
             return ImageIO.read(imageStream);
@@ -34,7 +34,7 @@ public class ImageManager {
     public static BufferedImage renderSvgImage(String path, int width, int height) {
         final BufferedImage[] imagePointer = new BufferedImage[1]; // To store the rendered image
 
-        try (InputStream svgInputStream = ImageLoader.class.getClassLoader().getResourceAsStream(path)) {
+        try (InputStream svgInputStream = ImageManager.class.getClassLoader().getResourceAsStream(path)) {
             if (svgInputStream == null) {
                 throw new IllegalArgumentException("Could not find SVG file: " + path);
             }

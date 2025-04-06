@@ -1,4 +1,4 @@
-package frontend.view.assets;
+package frontend.model.assets;
 
 import javax.sound.sampled.*;
 import java.io.IOException;
