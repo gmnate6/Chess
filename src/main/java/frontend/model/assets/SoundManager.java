@@ -8,6 +8,10 @@ import java.util.Map;
 public class SoundManager {
     private final Map<String, Clip> sounds = new HashMap<>();
 
+    public SoundManager() {
+        loadSounds();
+    }
+
     public void loadSound(String key, String path) {
         try {
             // Get the resource as a stream
@@ -68,16 +72,5 @@ public class SoundManager {
         // Play
         clip.setFramePosition(0);
         clip.start();
-    }
-
-    public static void main(String[] args) {
-        SoundManager soundManager = new SoundManager();
-        soundManager.loadSounds();
-        soundManager.playSound("castle");
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

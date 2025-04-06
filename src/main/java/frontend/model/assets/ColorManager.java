@@ -47,6 +47,11 @@ public class ColorManager {
     }
 
     public Color getColor(String key) {
-        return colors.get(key);
+        if (!colors.containsKey(key)) {
+            System.err.println("Color with key '" + key + "' not found.");
+            return Color.BLACK;
+        }
+        Color color = colors.get(key);
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     }
 }

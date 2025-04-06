@@ -12,15 +12,16 @@ public class CursorManager {
         loadCursors();
     }
 
-    private void loadCursor(String key, String path) {
+    private void loadCursor(String key, String path, boolean centered) {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Cursor grabCursor = toolkit.createCustomCursor(ImageManager.renderSvgImage(path, size, size), new Point(size/2, size/2), key);
+        Point hotSpot = centered ? new Point(size/2, size/2) : new Point(0, 0);
+        Cursor grabCursor = toolkit.createCustomCursor(ImageManager.renderSvgImage(path, size, size), hotSpot, key);
         cursors.put(key, grabCursor);
     }
 
     public void loadCursors() {
-        loadCursor("grab", "cursors/grab.svg");
-        loadCursor("grabbing", "cursors/grabbing.svg");
+        loadCursor("grab", "cursors/grab.svg", true);
+        loadCursor("grabbing", "cursors/grabbing.svg", true);
     }
 
     public Cursor getCursor(String key) {

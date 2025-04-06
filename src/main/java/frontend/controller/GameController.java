@@ -8,6 +8,7 @@ import engine.types.Move;
 
 import engine.types.Position;
 import engine.utils.MoveUtils;
+import frontend.model.assets.AssetManager;
 import frontend.view.game.BoardPanel;
 import frontend.model.server.GameServerManager;
 
@@ -180,6 +181,9 @@ public class GameController {
         boardPanel.setMarkedRed(move.initialPosition(), true);
         boardPanel.setMarkedRed(move.finalPosition(), true);
         preMove = move;
+
+        // Play PreMove Sound
+        AssetManager.getInstance().playSound("premove");
     }
 
     public void onSquareButtonRightDown(Position position) {
@@ -244,7 +248,36 @@ public class GameController {
 
     public void executeMove(Move move) {
         System.out.println("Move: " + MoveUtils.toAlgebraic(move, game));
+        playMoveSound(move);
         game.move(move);
         boardPanel.loadPieces(game);
+    }
+
+    // Call before executing move
+    public void playMoveSound(Move move) {
+        // Capture
+        if (MoveUtils.isCapture(move, game)) {
+            AssetManager.getInstance().playSound("capture");
+        }
+
+        // Castle
+        if (MoveUtils.isCastlingMove(move, game)) {
+            AssetManager.getInstance().playSound("castle");
+        }
+
+        // Check
+        if (MoveUtils.causesCheck(move, game)) {
+            AssetManager.getInstance().playSound("move-check");
+        }
+
+        // Opponent Move
+        if (game.getTurn() != color) {
+            AssetManager.getInstance().playSound("move-opponent");
+        }
+
+        // Self Move
+        if (game.getTurn() == color) {
+            AssetManager.getInstance().playSound("move-self");
+        }
     }
 }

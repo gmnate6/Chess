@@ -8,6 +8,10 @@ import java.util.Objects;
 public class FontManager {
     private final Map<String, Font> fonts = new HashMap<>();
 
+    public FontManager() {
+        loadFonts();
+    }
+
     private void loadFont(String key, String path) {
         try {
             // Load the font from a file or resource
@@ -21,8 +25,8 @@ public class FontManager {
     }
 
     public void loadFonts() {
-        loadFont("Chess", "/fonts/chess_font.ttf");
-        loadFont("Glyph", "/fonts/chess_glyph.ttf");
+        loadFont("chess_font", "/fonts/chess_font.ttf");
+        loadFont("chess_glyph", "/fonts/chess_glyph.ttf");
     }
 
     public Font getFont(String key, float size) {

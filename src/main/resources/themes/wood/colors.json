@@ -1,14 +1,14 @@
 {
   "highlight": "#7fd1a52d",
-  "markedRed": "#cdeb614c",
+  "markedRed": "#cceb614c",
 
   "panel": "#24000000",
 
-  "transparentButton": "#1affffff",
-  "transparentButtonHovered": "#24ffffff",
+  "neutralButton": "#656567",
+  "neutralButtonHovered": "#7E7E80",
 
-  "opaqueButton": "#ff81b64c",
-  "opaqueButtonHovered": "#ffa3d160",
+  "colorButton": "#81b64c",
+  "colorButtonHovered": "#a3d160",
 
   "text": "#f8f8f8"
 }

@@ -1,6 +1,7 @@
 package frontend.view.game;
 
 import frontend.model.assets.AssetManager;
+import frontend.view.button.NeutralButton;
 import frontend.view.utils.BackgroundImagedPanel;
 import frontend.view.utils.SquareLayoutManager;
 
@@ -52,7 +53,7 @@ public class GamePanel extends BackgroundImagedPanel {
         /// Right Panel
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.setOpaque(false);
-        rightPanel.setPreferredSize(new Dimension(300, 600));
+        rightPanel.setPreferredSize(new Dimension(350, 600));
         rightPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         // Right Content Panel
@@ -62,12 +63,36 @@ public class GamePanel extends BackgroundImagedPanel {
 
         // Title
         JPanel titlePanel = new JPanel(new BorderLayout());
-        JLabel titleLabel = new JLabel("Chess");
+        titlePanel.setOpaque(false);
+        JLabel titleLabel = new JLabel("Chess", SwingConstants.CENTER);
+        titleLabel.setFont(AssetManager.getInstance().getFont("chess_font", 60));
+        titleLabel.setForeground(AssetManager.getInstance().getThemeColor("text"));
         titlePanel.add(titleLabel, BorderLayout.CENTER);
         rightContentPanel.add(titlePanel, BorderLayout.NORTH);
 
         // History
+        JPanel historyBufferPanel = new JPanel(new BorderLayout());
+        historyBufferPanel.setOpaque(false);
+        rightContentPanel.add(historyBufferPanel, BorderLayout.CENTER);
+
+        JPanel historyPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+
         // Buttons
+        JPanel buttonsPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        buttonsPanel.setOpaque(false);
+        buttonsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        rightContentPanel.add(buttonsPanel, BorderLayout.SOUTH);
+
+        JButton drawButton = new NeutralButton("Offer Draw");
+        drawButton.setPreferredSize(new Dimension(120, 40));
+        drawButton.setMargin(new Insets(10, 10, 10, 10));
+
+        JButton resignButton = new NeutralButton("Resign");
+        resignButton.setMargin(new Insets(10, 10, 10, 10));
+        resignButton.setPreferredSize(new Dimension(120, 40));
+
+        buttonsPanel.add(drawButton);
+        buttonsPanel.add(resignButton);
 
         add(leftPanel, BorderLayout.CENTER); // Add left panel to the WEST
         add(rightPanel, BorderLayout.EAST); // Add right panel to the EAST

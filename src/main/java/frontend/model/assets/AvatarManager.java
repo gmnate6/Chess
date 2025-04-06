@@ -1,13 +1,12 @@
 package frontend.model.assets;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.InputStream;
 import java.util.Map;
-import java.util.Objects;
 
 public class AvatarManager {
     private final ImageManager avatars = new ImageManager();
-    private final int size = 100;
 
     public AvatarManager() {
         loadAvatars();
@@ -15,44 +14,26 @@ public class AvatarManager {
 
     private void loadAvatars() {
         String path = "avatars/";
+        int size = 100;
 
-        // Access the directory
-        File folder = new File(Objects.requireNonNull(this.getClass().getClassLoader().getResource(path)).getPath());
+        // Load Avatars
+        avatars.loadSVG("default", path + "default.svg", size, size);
+        avatars.loadSVG("bot", path + "bot.svg", size, size);
 
-        if (!folder.isDirectory()) {
-            System.err.println("The path provided is not a directory: " + path);
-        }
+        // Load the rest
+        int index = 1;
+        while (true) {
+            String fileName = path + index + ".svg";
+            InputStream stream = getClass().getClassLoader().getResourceAsStream(fileName);
 
-        // Loop through files
-        for (File file : Objects.requireNonNull(folder.listFiles())) {
-            if (!file.isFile()) {
-                continue;
+            // Ran out
+            if (stream == null) {
+                break;
             }
 
-            // Check file extension for supported formats
-            String fileName = file.getName();
-            String extension = getFileExtension(fileName).toLowerCase();
-
-            // Only load supported formats
-            if (!extension.equals("png") && !extension.equals("jpg") && !extension.equals("jpeg") && !extension.equals("svg")) {
-                continue;
-            }
-
-            // Try to load file
-            try {
-                String key = fileName.substring(0, fileName.lastIndexOf('.'));
-                String filePath = path + "/" + fileName;
-
-                if (extension.equals("svg")) {
-                    avatars.loadSVG(key, filePath, size, size);
-                } else {
-                    avatars.loadImage(key, filePath);
-                }
-
-            } catch (Exception e) {
-                System.err.println("Failed to load image: " + fileName);
-                e.printStackTrace();
-            }
+            // Try to load
+            avatars.loadSVG(Integer.toString(index), fileName, size, size);
+            index++;
         }
     }
 
@@ -65,6 +46,10 @@ public class AvatarManager {
     }
 
     public BufferedImage getAvatar(String key) {
+        if (!avatars.getImages().containsKey(key)) {
+            System.err.println("Avatar with key '" + key + "' not found.");
+            return null;
+        }
         return avatars.getImage(key);
     }
 

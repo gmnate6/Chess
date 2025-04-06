@@ -28,7 +28,7 @@ public class BannerPanel extends JPanel {
         // Avatar Panel
         DynamicImagedPanel avatarPanel = new DynamicImagedPanel();
         avatarPanel.setPreferredSize(new Dimension(50, 50));
-        // avatarPanel.setImage(ImageLoader.loadBufferedImage("avatars/bot.png"));
+        avatarPanel.setImage(AssetManager.getInstance().getAvatar("default"));
         avatarBufferPanel.add(avatarPanel);
 
         // Add

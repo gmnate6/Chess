@@ -51,6 +51,18 @@ public class MoveUtils {
         return pawn.isLegalPromotion(move, game.board);
     }
 
+    public static boolean isCastlingMove(Move move, Game game) {
+        Piece pieceToMove = game.board.getPieceAt(move.initialPosition());
+
+        // Must be king
+        if (!(pieceToMove instanceof King king)) {
+            return false;
+        }
+
+        // Attempted castle
+        return king.isCastleAttempt(move);
+    }
+
     /**
      * Determines if the move would put the opposing king in check.
      * This is a private helper method used to assess moves that place
@@ -60,7 +72,7 @@ public class MoveUtils {
      * @param game The current game state, including the board and pieces.
      * @return True if the move would cause a check, false otherwise.
      */
-    private static boolean moveCausesCheck(Move move, Game game) {
+    public static boolean causesCheck(Move move, Game game) {
         // Create a copy of the board
         Board boardCopy = game.board.getDeepCopy();
 
@@ -83,7 +95,7 @@ public class MoveUtils {
      * @param game The current game state, including the board and pieces.
      * @return True if the move results in a checkmate, false otherwise.
      */
-    private static boolean moveCausesCheckmate(Move move, Game game) {
+    public static boolean causesCheckmate(Move move, Game game) {
         Game gameCopy = game.getDeepCopy();
 
         // Early Return
@@ -304,10 +316,10 @@ public class MoveUtils {
         if (isCapture ^ isCapture(move, game)) {
             throw new IllegalNotationException("Illegal Algebraic Notation: '" + originalNotation + "'. Capture symbol does not match move.");
         }
-        if ((causesCheck ^ moveCausesCheck(move, game)) && !causesCheckmate) {
+        if ((causesCheck ^ causesCheck(move, game)) && !causesCheckmate) {
             throw new IllegalNotationException("Illegal Algebraic Notation: '" + originalNotation + "'. Check symbol does not match move.");
         }
-        if (causesCheckmate ^ moveCausesCheckmate(move, game)) {
+        if (causesCheckmate ^ causesCheckmate(move, game)) {
             throw new IllegalNotationException("Illegal Algebraic Notation: '" + originalNotation + "'. Checkmate symbol does not match move.");
         }
 
@@ -373,9 +385,9 @@ public class MoveUtils {
         }
 
         // Add Check and Checkmate
-        if (moveCausesCheckmate(move, game)) {
+        if (causesCheckmate(move, game)) {
             sb.append("#");
-        } else if (moveCausesCheck(move, game)) {
+        } else if (causesCheck(move, game)) {
             sb.append("+");
         }
 
