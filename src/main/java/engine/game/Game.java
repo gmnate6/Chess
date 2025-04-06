@@ -131,11 +131,11 @@ public class Game {
         this.turn = this.turn.inverse();
 
         // Switch Timer Turn
-
-        if (this.timer == null) { return; }
-        this.timer.switchTurn();
-        if (this.turn != timer.getTurn()) {
-            throw new IllegalStateException("Timer.turn did not equal Game.turn");
+        if (this.timer != null) {
+            this.timer.switchTurn();
+            if (this.turn != timer.getTurn()) {
+                throw new IllegalStateException("Timer.turn did not equal Game.turn");
+            }
         }
     }
 
@@ -333,7 +333,7 @@ public class Game {
         }
 
         // Threefold Repetition
-        if (boardHistory.get(FEN.getFENBoardAndTurn(this)) >= 3) {
+        if (!boardHistory.isEmpty() && boardHistory.get(FEN.getFENBoardAndTurn(this)) >= 3) {
             result = GameResult.THREEFOLD_REPETITION;
             stopTimer();
             return;
@@ -355,9 +355,8 @@ public class Game {
     }
 
     public void stopTimer() {
-        if (timer != null) {
-            timer.stop();
-        }
+        if (timer == null) { return; }
+        timer.stop();
     }
 
     /**
@@ -403,14 +402,15 @@ public class Game {
      * @throws IllegalMoveException If the move is illegal.
      */
     public void move(Move move) {
-        // Convert Stuff
-        Position initialPosition = move.initialPosition();
-        Piece pieceToMove = board.getPieceAt(initialPosition);
-
         // If Game is Over
+        this.checkWinConditions();
         if (getResult() != GameResult.ON_GOING) {
             throw new IllegalMoveException("Illegal Move: Cannot make move after game is finished.");
         }
+
+        // Convert Stuff
+        Position initialPosition = move.initialPosition();
+        Piece pieceToMove = board.getPieceAt(initialPosition);
 
         // Make sure there is a pieceToMove
         if (pieceToMove == null) {

@@ -171,7 +171,7 @@ public class Timer {
     }
 
     // Getters
-    public boolean isActived() { return active; }
+    public boolean isActive() { return active; }
     public boolean isOutOfTime(Color player) {
         return (player == Color.WHITE ? whiteTime : blackTime) <= 0;
     }

@@ -132,7 +132,7 @@ public class BoardPanel extends DynamicImagedPanel {
     private void paintPieces(Graphics g) {
         int squareWidth = getWidth() / SIZE;
         int squareHeight = getHeight() / SIZE;
-        squareWidth++; squareHeight++;
+        squareWidth += 2; squareHeight += 2;
         AssetManager assetManager = AssetManager.getInstance();
 
         // Draw Piece / Overlays
@@ -276,7 +276,6 @@ public class BoardPanel extends DynamicImagedPanel {
         Square newFinalSquare = getSquare(move.finalPosition());
         newInitialSquare.setHighLight(true);
         newFinalSquare.setHighLight(true);
-        repaint();
     }
 
     public void setHighlight(Position position, boolean isHighlighted) {
@@ -338,33 +337,7 @@ public class BoardPanel extends DynamicImagedPanel {
 
     public void dropPiece() {
         pickedUpPosition = null;
+        updateCursor(mousePosition);
         repaint();
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public void createJFrame() {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Chess - BoardPanel");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(new Dimension(800, 800));
-            frame.setLayout(new SquareLayoutManager());
-            //frame.setResizable(false);
-
-            // Add the BoardPanel to the frame
-            frame.add(this);
-            frame.setVisible(true);
-        });
     }
 }
