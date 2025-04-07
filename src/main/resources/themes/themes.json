@@ -1,5 +1,5 @@
 {
-  "default_theme": "wood",
+  "default_theme": "icy",
   "available_themes": ["wood", "icy", "metal"],
   "theme_names": {
     "wood": "Wood",

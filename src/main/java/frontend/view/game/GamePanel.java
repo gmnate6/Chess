@@ -21,17 +21,18 @@ public class GamePanel extends BackgroundImagedPanel {
 
         /// Left Panel
         JPanel leftPanel = new JPanel(new BorderLayout());
+        leftPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         leftPanel.setOpaque(false);
 
         // Top Player Panel
         JPanel topBufferPanel = new JPanel(new BorderLayout());
         topBufferPanel.setOpaque(false);
-        topBufferPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         topBannerPanel = new BannerPanel();
         topBufferPanel.add(topBannerPanel, BorderLayout.CENTER);
 
         // Board Buffer Panel
         JPanel boardBufferPanel = new JPanel(new SquareLayoutManager());
+        boardBufferPanel.setBorder(new EmptyBorder(10, 0, 10, 0));
         boardBufferPanel.setOpaque(false);
 
         // Board Panel
@@ -41,7 +42,6 @@ public class GamePanel extends BackgroundImagedPanel {
         // Bottom Player Panel
         JPanel bottomBufferPanel = new JPanel(new BorderLayout());
         bottomBufferPanel.setOpaque(false);
-        bottomBufferPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         bottomBannerPanel = new BannerPanel();
         bottomBufferPanel.add(bottomBannerPanel, BorderLayout.CENTER);
 
@@ -54,7 +54,7 @@ public class GamePanel extends BackgroundImagedPanel {
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.setOpaque(false);
         rightPanel.setPreferredSize(new Dimension(350, 600));
-        rightPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        rightPanel.setBorder(new EmptyBorder(10, 0, 10, 10));
 
         // Right Content Panel
         JPanel rightContentPanel = new JPanel(new BorderLayout());

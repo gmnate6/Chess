@@ -13,8 +13,7 @@ public class BannerPanel extends JPanel {
         /// Setup Banner Panel
         setLayout(new BorderLayout());
         setBackground(AssetManager.getInstance().getThemeColor("panel"));
-        setPreferredSize(new Dimension(100, 50));
-        setMinimumSize(new Dimension(100, 50));
+        setPreferredSize(new Dimension(50, 50));
 
         /// Add Profile
         JPanel profilePanel = new JPanel(new BorderLayout());
@@ -34,11 +33,32 @@ public class BannerPanel extends JPanel {
         // Add
         profilePanel.add(avatarBufferPanel, BorderLayout.WEST);
 
+        // Username Label
+        JLabel usernameLabel = new JLabel("Username", SwingConstants.CENTER);
+        usernameLabel.setFont(AssetManager.getInstance().getFont("chess_font", 16));
+        usernameLabel.setForeground(AssetManager.getInstance().getThemeColor("text"));
+        profilePanel.add(usernameLabel, BorderLayout.CENTER);
+
         // Add
         add(profilePanel, BorderLayout.WEST);
 
         /// Add Timer
+        JPanel timerBufferPanel = new JPanel(new BorderLayout());
+        timerBufferPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        timerBufferPanel.setOpaque(false);
+
         JPanel timerPanel = new JPanel(new BorderLayout());
-        add(timerPanel, BorderLayout.EAST);
+        timerPanel.setBackground(AssetManager.getInstance().getThemeColor("panel"));
+
+        // Timer Label
+        JLabel timerLabel = new JLabel("00:00", SwingConstants.CENTER);
+        timerLabel.setFont(AssetManager.getInstance().getFont("chess_font", 32));
+        timerLabel.setForeground(AssetManager.getInstance().getThemeColor("text"));
+
+        // Add
+        timerPanel.add(timerLabel, BorderLayout.CENTER);
+        timerBufferPanel.add(timerPanel);
+        add(timerBufferPanel, BorderLayout.EAST);
+
     }
 }
