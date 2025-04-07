@@ -118,8 +118,8 @@ public class GameController {
 
         // Dragged Move
         if (!selectedPosition.equals(position)) {
-            Move move = new Move(selectedPosition, position, '\0');
-            processPlayerMove(move);
+            isPieceSelected = true;
+            processPlayerMove(new Move(selectedPosition, position, '\0'));
             return;
         }
 
