@@ -85,16 +85,34 @@ public class GameController {
         boardPanel.loadPieces(game);
     }
 
+    // Helper method for onSquareButtonLeftDown, returns true if selection can be made
+    private boolean canSelectPosition(Position position) {
+        assert position != null;
+        Piece piece = game.board.getPieceAt(position);
+
+        // Cannot select non piece
+        if (piece == null) { return false; }
+
+        // My piece
+        if (piece.getColor() == color) { return true; }
+
+        // Select opponents piece if nothing is selected
+        if (selectedPosition == null) { return true; }
+
+        // Select opponents piece if move not legal
+        Move move = new Move(selectedPosition, position, '\0');
+        return !game.isMoveLegal(move);
+    }
+
     public void onSquareButtonLeftDown(Position position) {
         if (position == null) {
             throw new IllegalArgumentException("Error: Position is null.");
         }
-        Piece piece = game.board.getPieceAt(position);
 
         // Select
-        if (piece != null) {
-            // Deselect if already selecting and selecting different piece. Do not remove
-            if (selectedPosition != null && !selectedPosition.equals(position)) {
+        if (canSelectPosition(position)) {
+            // Deselect
+            if (!position.equals(selectedPosition)) {
                 deselect();
             }
             select(position);

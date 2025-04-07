@@ -178,6 +178,7 @@ public class BoardPanel extends DynamicImagedPanel {
     public void setPerspective(Color perspective) {
         if (perspective == null) { throw new NullPointerException("Perspective cannot be null."); }
         this.perspective = perspective;
+        repaint();
     }
 
     public Square getSquare(Position position) {
