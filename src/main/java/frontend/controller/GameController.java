@@ -92,8 +92,8 @@ public class GameController {
         Piece piece = game.board.getPieceAt(position);
 
         // Select
-        if (piece != null && piece.getColor() == color) {
-            // Deselect if already selecting and selecting different piece
+        if (piece != null) {
+            // Deselect if already selecting and selecting different piece. Do not remove
             if (selectedPosition != null && !selectedPosition.equals(position)) {
                 deselect();
             }
@@ -148,8 +148,10 @@ public class GameController {
         boardPanel.setHighlight(position, true);
 
         // Add Hints
-        for (Position pos : game.getLegalMoves(position)) {
-            boardPanel.setHint(pos, true);
+        if (game.getTurn() == color) {
+            for (Position pos : game.getLegalMoves(position)) {
+                boardPanel.setHint(pos, true);
+            }
         }
 
         // Grab Piece
@@ -204,8 +206,11 @@ public class GameController {
     }
 
     public void processPlayerMove(Move move) {
-        // Deselect
-        deselect();
+        // Not your piece
+        Piece piece = game.board.getPieceAt(move.initialPosition());
+        if (piece != null && piece.getColor() != color) {
+            return;
+        }
 
         // Remove Premove
         if (preMove != null) {
@@ -228,6 +233,9 @@ public class GameController {
 
         // Execute Move
         executeMove(move);
+
+        // Deselect
+        deselect();
 
         /// Temp
         processServerMove(null);

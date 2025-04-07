@@ -73,9 +73,13 @@ public class GamePanel extends BackgroundImagedPanel {
         // History
         JPanel historyBufferPanel = new JPanel(new BorderLayout());
         historyBufferPanel.setOpaque(false);
-        rightContentPanel.add(historyBufferPanel, BorderLayout.CENTER);
+        historyBufferPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         JPanel historyPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        historyPanel.setBackground(AssetManager.getInstance().getThemeColor("panel"));
+        historyBufferPanel.add(historyPanel, BorderLayout.CENTER);
+
+        rightContentPanel.add(historyBufferPanel, BorderLayout.CENTER);
 
         // Buttons
         JPanel buttonsPanel = new JPanel(new GridLayout(1, 2, 10, 0));

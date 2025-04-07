@@ -90,7 +90,7 @@ public class BoardPanel extends DynamicImagedPanel {
         }
 
         // Open Grab
-        if (square.getPiece() != null) {
+        if (square.getPiece() != null ) {
             setCursor(AssetManager.getInstance().getCursor("grab"));
             return;
         }
@@ -142,7 +142,8 @@ public class BoardPanel extends DynamicImagedPanel {
                 Square square = getSquare(position);
 
                 // Highlight
-                if (square.isHighlighted()) {
+                boolean isLastMove = lastMove != null && (lastMove.initialPosition().equals(position) || lastMove.finalPosition().equals(position));
+                if (square.isHighlighted() || isLastMove) {
                     g.setColor(assetManager.getThemeColor("highlight"));
                     g.fillRect(point.x, point.y, squareWidth, squareHeight);
                 }
@@ -259,21 +260,8 @@ public class BoardPanel extends DynamicImagedPanel {
     }
 
     public void setLastMove(Move move) {
-        // Remove Old Last Move
-        if (lastMove != null) {
-            Square initialSquare = getSquare(lastMove.initialPosition());
-            Square finalSquare = getSquare(lastMove.finalPosition());
-            initialSquare.setHighLight(false);
-            finalSquare.setHighLight(false);
-        }
-
-        // Add New Last Move
         lastMove = move;
-        if (move == null) { return; }
-        Square newInitialSquare = getSquare(move.initialPosition());
-        Square newFinalSquare = getSquare(move.finalPosition());
-        newInitialSquare.setHighLight(true);
-        newFinalSquare.setHighLight(true);
+        repaint();
     }
 
     public void setHighlight(Position position, boolean isHighlighted) {
