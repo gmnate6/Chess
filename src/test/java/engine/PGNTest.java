@@ -37,7 +37,7 @@ public class PGNTest {
 
         // Play random game
         while (game.inPlay()) {
-            game.move(RandomAI.getMove(game));
+            game.move(new RandomAI().getMove(game));
         }
 
         // Get pgn

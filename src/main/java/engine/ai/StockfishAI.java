@@ -7,7 +7,11 @@ import engine.utils.MoveUtils;
 
 import java.io.*;
 
-public class StockfishAI {
+public class StockfishAI implements ChessAI{
+    public String getName() {
+        return "StockfishAI";
+    }
+
     private static String getStockfishPath() {
         // Set path based on the user's operating system
         String os = System.getProperty("os.name").toLowerCase();
@@ -37,7 +41,7 @@ public class StockfishAI {
         return stockfishFile.exists();
     }
 
-    public static Move getMove(Game game) {
+    public Move getMove(Game game) {
         String fen = FEN.getFEN(game);
         String stringMove;
         String stockfishPath = getStockfishPath();
@@ -46,7 +50,8 @@ public class StockfishAI {
         File stockfishFile = new File(stockfishPath);
         if (!stockfishFile.exists()) {
             System.out.println("Stockfish Failed. Did Random Move.");
-            return RandomAI.getMove(game);
+            RandomAI randomAI = new RandomAI();
+            return randomAI.getMove(game);
         }
 
         // Get Stock Fish Move
@@ -85,6 +90,7 @@ public class StockfishAI {
 
         // In Case
         System.out.println("Did random move.");
-        return RandomAI.getMove(game);
+        RandomAI randomAI = new RandomAI();
+        return randomAI.getMove(game);
     }
 }

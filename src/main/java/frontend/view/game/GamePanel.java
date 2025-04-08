@@ -14,6 +14,9 @@ public class GamePanel extends BackgroundImagedPanel {
     public BannerPanel topBannerPanel;
     public BannerPanel bottomBannerPanel;
 
+    public JButton drawButton;
+    public JButton resignButton;
+
     public GamePanel() {
         /// Setup
         super(AssetManager.getInstance().getThemeImage("background"));
@@ -58,7 +61,7 @@ public class GamePanel extends BackgroundImagedPanel {
 
         // Right Content Panel
         JPanel rightContentPanel = new JPanel(new BorderLayout());
-        rightContentPanel.setBackground(AssetManager.getInstance().getThemeColor("panel"));
+        rightContentPanel.setBackground(AssetManager.getInstance().getThemeColor("transparent"));
         rightPanel.add(rightContentPanel, BorderLayout.CENTER);
 
         // Title
@@ -76,7 +79,7 @@ public class GamePanel extends BackgroundImagedPanel {
         historyBufferPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         JPanel historyPanel = new JPanel(new GridLayout(1, 2, 10, 0));
-        historyPanel.setBackground(AssetManager.getInstance().getThemeColor("panel"));
+        historyPanel.setBackground(AssetManager.getInstance().getThemeColor("opaque"));
         historyBufferPanel.add(historyPanel, BorderLayout.CENTER);
 
         rightContentPanel.add(historyBufferPanel, BorderLayout.CENTER);
@@ -87,11 +90,11 @@ public class GamePanel extends BackgroundImagedPanel {
         buttonsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         rightContentPanel.add(buttonsPanel, BorderLayout.SOUTH);
 
-        JButton drawButton = new NeutralButton("Offer Draw");
+        drawButton = new NeutralButton("Offer Draw");
         drawButton.setPreferredSize(new Dimension(120, 40));
         drawButton.setMargin(new Insets(10, 10, 10, 10));
 
-        JButton resignButton = new NeutralButton("Resign");
+        resignButton = new NeutralButton("Resign");
         resignButton.setMargin(new Insets(10, 10, 10, 10));
         resignButton.setPreferredSize(new Dimension(120, 40));
 
@@ -100,6 +103,27 @@ public class GamePanel extends BackgroundImagedPanel {
 
         add(leftPanel, BorderLayout.CENTER); // Add left panel to the WEST
         add(rightPanel, BorderLayout.EAST); // Add right panel to the EAST
+    }
+
+    public void setTopTimer(String time) {
+        topBannerPanel.timerLabel.setText(time);
+    }
+
+    public void setBottomTimer(String time) {
+        bottomBannerPanel.timerLabel.setText(time);
+    }
+
+    public void setTopUsername(String username) {
+        topBannerPanel.usernameLabel.setText(username);
+    }
+
+    public void setBottomUsername(String username) {
+        bottomBannerPanel.usernameLabel.setText(username);
+    }
+
+    public void setTimerEnabled(boolean enabled) {
+        topBannerPanel.timerBufferPanel.setVisible(enabled);
+        bottomBannerPanel.timerBufferPanel.setVisible(enabled);
     }
 
 

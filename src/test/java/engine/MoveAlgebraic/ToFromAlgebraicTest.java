@@ -27,7 +27,7 @@ public class ToFromAlgebraicTest {
 
         // Play random game
         while (game.inPlay()) {
-            Move originalMove = RandomAI.getMove(game);
+            Move originalMove = new RandomAI().getMove(game);
 
             // To and From
             String algebraic = MoveUtils.toAlgebraic(originalMove, game);

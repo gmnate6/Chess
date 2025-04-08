@@ -2,7 +2,7 @@ package engine.utils;
 
 import engine.exceptions.IllegalNotationException;
 import engine.game.Game;
-import engine.game.Timer;
+import engine.game.ChessTimer;
 import engine.types.Move;
 import utils.Color;
 
@@ -68,11 +68,11 @@ public class PGN {
      * Parses a PGN notation string and reconstructs the corresponding <code>Game</code> object by simulating its moves.
      *
      * @param pgn The PGN string to be parsed into a <code>Game</code>.
-     * @param timer The timer object to be used by <code>Game</code>.
+     * @param chessTimer The timer object to be used by <code>Game</code>.
      * @return A <code>Game</code> object reconstructed from the provided PGN.
      */
-    public static Game getGame(String pgn, Timer timer) {
-        Game game = new Game(timer);
+    public static Game getGame(String pgn, ChessTimer chessTimer) {
+        Game game = new Game(chessTimer);
 
         // Early Throw
         if (pgn == null || pgn.isEmpty()) {

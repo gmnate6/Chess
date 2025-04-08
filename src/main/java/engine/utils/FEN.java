@@ -3,7 +3,7 @@ package engine.utils;
 import engine.exceptions.IllegalNotationException;
 import engine.game.Board;
 import engine.game.Game;
-import engine.game.Timer;
+import engine.game.ChessTimer;
 import engine.pieces.Piece;
 import engine.types.CastlingRights;
 import engine.types.Position;
@@ -83,10 +83,10 @@ public class FEN {
      * and en passant targets. Optionally includes a timer state if provided.
      *
      * @param fen The FEN string representing the game's current state.
-     * @param timer An optional <code>Timer</code> object for tracking elapsed time (can be null).
+     * @param chessTimer An optional <code>Timer</code> object for tracking elapsed time (can be null).
      * @return A <code>Game</code> object reconstructed from the given FEN string.
      */
-    public static Game getGame(String fen, Timer timer) {
+    public static Game getGame(String fen, ChessTimer chessTimer) {
         Board board;
         Color currentPlayer;
         int halfMoveClock;
@@ -193,7 +193,7 @@ public class FEN {
         }
 
         // Construct and return the FEN object.
-        return new Game(board, currentPlayer, halfMoveClock, fullMoveNumber, timer);
+        return new Game(board, currentPlayer, halfMoveClock, fullMoveNumber, chessTimer);
     }
 
     /**

@@ -36,7 +36,8 @@ public class FENTest {
 
         // Play random game
         while (game.inPlay()) {
-            Move move = RandomAI.getMove(game);
+            RandomAI randomAI = new RandomAI();
+            Move move = randomAI.getMove(game);
 
             // To and From
             String expectedFEN = FEN.getFEN(game);

@@ -9,16 +9,21 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class BannerPanel extends JPanel {
+    public JLabel usernameLabel;
+    public JLabel timerLabel;
+    public JPanel timerBufferPanel;
+
     public BannerPanel() {
         /// Setup Banner Panel
         setLayout(new BorderLayout());
-        setBackground(AssetManager.getInstance().getThemeColor("panel"));
         setPreferredSize(new Dimension(50, 50));
+        setOpaque(false);
 
         /// Add Profile
         JPanel profilePanel = new JPanel(new BorderLayout());
         profilePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-        profilePanel.setOpaque(false);
+        profilePanel.setBackground(AssetManager.getInstance().getThemeColor("opaque"));
+
 
         // Avatar Buffer Panel
         JPanel avatarBufferPanel = new JPanel(new SquareLayoutManager());
@@ -34,7 +39,7 @@ public class BannerPanel extends JPanel {
         profilePanel.add(avatarBufferPanel, BorderLayout.WEST);
 
         // Username Label
-        JLabel usernameLabel = new JLabel("Username", SwingConstants.CENTER);
+        usernameLabel = new JLabel("Username", SwingConstants.CENTER);
         usernameLabel.setFont(AssetManager.getInstance().getFont("chess_font", 16));
         usernameLabel.setForeground(AssetManager.getInstance().getThemeColor("text"));
         profilePanel.add(usernameLabel, BorderLayout.CENTER);
@@ -43,15 +48,16 @@ public class BannerPanel extends JPanel {
         add(profilePanel, BorderLayout.WEST);
 
         /// Add Timer
-        JPanel timerBufferPanel = new JPanel(new BorderLayout());
+        timerBufferPanel = new JPanel(new BorderLayout());
         timerBufferPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        timerBufferPanel.setPreferredSize(new Dimension(120, 50));
         timerBufferPanel.setOpaque(false);
 
         JPanel timerPanel = new JPanel(new BorderLayout());
-        timerPanel.setBackground(AssetManager.getInstance().getThemeColor("panel"));
+        timerPanel.setBackground(AssetManager.getInstance().getThemeColor("opaque"));
 
         // Timer Label
-        JLabel timerLabel = new JLabel("00:00", SwingConstants.CENTER);
+        timerLabel = new JLabel("--:--", SwingConstants.CENTER);
         timerLabel.setFont(AssetManager.getInstance().getFont("chess_font", 32));
         timerLabel.setForeground(AssetManager.getInstance().getThemeColor("text"));
 
@@ -59,6 +65,5 @@ public class BannerPanel extends JPanel {
         timerPanel.add(timerLabel, BorderLayout.CENTER);
         timerBufferPanel.add(timerPanel);
         add(timerBufferPanel, BorderLayout.EAST);
-
     }
 }

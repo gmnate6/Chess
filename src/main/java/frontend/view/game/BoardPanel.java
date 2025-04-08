@@ -119,6 +119,7 @@ public class BoardPanel extends DynamicImagedPanel {
         int squareHeight = getHeight() / SIZE;
         AssetManager assetManager = AssetManager.getInstance();
         Square square = getSquare(pickedUpPosition);
+        if (square.getPiece() == null) { return; }
         BufferedImage pieceImage = assetManager.getThemeImage(square.getPiece());
 
         // Draw piece at mouse

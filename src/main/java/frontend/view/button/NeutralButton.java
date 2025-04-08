@@ -6,8 +6,8 @@ public class NeutralButton extends Button {
     public NeutralButton(String text) {
         super(
                 text,
-                AssetManager.getInstance().getThemeColor("neutralButton"),
-                AssetManager.getInstance().getThemeColor("neutralButtonHovered")
+                AssetManager.getInstance().getThemeColor("opaque"),
+                AssetManager.getInstance().getThemeColor("color")
         );
     }
 }

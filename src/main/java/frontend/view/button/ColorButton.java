@@ -6,8 +6,8 @@ public class ColorButton extends Button {
     public ColorButton(String text) {
         super(
                 text,
-                AssetManager.getInstance().getThemeColor("colorButton"),
-                AssetManager.getInstance().getThemeColor("colorButtonHovered")
+                AssetManager.getInstance().getThemeColor("color"),
+                AssetManager.getInstance().getThemeColor("opaque")
         );
     }
 }

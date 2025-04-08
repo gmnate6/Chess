@@ -2,13 +2,9 @@
   "highlight": "#7f5b91b3",
   "markedRed": "#cceb614c",
 
-  "panel": "#24000000",
-
-  "neutralButton": "#656567",
-  "neutralButtonHovered": "#7E7E80",
-
-  "colorButton": "#81b64c",
-  "colorButtonHovered": "#a3d160",
+  "transparent": "#24000000",
+  "opaque": "#656567",
+  "color": "#81b64c",
 
   "text": "#f8f8f8"
 }

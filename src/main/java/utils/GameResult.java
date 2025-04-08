@@ -37,4 +37,10 @@ public enum GameResult {
         if (isDraw()) { return "1/2-1/2"; }
         return "";
     }
+
+    public Color getWinner() {
+        if (whiteWon()) { return Color.WHITE; }
+        if (blackWon()) { return Color.BLACK; }
+        return null;
+    }
 }

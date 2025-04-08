@@ -18,12 +18,6 @@ public class AssetManager {
         return instance;
     }
 
-    // public AvatarManager getAvatarManager() { return avatarManager; }
-    // public CursorManager getCursorManager() { return cursorManager; }
-    // public FontManager getFontManager() { return fontManager; }
-    // public SoundManager getSoundManager() { return soundManager; }
-    // public ThemeManager getThemeManager() { return themeManager; }
-
     public BufferedImage getAvatar(String key) {
         return avatarManager.getAvatar(key);
     }
