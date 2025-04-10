@@ -5,11 +5,11 @@ import frontend.model.assets.AssetManager;
 import javax.swing.*;
 import java.awt.*;
 
-public class Button extends JButton {
-    public Button(String text, Color defaultColor, Color clickedColor) {
-        super(text);
+public class CustomButton extends JButton {
+    public int fontSize = 32;
 
-        setFont(AssetManager.getInstance().getFont("chess_font", 16));
+    public CustomButton(String text, Color defaultColor, Color clickedColor) {
+        setText(text);
         setForeground(AssetManager.getInstance().getThemeColor("text"));
         setBackground(defaultColor);
         setBorder(BorderFactory.createEmptyBorder());
@@ -43,7 +43,12 @@ public class Button extends JButton {
     }
 
     public void setGlyph(int glyph) {
-        setFont(AssetManager.getInstance().getFont("chess_glyph", 16));
-        new String(Character.toChars(glyph));
+        setFont(AssetManager.getInstance().getFont("chess_glyph", fontSize));
+        super.setText(new String(Character.toChars(glyph)));
+    }
+
+    public void setText(String text) {
+        setFont(AssetManager.getInstance().getFont("chess_font", fontSize));
+        super.setText(text);
     }
 }

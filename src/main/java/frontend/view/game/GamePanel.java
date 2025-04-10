@@ -2,6 +2,7 @@ package frontend.view.game;
 
 import frontend.model.assets.AssetManager;
 import frontend.view.button.NeutralButton;
+import frontend.view.button.CustomButton;
 import frontend.view.utils.BackgroundImagedPanel;
 import frontend.view.utils.SquareLayoutManager;
 
@@ -14,7 +15,7 @@ public class GamePanel extends BackgroundImagedPanel {
     public BannerPanel topBannerPanel;
     public BannerPanel bottomBannerPanel;
 
-    public JButton drawButton;
+    public CustomButton drawButton;
     public JButton resignButton;
 
     public GamePanel() {
@@ -90,11 +91,11 @@ public class GamePanel extends BackgroundImagedPanel {
         buttonsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         rightContentPanel.add(buttonsPanel, BorderLayout.SOUTH);
 
-        drawButton = new NeutralButton("Offer Draw");
+        drawButton = new NeutralButton(0x2b);
         drawButton.setPreferredSize(new Dimension(120, 40));
         drawButton.setMargin(new Insets(10, 10, 10, 10));
 
-        resignButton = new NeutralButton("Resign");
+        resignButton = new NeutralButton(0x59);
         resignButton.setMargin(new Insets(10, 10, 10, 10));
         resignButton.setPreferredSize(new Dimension(120, 40));
 
@@ -150,9 +151,5 @@ public class GamePanel extends BackgroundImagedPanel {
             frame.add(this);
             frame.setVisible(true);
         });
-    }
-    public static void main(String[] args) {
-        GamePanel gamePanel = new GamePanel();
-        gamePanel.createJFrame();
     }
 }

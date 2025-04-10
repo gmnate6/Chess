@@ -224,13 +224,16 @@ public abstract class AbstractGameController {
     }
 
     public void processPlayerMove(Move move) {
+        // Deselect
+        deselect();
+
         // Not your piece
         Piece piece = game.board.getPieceAt(move.initialPosition());
         if (piece != null && piece.getColor() != color) {
             return;
         }
 
-        // Remove Premove
+        // Remove Pre move
         if (preMove != null) {
             setPreMove(null);
         }
@@ -258,9 +261,6 @@ public abstract class AbstractGameController {
 
         // Execute Move
         executeMove(move);
-
-        // Deselect
-        deselect();
     }
 
     public void executeMove(Move move) {

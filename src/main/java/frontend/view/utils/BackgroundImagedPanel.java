@@ -11,12 +11,10 @@ public class BackgroundImagedPanel extends JPanel {
 
     public BackgroundImagedPanel(Image image) {
         super();
-        this.originalImage = image;
-        setOpaque(false);
-        this.repaint();
+        setImage(image);
     }
     public BackgroundImagedPanel() {
-        this(null);
+        super();
     }
 
     @Override

@@ -20,7 +20,7 @@ public class FontManager {
             // Add to the map (stored with the default size)
             fonts.put(key, font);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Failed to load font from file: " + path);
         }
     }
 
@@ -38,6 +38,5 @@ public class FontManager {
 
         // Return the font with the requested size
         return font.deriveFont(size);
-
     }
 }
