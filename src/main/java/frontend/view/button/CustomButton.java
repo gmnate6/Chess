@@ -41,4 +41,9 @@ public class Button extends JButton {
 
         });
     }
+
+    public void setGlyph(int glyph) {
+        setFont(AssetManager.getInstance().getFont("chess_glyph", 16));
+        new String(Character.toChars(glyph));
+    }
 }
