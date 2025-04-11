@@ -19,9 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * and reliability of the move-to-algebraic conversion logic.</p>
  */
 public class ToAlgebraicTest {
-    /**
-     * Verifies that pawn moves are correctly translated to algebraic notation.
-     */
     @Test
     public void testPawn() {
         // White
@@ -45,9 +42,6 @@ public class ToAlgebraicTest {
         assertEquals("bxc6", MoveUtils.toAlgebraic(move1, game));
     }
 
-    /**
-     * Ensures that pawn promotions are correctly represented in algebraic notation.
-     */
     @Test
     public void testPromotion() {
         // White
@@ -73,9 +67,6 @@ public class ToAlgebraicTest {
         assertEquals("f1=B", MoveUtils.toAlgebraic(move4, game));
     }
 
-    /**
-     * Checks that castling moves (king side and queen side) are correctly represented in algebraic notation.
-     */
     @Test
     public void testCastling() {
         // White
@@ -93,9 +84,6 @@ public class ToAlgebraicTest {
         assertEquals("O-O-O", MoveUtils.toAlgebraic(move2, game));
     }
 
-    /**
-     * Verifies that algebraic notation properly resolves ambiguities when the same piece type can make a move.
-     */
     @Test
     public void testAmbiguity() {
         // No Ambiguity
@@ -138,9 +126,6 @@ public class ToAlgebraicTest {
         assertEquals("Nce2", MoveUtils.toAlgebraic(move2, game));
     }
 
-    /**
-     * Ensures that capturing moves are represented correctly in algebraic notation.
-     */
     @Test
     public void testCapture() {
         // White
@@ -154,9 +139,6 @@ public class ToAlgebraicTest {
         assertEquals("Rxg3", MoveUtils.toAlgebraic(move, game));
     }
 
-    /**
-     * Checks that moves which result in a check to the opposing king are correctly annotated in algebraic notation.
-     */
     @Test
     public void testChecks() {
         // White
@@ -170,9 +152,6 @@ public class ToAlgebraicTest {
         assertEquals("Rh1+", MoveUtils.toAlgebraic(move, game));
     }
 
-    /**
-     * Verifies that moves which result in a checkmate are correctly indicated in algebraic notation.
-     */
     @Test
     public void testCheckmates() {
         // White
@@ -186,9 +165,6 @@ public class ToAlgebraicTest {
         assertEquals("Rg1#", MoveUtils.toAlgebraic(move, game));
     }
 
-    /**
-     * Tests the correct representation of a complex scenario involving promotion, capture, and checkmate in a single move.
-     */
     @Test
     public void testPromotion_Capture_Checkmate() {
         // White

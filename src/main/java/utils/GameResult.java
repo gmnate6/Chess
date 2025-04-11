@@ -6,8 +6,8 @@ public enum GameResult {
     STALEMATE,                     // Draw by stalemate
     FIFTY_MOVE_RULE,               // Draw by 50-move rule
     THREEFOLD_REPETITION,          // Draw by move repetition
-    TIME_WHITE_LOSS,               // White loses on time
-    TIME_BLACK_LOSS,               // Black loses on time
+    WHITE_WON_ON_TIME,             // White won on time
+    BLACK_WON_ON_TIME,             // Black won on time
     DRAW_AGREEMENT,                // Draw by mutual agreement
     RESIGN_WHITE,                  // White resigns
     RESIGN_BLACK,                  // Black resigns
@@ -15,10 +15,10 @@ public enum GameResult {
 
     // Getters
     public boolean whiteWon() {
-        return this == WHITE_CHECKMATE || this == RESIGN_WHITE;
+        return this == WHITE_CHECKMATE || this == RESIGN_WHITE || this == WHITE_WON_ON_TIME;
     }
     public boolean blackWon() {
-        return this == BLACK_CHECKMATE || this == RESIGN_BLACK;
+        return this == BLACK_CHECKMATE || this == RESIGN_BLACK || this == BLACK_WON_ON_TIME;
     }
 
     public boolean isCheckmate() {
@@ -27,7 +27,6 @@ public enum GameResult {
     public boolean isDraw() {
         return this == STALEMATE || this == FIFTY_MOVE_RULE || this == THREEFOLD_REPETITION || this == DRAW_AGREEMENT;
     }
-
     public boolean isOnGoing() {
         return this == ON_GOING;
     }
@@ -37,5 +36,11 @@ public enum GameResult {
         if (blackWon()) { return "0-1"; }
         if (isDraw()) { return "1/2-1/2"; }
         return "";
+    }
+
+    public Color getWinner() {
+        if (whiteWon()) { return Color.WHITE; }
+        if (blackWon()) { return Color.BLACK; }
+        return null;
     }
 }

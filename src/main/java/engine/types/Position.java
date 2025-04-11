@@ -19,7 +19,7 @@ public record Position(int file, int rank) {
      */
     public Position {
         if (file < 0 || file > 7 || rank < 0 || rank > 7) {
-            throw new IllegalPositionException("Illegal Position: " + file + ", " + rank + ". Valid range for file and rank is 0-7.");
+            throw new IllegalPositionException("Illegal Position: (" + file + ", " + rank + "). Valid range for file and rank is 0-7.");
         }
     }
 
@@ -32,7 +32,7 @@ public record Position(int file, int rank) {
      */
     public static Position fromAlgebraic(String notation) {
         if (notation.length() != 2) {
-            throw new IllegalNotationException("Illegal Position Notation: Notation must be exactly 2 characters. Received: " + notation);
+            throw new IllegalNotationException("Illegal Position Notation: '" + notation + "'. Notation must be exactly 2 characters.");
         }
 
         // Parse
@@ -41,7 +41,7 @@ public record Position(int file, int rank) {
 
         // Rank must be Digit
         if (!Character.isDigit(rankChar)) {
-            throw new IllegalNotationException("Illegal Position Notation: Rank must be a digit (1-8). Received: " + notation);
+            throw new IllegalNotationException("Illegal Position Notation: '" + notation + "'. Rank must be a digit (1-8)");
         }
 
         // Convert to INT
@@ -50,7 +50,7 @@ public record Position(int file, int rank) {
 
         // Must be in range
         if (file < 0 || file > 7 || rank < 0 || rank > 7) {
-            throw new IllegalNotationException("Illegal Position Notation: " + notation + ". File and rank must be between 0 and 7.");
+            throw new IllegalNotationException("Illegal Position Notation: '" + notation + "'. File and rank must be between 0 and 7.");
         }
 
         // Return
@@ -103,6 +103,23 @@ public record Position(int file, int rank) {
             throw new IllegalPositionException("Illegal Position: Moved Position is Out of Bounds.");
         }
         return new Position(newFile, newRank);
+    }
+
+
+    /**
+     * Flips the position as if the chessboard is turned 180 degrees.
+     * The file (column) and rank (row) are both inverted relative to
+     * the center of the chessboard.
+     *
+     * For example:
+     * - Position "a1" (file = 0, rank = 0) is inverted to "h8" (file = 7, rank = 7).
+     * - Position "h8" (file = 7, rank = 7) is inverted to "a1" (file = 0, rank = 0).
+     * - Position "c3" (file = 2, rank = 2) is inverted to "f6" (file = 5, rank = 5).
+     *
+     * @return A new `Position` object representing the flipped coordinates.
+     */
+    public Position inverse() {
+        return new Position(7 - file, 7 - rank);
     }
 
     // Equality & Hashing

@@ -2,7 +2,7 @@ package engine;
 
 import engine.game.Game;
 import engine.types.Position;
-import engine.game.Timer;
+import engine.game.ChessTimer;
 import engine.utils.FEN;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
 public class EngineSpeedTest {
     public static void main(String[] args) {
         // Setup Game
-        Game game = FEN.getGame("4k3/8/8/8/1Q4K1/8/8/8 w KQkq - 0 1", new Timer(600_000, 0));
+        Game game = FEN.getGame("4k3/8/8/8/1Q4K1/8/8/8 w KQkq - 0 1", new ChessTimer(600_000, 0));
 
         // Suggest garbage collection
         System.gc();

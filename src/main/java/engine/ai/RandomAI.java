@@ -8,8 +8,12 @@ import engine.utils.MoveUtils;
 import java.util.List;
 import java.util.Random;
 
-public class RandomAI {
-    public static Move getMove(Game game) {
+public class RandomAI implements ChessAI{
+    public String getName() {
+        return "RandomAI";
+    }
+
+    public Move getMove(Game game) {
         // Random instance
         Random random = new Random();
 

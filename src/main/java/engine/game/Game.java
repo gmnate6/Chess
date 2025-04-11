@@ -33,7 +33,7 @@ public class Game {
     private Color turn = Color.WHITE;
     private int halfMoveClock = 0;
     private int fullMoveNumber = 1;
-    private final Timer timer;
+    private ChessTimer chessTimer;
     private GameResult result = GameResult.ON_GOING;
     private final HashMap<String, Integer> boardHistory = new HashMap<>();
     private final MoveHistory moveHistory = new MoveHistory();
@@ -43,20 +43,18 @@ public class Game {
      * If a Timer is provided, it is validated and started if not already running.
      * If no Timer is provided, the game is played without time tracking.
      *
-     * @param timer The Timer object for managing player time or null to disable timers.
+     * @param chessTimer The Timer object for managing player time or null to disable timers.
      */
-    public Game(Timer timer) {
+    public Game(ChessTimer chessTimer) {
         // Disabled Timer
-        if (timer == null) {
-            this.timer = null;
+        if (chessTimer == null) {
+            this.chessTimer = null;
             return;
         }
 
-        // Set Timer
-        this.timer = timer;
-        if (!this.timer.isStarted()) {
-            this.timer.start();
-        }
+        // Set and Start Timer
+        this.chessTimer = chessTimer;
+        this.chessTimer.start();
     }
 
     /**
@@ -70,18 +68,18 @@ public class Game {
      * @param turn            The current player's turn (Color.WHITE or Color.BLACK).
      * @param halfMoveClock   The half-move counter for the fifty-move rule.
      * @param fullMoveNumber  The turn count, incremented after each move by Black.
-     * @param timer           The Timer object for time management (nullable).
+     * @param chessTimer           The Timer object for time management (nullable).
      */
-    public Game(Board board, Color turn, int halfMoveClock, int fullMoveNumber, Timer timer) {
-        this(timer);
+    public Game(Board board, Color turn, int halfMoveClock, int fullMoveNumber, ChessTimer chessTimer) {
+        this(chessTimer);
         this.board = board;
         this.turn = turn;
         this.halfMoveClock = halfMoveClock;
         this.fullMoveNumber = fullMoveNumber;
 
         // Update Timer.turn if needed
-        if (timer != null && this.turn != this.timer.getTurn()) {
-            this.timer.setTurn(this.turn);
+        if (chessTimer != null && this.turn != this.chessTimer.getTurn()) {
+            this.chessTimer.setTurn(this.turn);
         }
     }
 
@@ -97,7 +95,7 @@ public class Game {
                 this.board.getDeepCopy(),
                 this.turn, this.halfMoveClock,
                 this.fullMoveNumber,
-                (this.timer == null ? null : this.timer.getDeepCopy())
+                (this.chessTimer == null ? null : this.chessTimer.getDeepCopy())
         );
     }
 
@@ -107,8 +105,19 @@ public class Game {
     public int getFullMoveNumber() { return fullMoveNumber; }
     public GameResult getResult() { return result; }
     public boolean inPlay() { return result == GameResult.ON_GOING;}
-    public Timer getTimer() { return timer; }
+    public ChessTimer getTimer() { return chessTimer; }
     public MoveHistory getMoveHistory() { return moveHistory; }
+
+    /**
+     * Removes the timer from the game.
+     *
+     * <p>This method sets the game's timer to `null`, effectively disabling
+     * time tracking for the rest of the game. Use this when time management
+     * is no longer required or to transition the game to a non-timed format.</p>
+     */
+    public void removeTimer() {
+        this.chessTimer = null;
+    }
 
     /**
      * Switches the current player's turn in the game.
@@ -122,9 +131,9 @@ public class Game {
         this.turn = this.turn.inverse();
 
         // Switch Timer Turn
-        if (this.timer != null) {
-            this.timer.switchTurn();
-            if (this.turn != timer.getTurn()) {
+        if (this.chessTimer != null) {
+            this.chessTimer.switchTurn();
+            if (this.turn != chessTimer.getTurn()) {
                 throw new IllegalStateException("Timer.turn did not equal Game.turn");
             }
         }
@@ -189,7 +198,7 @@ public class Game {
             King king = boardCopy.getKing(turn);
             Position kingPosition = boardCopy.getKingPosition(turn);
             return !king.isChecked(kingPosition, boardCopy);
-        } catch (IllegalMoveException e) {
+        } catch (Exception e) {
             return false;
         }
     }
@@ -305,38 +314,78 @@ public class Game {
         // Checkmated
         if (isCheckmate()) {
             result = (turn == Color.WHITE ? GameResult.BLACK_CHECKMATE : GameResult.WHITE_CHECKMATE);
+            stopTimer();
             return;
         }
 
         // Stalemate
         if (isStalemate()) {
             result = GameResult.STALEMATE;
+            stopTimer();
             return;
         }
 
         // 50 Move Rule
         if (this.halfMoveClock >= 100) {
             result = GameResult.FIFTY_MOVE_RULE;
+            stopTimer();
             return;
         }
 
         // Threefold Repetition
-        if (boardHistory.get(FEN.getFENBoardAndTurn(this)) >= 3) {
+        if (!boardHistory.isEmpty() && boardHistory.get(FEN.getFENBoardAndTurn(this)) >= 3) {
             result = GameResult.THREEFOLD_REPETITION;
+            stopTimer();
             return;
         }
 
         // Timer
-        if (this.timer != null){
-            if (this.timer.isOutOfTime(Color.WHITE)) {
-                result = GameResult.TIME_WHITE_LOSS;
+        if (this.chessTimer != null){
+            if (this.chessTimer.isOutOfTime(Color.WHITE)) {
+                result = GameResult.BLACK_WON_ON_TIME;
+                stopTimer();
+                return;
             }
-            if (this.timer.isOutOfTime(Color.BLACK)) {
-                result = GameResult.TIME_BLACK_LOSS;
+            if (this.chessTimer.isOutOfTime(Color.BLACK)) {
+                result = GameResult.WHITE_WON_ON_TIME;
+                stopTimer();
+                return;
             }
         }
     }
 
+    public void stopTimer() {
+        if (chessTimer == null) { return; }
+        chessTimer.stop();
+    }
+
+    /**
+     * Updates the game result to reflect a resignation by the specified player.
+     *
+     * <p>The method sets the game result based on the color of the player
+     * who resigns. If the White player resigns, the result is set to
+     * `RESIGN_WHITE`, indicating that Black wins. Similarly, if the
+     * Black player resigns, the result is set to `RESIGN_BLACK`, indicating that
+     * White wins.</p>
+     *
+     * @param color The color of the player resigning (Color.WHITE or Color.BLACK).
+     */
+    public void resign(Color color) {
+        this.result = color == Color.WHITE ? GameResult.RESIGN_WHITE : GameResult.RESIGN_BLACK;
+        stopTimer();
+    }
+
+    /**
+     * Updates the game result to indicate a draw by mutual agreement.
+     *
+     * <p>This method sets the game result to `DRAW_AGREEMENT`, signifying that
+     * both players have agreed to end the game in a draw. This is one of the
+     * standard methods to conclude a chess game without a decisive winner.</p>
+     */
+    public void drawAgreement() {
+        this.result = GameResult.DRAW_AGREEMENT;
+        stopTimer();
+    }
 
     /**
      * Executes a move, updates the game state, and switches turns.
@@ -353,14 +402,15 @@ public class Game {
      * @throws IllegalMoveException If the move is illegal.
      */
     public void move(Move move) {
-        // Convert Stuff
-        Position initialPosition = move.initialPosition();
-        Piece pieceToMove = board.getPieceAt(initialPosition);
-
         // If Game is Over
+        this.checkWinConditions();
         if (getResult() != GameResult.ON_GOING) {
             throw new IllegalMoveException("Illegal Move: Cannot make move after game is finished.");
         }
+
+        // Convert Stuff
+        Position initialPosition = move.initialPosition();
+        Piece pieceToMove = board.getPieceAt(initialPosition);
 
         // Make sure there is a pieceToMove
         if (pieceToMove == null) {
@@ -426,7 +476,7 @@ public class Game {
                 "\nEn Passant: " + board.getEnPassantPosition() +
                 "\nGame Result: " + getResult() +
                 "\nCurrent Turn: " + getTurn() +
-                (this.timer == null ?
-                        "" : "\nWhite Time: " + timer.getFormatedTimeLeft(Color.WHITE) + "\nBlack Time: " + timer.getFormatedTimeLeft(Color.BLACK));
+                (this.chessTimer == null ?
+                        "" : "\nWhite Time: " + chessTimer.getFormatedTimeLeft(Color.WHITE) + "\nBlack Time: " + chessTimer.getFormatedTimeLeft(Color.BLACK));
     }
 }

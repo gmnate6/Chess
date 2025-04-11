@@ -1,7 +1,7 @@
 package engine;
 
 import engine.game.Game;
-import engine.game.Timer;
+import engine.game.ChessTimer;
 import engine.types.Move;
 import engine.types.Position;
 import engine.utils.FEN;
@@ -23,8 +23,8 @@ public class CommandLineGame {
      * It initializes the game state, displays the game, and processes player input in a loop.
      */
     private void run() {
-        Timer timer = new Timer(DEFAULT_GAME_DURATION_MS, 0);
-        Game game = initializeGame(timer); // Initialize the game
+        ChessTimer chessTimer = new ChessTimer(DEFAULT_GAME_DURATION_MS, 0);
+        Game game = initializeGame(chessTimer); // Initialize the game
 
         // Main game loop
         while (game.inPlay()) {
@@ -50,10 +50,10 @@ public class CommandLineGame {
     /**
      * Initializes the game by either starting a new game or loading from a FEN or PGN.
      *
-     * @param timer The game's timer to manage the duration.
+     * @param chessTimer The game's timer to manage the duration.
      * @return The initialized `Game` object.
      */
-    private Game initializeGame(Timer timer) {
+    private Game initializeGame(ChessTimer chessTimer) {
         System.out.print("Import Game? (y, n): ");
         String input = scanner.nextLine();
 
@@ -66,7 +66,7 @@ public class CommandLineGame {
                 System.out.print("Enter FEN: ");
                 input = scanner.nextLine().trim();
                 try {
-                    return FEN.getGame(input, timer);
+                    return FEN.getGame(input, chessTimer);
                 } catch (Exception e) {
                     System.out.println("Not a valid FEN string.");
                 }
@@ -75,7 +75,7 @@ public class CommandLineGame {
                 System.out.print("Enter PGN: ");
                 input = scanner.nextLine().trim();
                 try {
-                    return PGN.getGame(input);
+                    return PGN.getGame(input, chessTimer);
                 } catch (Exception e) {
                     System.out.println("Not a valid PGN string.");
                 }
@@ -83,7 +83,7 @@ public class CommandLineGame {
         }
 
         // New Game
-        return new Game(timer); // Default game creation
+        return new Game(chessTimer); // Default game creation
     }
 
     /**

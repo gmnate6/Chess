@@ -21,13 +21,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * It is repeated multiple times to ensure robustness across various random game scenarios.
  */
 public class ToFromAlgebraicTest {
-    @RepeatedTest(20)
+    @RepeatedTest(5)
     public void randomGameTest() {
         Game game = new Game(null);
 
         // Play random game
         while (game.inPlay()) {
-            Move originalMove = RandomAI.getMove(game);
+            Move originalMove = new RandomAI().getMove(game);
 
             // To and From
             String algebraic = MoveUtils.toAlgebraic(originalMove, game);

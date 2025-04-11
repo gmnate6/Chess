@@ -139,6 +139,10 @@ public class King extends Piece {
         }
     }
 
+    public boolean isCastleAttempt(Move move) {
+        return isCastleAttempt(move, true) || isCastleAttempt(move, false);
+    }
+
     /**
      * Checks if the path for castling is free of obstructions.
      *

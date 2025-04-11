@@ -3,7 +3,7 @@ package engine.utils;
 import engine.exceptions.IllegalNotationException;
 import engine.game.Board;
 import engine.game.Game;
-import engine.game.Timer;
+import engine.game.ChessTimer;
 import engine.pieces.Piece;
 import engine.types.CastlingRights;
 import engine.types.Position;
@@ -48,6 +48,10 @@ public class FEN {
                     continue;
                 }
 
+                if (file >= 8) {
+                    throw new IllegalNotationException("Illegal FEN: Board must be 8 ranks wide.");
+                }
+
                 // Set Piece On Board
                 Position pos = new Position(file, rank);
                 try {
@@ -79,10 +83,10 @@ public class FEN {
      * and en passant targets. Optionally includes a timer state if provided.
      *
      * @param fen The FEN string representing the game's current state.
-     * @param timer An optional <code>Timer</code> object for tracking elapsed time (can be null).
+     * @param chessTimer An optional <code>Timer</code> object for tracking elapsed time (can be null).
      * @return A <code>Game</code> object reconstructed from the given FEN string.
      */
-    public static Game getGame(String fen, Timer timer) {
+    public static Game getGame(String fen, ChessTimer chessTimer) {
         Board board;
         Color currentPlayer;
         int halfMoveClock;
@@ -170,6 +174,11 @@ public class FEN {
             throw new IllegalNotationException("Illegal FEN: Invalid half move clock '" + halfMoveClockFEN + "'.");
         }
 
+        // Constrain Half Move Clock
+        if (halfMoveClock < 0 || halfMoveClock > 100) {
+            throw new IllegalNotationException("Illegal FEN: Half move clock must be between 0 and 100.");
+        }
+
         /// Construct Full Move Number
         String fullMoveNumberFEN = fenParts[5];
         try {
@@ -178,8 +187,13 @@ public class FEN {
             throw new IllegalNotationException("Illegal FEN: Invalid full move number '" + fullMoveNumberFEN + "'.");
         }
 
+        // Constrain Full Move Number
+        if (fullMoveNumber <= 0) {
+            throw new IllegalNotationException("Illegal FEN: Full move number must be greater than 0.");
+        }
+
         // Construct and return the FEN object.
-        return new Game(board, currentPlayer, halfMoveClock, fullMoveNumber, timer);
+        return new Game(board, currentPlayer, halfMoveClock, fullMoveNumber, chessTimer);
     }
 
     /**
