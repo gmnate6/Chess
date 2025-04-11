@@ -1,5 +1,6 @@
 package frontend.controller.game;
 
+import engine.game.ChessTimer;
 import engine.types.Move;
 import frontend.view.game.GamePanel;
 import utils.Color;

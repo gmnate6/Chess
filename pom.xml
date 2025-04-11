@@ -32,7 +32,7 @@
       <version>1.18</version>
     </dependency>
 
-    <!--  -->
+    <!-- GSON for working with json files -->
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>

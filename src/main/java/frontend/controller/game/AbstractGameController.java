@@ -13,6 +13,7 @@ import frontend.view.game.Square;
 import utils.Color;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -81,6 +82,10 @@ public abstract class AbstractGameController {
     }
 
     public void setPerspective(Color color) {
+        if (game.getTimer() != null && game.getTimer().isActive()) {
+            System.err.println("Cannot change perspective while timer is active.");
+            return;
+        }
         boardPanel.setPerspective(color);
         boardPanel.loadPieces(game);
     }

@@ -26,6 +26,11 @@ public class ClientApplication {
                 modeOptions,
                 modeOptions[0]);
 
+        // Early Return
+        if (modeChoice == -1) {
+            System.exit(0);
+        }
+
         // Solo
         if (modeChoice == 0) {
             return new SoloGameController(gamePanel);
@@ -54,7 +59,6 @@ public class ClientApplication {
         }
 
         // If the user closes the dialog or selects nothing
-        JOptionPane.showMessageDialog(null, "No selection made. Exiting game.");
         System.exit(0);
         return null;
     }

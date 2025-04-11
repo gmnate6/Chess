@@ -1,6 +1,7 @@
 package frontend.view.game;
 
 import frontend.model.assets.AssetManager;
+import frontend.view.menu.TransparentPanel;
 import frontend.view.utils.DynamicImagedPanel;
 import frontend.view.utils.SquareLayoutManager;
 
@@ -20,10 +21,8 @@ public class BannerPanel extends JPanel {
         setOpaque(false);
 
         /// Add Profile
-        JPanel profilePanel = new JPanel(new BorderLayout());
+        TransparentPanel profilePanel = new TransparentPanel(new BorderLayout());
         profilePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-        profilePanel.setBackground(AssetManager.getInstance().getThemeColor("opaque"));
-
 
         // Avatar Buffer Panel
         JPanel avatarBufferPanel = new JPanel(new SquareLayoutManager());
@@ -52,18 +51,15 @@ public class BannerPanel extends JPanel {
         timerBufferPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         timerBufferPanel.setPreferredSize(new Dimension(120, 50));
         timerBufferPanel.setOpaque(false);
+        add(timerBufferPanel, BorderLayout.EAST);
 
-        JPanel timerPanel = new JPanel(new BorderLayout());
-        timerPanel.setBackground(AssetManager.getInstance().getThemeColor("opaque"));
+        TransparentPanel timerPanel = new TransparentPanel(new BorderLayout());
+        timerBufferPanel.add(timerPanel);
 
         // Timer Label
         timerLabel = new JLabel("--:--", SwingConstants.CENTER);
         timerLabel.setFont(AssetManager.getInstance().getFont("chess_font", 32));
         timerLabel.setForeground(AssetManager.getInstance().getThemeColor("text"));
-
-        // Add
         timerPanel.add(timerLabel, BorderLayout.CENTER);
-        timerBufferPanel.add(timerPanel);
-        add(timerBufferPanel, BorderLayout.EAST);
     }
 }

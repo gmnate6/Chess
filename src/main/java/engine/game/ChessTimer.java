@@ -179,6 +179,7 @@ public class ChessTimer {
         return player == Color.WHITE ? whiteTime : blackTime;
     }
     public Color getTurn() { return turn; }
+    public boolean isActive() { return active; }
 
     // Setters
     public void setTurn(Color currentTurn) { this.turn = currentTurn; }
