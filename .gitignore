@@ -6,3 +6,6 @@ target/
 
 # Ignore compiled class files
 *.class
+
+# Ignore Maven files
+dependency-reduced-pom.xml
