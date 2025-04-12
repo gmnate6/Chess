@@ -44,8 +44,8 @@ public abstract class AbstractImagedPanel extends JPanel {
     protected abstract Dimension getNewDimension();
 
     protected boolean hasChangedSize() {
-        int width = getWidth();
-        int height = getHeight();
+        int width = getNewDimension().width;
+        int height = getNewDimension().height;
         return (cachedImage == null || width != cachedWidth || height != cachedHeight);
     }
 

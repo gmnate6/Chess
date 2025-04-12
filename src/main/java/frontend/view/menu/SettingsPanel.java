@@ -59,7 +59,7 @@ public class SettingsPanel extends AbstractMenuPanel {
         avatarPreviewBufferPanel.add(avatarPanel);
 
         // Avatar Dropdown
-        avatarDropdown = new TranslucentComboBox<>(new String[] {"Avatar 1", "Avatar 2", "Avatar 3"});
+        avatarDropdown = new TranslucentComboBox<>();
         avatarDropdown.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentPanel.add(avatarDropdown);
 
@@ -69,7 +69,7 @@ public class SettingsPanel extends AbstractMenuPanel {
         contentPanel.add(themeLabel);
 
         // Theme Dropdown
-        themeDropdown = new TranslucentComboBox<>(new String[] {"Theme 1", "Theme 2", "Theme 3"});
+        themeDropdown = new TranslucentComboBox<>();
         themeDropdown.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentPanel.add(themeDropdown);
 

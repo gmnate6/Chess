@@ -4,7 +4,7 @@ import frontend.controller.BaseController;
 
 import javax.swing.*;
 
-public class OfflineMenuController implements BaseController {
+public class OnlineController implements BaseController {
     @Override
     public void dispose() {
 

@@ -18,7 +18,10 @@ public class BotGameController extends AbstractGameController {
         // Set AI
         this.ai = ai;
         gamePanel.setTopAvatar(AssetManager.getInstance().getAvatar("bot"));
-        gamePanel.setTopUsername(ai.getName());
+        gamePanel.setTopUsername(ai.toString());
+
+        // Disable Draw
+        gamePanel.drawButton.setEnabled(false);
 
         // First move bot
         if (color == Color.BLACK) {

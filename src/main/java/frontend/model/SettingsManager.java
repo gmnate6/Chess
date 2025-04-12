@@ -1,5 +1,6 @@
 package frontend.model;
 
+import frontend.controller.MainController;
 import frontend.model.assets.AssetManager;
 import frontend.model.json.SettingsJsonHandler;
 
@@ -91,6 +92,7 @@ public class SettingsManager {
             return;
         }
         AssetManager.getInstance().getThemeManager().loadTheme(theme);
+        MainController.forceRedraw();
         this.theme = theme;
     }
     public String getTheme() {

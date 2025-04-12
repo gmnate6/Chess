@@ -12,10 +12,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SettingsMenuController implements BaseController {
+public class SettingsController implements BaseController {
     private final SettingsPanel settingsPanel;
 
-    public SettingsMenuController() {
+    public SettingsController() {
         settingsPanel = new SettingsPanel();
         setInitialValues();
         setListeners();
@@ -56,8 +56,10 @@ public class SettingsMenuController implements BaseController {
             settingsPanel.avatarPanel.setImage(AssetManager.getInstance().getAvatars().get(selectedAvatar));
         });
 
+        // Save Button Listener
         settingsPanel.saveButton.addActionListener(e -> save());
 
+        // Cancel Button Listener
         settingsPanel.cancelButton.addActionListener(e -> goBack());
     }
 
@@ -70,7 +72,6 @@ public class SettingsMenuController implements BaseController {
             JOptionPane.showMessageDialog(settingsPanel, "Invalid username", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        settingsManager.setUsername(username);
 
         // Avatar
         String avatar = (String) settingsPanel.avatarDropdown.getSelectedItem();
@@ -79,7 +80,6 @@ public class SettingsMenuController implements BaseController {
             JOptionPane.showMessageDialog(settingsPanel, "Invalid avatar", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        settingsManager.setAvatar(avatar);
 
         // Theme
         String theme = (String) settingsPanel.themeDropdown.getSelectedItem();
@@ -88,7 +88,6 @@ public class SettingsMenuController implements BaseController {
             JOptionPane.showMessageDialog(settingsPanel, "Invalid theme", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        settingsManager.setTheme(theme);
 
         // Server URL
         String serverURL = settingsPanel.serverURLField.getText();
@@ -96,17 +95,33 @@ public class SettingsMenuController implements BaseController {
             JOptionPane.showMessageDialog(settingsPanel, "Invalid server URL", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        settingsManager.setServerURL(serverURL);
 
         // Save Settings
-        settingsManager.save();
+        String finalTheme = theme;
+        new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() {
+                // Set
+                settingsManager.setUsername(username);
+                settingsManager.setAvatar(avatar);
+                settingsManager.setTheme(finalTheme);
+                settingsManager.setServerURL(serverURL);
+
+                // Save
+                settingsManager.save();
+                return null;
+            }
+        }.execute();
+
+        // Force Redraw
+        MainController.forceRedraw();
 
         // Exit
         goBack();
     }
 
     private void goBack() {
-        MainController.getInstance().switchTo(new TitleMenuController());
+        MainController.switchTo(new TitleController());
     }
 
     @Override

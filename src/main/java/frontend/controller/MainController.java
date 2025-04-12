@@ -1,6 +1,6 @@
 package frontend.controller;
 
-import frontend.controller.menu.TitleMenuController;
+import frontend.controller.menu.TitleController;
 import frontend.model.SettingsManager;
 import frontend.model.assets.AssetManager;
 import frontend.view.MainFrame;
@@ -19,21 +19,27 @@ public class MainController {
         SettingsManager.getInstance();
 
         // Load Title
-        switchTo(new TitleMenuController());
+        switchTo(new TitleController());
     }
 
-    public static MainController getInstance() {
+    private static MainController getInstance() {
         if (instance == null) {
             throw new IllegalStateException("MainController is not initialized");
         }
         return instance;
     }
 
-    public void switchTo(BaseController controller) {
-        if (activeController != null) {
-            activeController.dispose();
+    public static void switchTo(BaseController controller) {
+        MainController instance = MainController.getInstance();
+        if (instance.activeController != null) {
+            instance.activeController.dispose();
         }
-        activeController = controller;
-        mainFrame.setContentPanel(controller.getPanel());
+        instance.activeController = controller;
+        instance.mainFrame.setContentPanel(controller.getPanel());
+    }
+
+    public static void forceRedraw() {
+        MainController instance = MainController.getInstance();
+        instance.mainFrame.forceRedraw();
     }
 }

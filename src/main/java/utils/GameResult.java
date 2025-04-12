@@ -9,16 +9,16 @@ public enum GameResult {
     WHITE_WON_ON_TIME,             // White won on time
     BLACK_WON_ON_TIME,             // Black won on time
     DRAW_AGREEMENT,                // Draw by mutual agreement
-    RESIGN_WHITE,                  // White resigns
-    RESIGN_BLACK,                  // Black resigns
+    WHITE_RESIGN,                  // White wins by resigns
+    BLACK_RESIGN,                  // Black wins by resigns
     ON_GOING;                      // Game still in progress
 
     // Getters
     public boolean whiteWon() {
-        return this == WHITE_CHECKMATE || this == RESIGN_WHITE || this == WHITE_WON_ON_TIME;
+        return this == WHITE_CHECKMATE || this == WHITE_RESIGN || this == WHITE_WON_ON_TIME;
     }
     public boolean blackWon() {
-        return this == BLACK_CHECKMATE || this == RESIGN_BLACK || this == BLACK_WON_ON_TIME;
+        return this == BLACK_CHECKMATE || this == BLACK_RESIGN || this == BLACK_WON_ON_TIME;
     }
 
     public boolean isCheckmate() {

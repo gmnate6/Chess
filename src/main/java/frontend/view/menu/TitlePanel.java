@@ -7,8 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class TitlePanel extends AbstractMenuPanel {
-    public TransparentButton playOnlineButton;
-    public TransparentButton playOfflineButton;
+    public TransparentButton onlineButton;
+    public TransparentButton offlineButton;
     public TransparentButton settingsButton;
 
     public TitlePanel() {
@@ -20,18 +20,19 @@ public class TitlePanel extends AbstractMenuPanel {
         super.initializeComponents();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
 
-        // Play Online Button
-        playOnlineButton = new TransparentButton("Play Online");
-        playOnlineButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        contentPanel.add(playOnlineButton);
+        // Online Button
+        onlineButton = new TransparentButton("Play Online");
+        onlineButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        onlineButton.setEnabled(false);
+        contentPanel.add(onlineButton);
 
         // Spacer between buttons
         contentPanel.add(Box.createVerticalStrut(10));
 
-        // Play Offline Button
-        playOfflineButton = new TransparentButton("Play Offline");
-        playOfflineButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        contentPanel.add(playOfflineButton);
+        // Offline Button
+        offlineButton = new TransparentButton("Play Offline");
+        offlineButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentPanel.add(offlineButton);
 
         // Spacer between buttons
         contentPanel.add(Box.createVerticalStrut(10));
@@ -53,8 +54,8 @@ public class TitlePanel extends AbstractMenuPanel {
         int baseFontSize = getBaseFontSize();
 
         // Update button font sizes
-        playOnlineButton.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
-        playOfflineButton.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
+        onlineButton.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
+        offlineButton.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
         settingsButton.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
 
         // Revalidate and repaint the panel to apply changes

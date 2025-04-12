@@ -7,4 +7,8 @@ public enum Color {
     public Color inverse() {
         return this == WHITE ? BLACK : WHITE;
     }
+
+    public String toString() {
+        return this == WHITE ? "White" : "Black";
+    }
 }

@@ -8,10 +8,6 @@ import engine.utils.MoveUtils;
 import java.io.*;
 
 public class StockfishAI implements ChessAI{
-    public String getName() {
-        return "StockfishAI";
-    }
-
     private static String getStockfishPath() {
         // Set path based on the user's operating system
         String os = System.getProperty("os.name").toLowerCase();
@@ -28,11 +24,14 @@ public class StockfishAI implements ChessAI{
     }
 
     private static String parseBestMove(String stockfishOutput) {
-        String[] parts = stockfishOutput.split(" "); // Split by spaces
+        // Split by spaces
+        String[] parts = stockfishOutput.split(" ");
         if (parts.length >= 2 && parts[0].equals("bestmove")) {
-            return parts[1]; // Return the move after "bestmove"
+            // Return the move after "bestmove"
+            return parts[1];
         }
-        return null; // Return null if no valid move is found
+        // Return null if no valid move is found
+        return null;
     }
 
     public static boolean doesStockfishExist() {
@@ -91,5 +90,9 @@ public class StockfishAI implements ChessAI{
         System.out.println("Did random move.");
         RandomAI randomAI = new RandomAI();
         return randomAI.getMove(game);
+    }
+
+    public String toString() {
+        return "StockfishAI";
     }
 }

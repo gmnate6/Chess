@@ -7,6 +7,8 @@ import engine.types.Move;
 import engine.types.Position;
 import engine.utils.MoveUtils;
 import frontend.controller.BaseController;
+import frontend.controller.MainController;
+import frontend.controller.menu.TitleController;
 import frontend.model.SettingsManager;
 import frontend.model.assets.AssetManager;
 import frontend.view.game.BoardPanel;
@@ -56,7 +58,7 @@ public abstract class AbstractGameController implements BaseController {
         return gamePanel;
     }
 
-    public void startGame(Color color, ChessTimer chessTimer) {
+    protected void startGame(Color color, ChessTimer chessTimer) {
         this.game = new Game(chessTimer);
         this.color = color;
         boardPanel.loadPieces(game);
@@ -77,7 +79,32 @@ public abstract class AbstractGameController implements BaseController {
         });
         swingTimer.start();
 
-        // Add Listeners
+        // Back Button Listener
+        gamePanel.backButton.addActionListener(
+                e -> MainController.switchTo(new TitleController())
+        );
+
+        // Resign Button Listener
+        gamePanel.resignButton.addActionListener(e -> {
+            // Run the dialog box in a new thread to avoid blocking the game
+            new Thread(() -> {
+                int response = JOptionPane.showConfirmDialog(
+                        gamePanel,                             // Parent component
+                        "Are you sure you want to resign?",    // Message
+                        "Confirm Resignation",                 // Title
+                        JOptionPane.YES_NO_OPTION,             // Option type
+                        JOptionPane.QUESTION_MESSAGE           // Message type
+                );
+
+                // Handle the response
+                if (response == JOptionPane.YES_OPTION) {
+                    resign();
+                }
+            }).start();
+        });
+
+
+        // Board Listeners
         boardPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -107,7 +134,7 @@ public abstract class AbstractGameController implements BaseController {
         });
     }
 
-    public void setPerspective(Color color) {
+    protected void setPerspective(Color color) {
         if (game.getTimer() != null && game.getTimer().isActive()) {
             System.err.println("Cannot change perspective while timer is active.");
             return;
@@ -135,7 +162,7 @@ public abstract class AbstractGameController implements BaseController {
         return !game.isMoveLegal(move);
     }
 
-    public void onSquareButtonLeftDown(Position position) {
+    private void onSquareButtonLeftDown(Position position) {
         if (position == null) {
             throw new IllegalArgumentException("Error: Position is null.");
         }
@@ -156,7 +183,7 @@ public abstract class AbstractGameController implements BaseController {
         processPlayerMove(move);
     }
 
-    public void onSquareButtonLeftUp(Position position) {
+    private void onSquareButtonLeftUp(Position position) {
         if (position == null) {
             throw new IllegalArgumentException("Error: Position is null.");
         }
@@ -182,13 +209,13 @@ public abstract class AbstractGameController implements BaseController {
         deselect();
     }
 
-    public void onSquareButtonRightDown(Position position) {
+    private void onSquareButtonRightDown(Position position) {
         if (position == null) { return; }
         markedPosition = position;
         setPreMove(null);
     }
 
-    public void onSquareButtonRightUp(Position position) {
+    private void onSquareButtonRightUp(Position position) {
         if (position == null || markedPosition == null) { return; }
 
         // Mark Red
@@ -254,7 +281,9 @@ public abstract class AbstractGameController implements BaseController {
         AssetManager.getInstance().playSound("premove");
     }
 
-    public void processPlayerMove(Move move) {
+    protected void processPlayerMove(Move move) {
+        if (!game.inPlay()) { return; }
+
         // Deselect
         deselect();
 
@@ -294,7 +323,13 @@ public abstract class AbstractGameController implements BaseController {
         executeMove(move);
     }
 
-    public void executeMove(Move move) {
+    protected void resign() {
+        // Resign game
+        game.resign(color);
+        endGame();
+    }
+
+    protected void executeMove(Move move) {
         // Play Move sound
         if (!MoveUtils.causesCheckmate(move, game)) {
             playMoveSound(move);
@@ -304,13 +339,14 @@ public abstract class AbstractGameController implements BaseController {
         game.move(move);
         boardPanel.loadPieces(game);
 
-        // Play end game sound
-        if (game.inPlay()) { return; }
-        playEndSound();
+        // End Game
+        if (!game.inPlay()) {
+            endGame();
+        }
     }
 
     // Call before executing move
-    public void playMoveSound(Move move) {
+    protected void playMoveSound(Move move) {
         // Check
         if (MoveUtils.causesCheck(move, game)) {
             AssetManager.getInstance().playSound("move-check");
@@ -341,7 +377,23 @@ public abstract class AbstractGameController implements BaseController {
         }
     }
 
-    public void playEndSound() {
+    protected void endGame() {
+        if (game.inPlay()) {
+            System.err.println("Called endGame while game is still in play.");
+            return;
+        }
+
+        // Play sound
+        playEndSound();
+
+        // Stop Timer
+        swingTimer.stop();
+
+        // Update view
+        gamePanel.showBackButton();
+    }
+
+    protected void playEndSound() {
         if (game.inPlay()) { return; }
         Color winner = game.getResult().getWinner();
 
@@ -359,6 +411,5 @@ public abstract class AbstractGameController implements BaseController {
 
         // Lose
         AssetManager.getInstance().playSound("game-end");
-        System.out.println("hit");
     }
 }

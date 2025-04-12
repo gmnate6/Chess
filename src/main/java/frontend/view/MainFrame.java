@@ -38,7 +38,12 @@ public class MainFrame extends JFrame {
             background.add(contentPanel, BorderLayout.CENTER);
         }
 
-        // Refresh background and layout
+        // Refresh
+        background.revalidate();
+        background.repaint();
+    }
+
+    public void forceRedraw () {
         background.setImage(AssetManager.getInstance().getThemeImage("background"));
         background.revalidate();
         background.repaint();

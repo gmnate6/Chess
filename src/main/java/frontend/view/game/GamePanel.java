@@ -1,6 +1,7 @@
 package frontend.view.game;
 
 import frontend.model.assets.AssetManager;
+import frontend.view.components.button.TranslucentButton;
 import frontend.view.components.button.TransparentButton;
 import frontend.view.components.panels.TranslucentPanel;
 import frontend.view.components.panels.BackgroundImagedPanel;
@@ -10,23 +11,28 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
-public class GamePanel extends BackgroundImagedPanel {
+public class GamePanel extends JPanel {
     public BoardPanel boardPanel;
     public BannerPanel topBannerPanel;
     public BannerPanel bottomBannerPanel;
 
+    private JPanel rightContentPanel;
+    public JPanel buttonsPanel;
     public TransparentButton drawButton;
     public TransparentButton resignButton;
 
+    public TranslucentButton backButton;
+
     public GamePanel() {
         /// Setup
-        super(AssetManager.getInstance().getThemeImage("background"));
+        setOpaque(false);
         setLayout(new BorderLayout());
 
         /// Left Panel
         JPanel leftPanel = new JPanel(new BorderLayout());
         leftPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         leftPanel.setOpaque(false);
+        add(leftPanel, BorderLayout.CENTER);
 
         // Top Player Panel
         JPanel topBufferPanel = new JPanel(new BorderLayout());
@@ -59,9 +65,11 @@ public class GamePanel extends BackgroundImagedPanel {
         rightPanel.setOpaque(false);
         rightPanel.setPreferredSize(new Dimension(350, 600));
         rightPanel.setBorder(new EmptyBorder(10, 0, 10, 10));
+        add(rightPanel, BorderLayout.EAST);
 
         // Right Content Panel
-        TranslucentPanel rightContentPanel = new TranslucentPanel(new BorderLayout());
+        rightContentPanel = new TranslucentPanel(new BorderLayout());
+        rightContentPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         rightPanel.add(rightContentPanel, BorderLayout.CENTER);
 
         // Title
@@ -76,7 +84,7 @@ public class GamePanel extends BackgroundImagedPanel {
         // History
         JPanel historyBufferPanel = new JPanel(new BorderLayout());
         historyBufferPanel.setOpaque(false);
-        historyBufferPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        historyBufferPanel.setBorder(new EmptyBorder(10, 0, 10, 0));
 
         TranslucentPanel historyPanel = new TranslucentPanel(new GridLayout(1, 2, 10, 0));
         historyBufferPanel.add(historyPanel, BorderLayout.CENTER);
@@ -84,24 +92,27 @@ public class GamePanel extends BackgroundImagedPanel {
         rightContentPanel.add(historyBufferPanel, BorderLayout.CENTER);
 
         // Buttons
-        JPanel buttonsPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        buttonsPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         buttonsPanel.setOpaque(false);
         buttonsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         rightContentPanel.add(buttonsPanel, BorderLayout.SOUTH);
 
         drawButton = new TransparentButton(new String(Character.toChars(0x2b)));
+        drawButton.setFont(AssetManager.getInstance().getFont("chess_glyph", 32));
         drawButton.setPreferredSize(new Dimension(120, 40));
         drawButton.setMargin(new Insets(10, 10, 10, 10));
+        buttonsPanel.add(drawButton);
 
         resignButton = new TransparentButton(new String(Character.toChars(0x59)));
+        resignButton.setFont(AssetManager.getInstance().getFont("chess_glyph", 32));
         resignButton.setMargin(new Insets(10, 10, 10, 10));
         resignButton.setPreferredSize(new Dimension(120, 40));
-
-        buttonsPanel.add(drawButton);
         buttonsPanel.add(resignButton);
 
-        add(leftPanel, BorderLayout.CENTER); // Add left panel to the WEST
-        add(rightPanel, BorderLayout.EAST); // Add right panel to the EAST
+        // Back Button
+        backButton = new TranslucentButton("Back");
+        backButton.setMargin(new Insets(10, 10, 10, 10));
+        backButton.setEnabled(false);
     }
 
     public void setTopTimer(String time) {
@@ -124,29 +135,16 @@ public class GamePanel extends BackgroundImagedPanel {
         bottomBannerPanel.timerBufferPanel.setVisible(enabled);
     }
 
+    public void showBackButton() {
+        // Disable
+        buttonsPanel.setVisible(false);
+        drawButton.setEnabled(false);
+        resignButton.setEnabled(false);
+        rightContentPanel.remove(backButton);
 
-
-
-
-
-
-
-
-
-
-
-
-    public void createJFrame() {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Chess - GamePanel");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(new Dimension(900, 600));
-            frame.setMinimumSize(new Dimension(900, 600));
-            //frame.setResizable(false);
-
-            // Add the BoardPanel to the frame
-            frame.add(this);
-            frame.setVisible(true);
-        });
+        // Enable
+        backButton.setVisible(true);
+        backButton.setEnabled(true);
+        rightContentPanel.add(backButton, BorderLayout.SOUTH);
     }
 }

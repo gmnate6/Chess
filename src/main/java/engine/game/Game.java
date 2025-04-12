@@ -252,7 +252,7 @@ public class Game {
     }
 
     public void resign(Color color) {
-        this.result = color == Color.WHITE ? GameResult.RESIGN_WHITE : GameResult.RESIGN_BLACK;
+        this.result = (color == Color.WHITE ? GameResult.BLACK_RESIGN : GameResult.WHITE_RESIGN);
         stopTimer();
     }
 

@@ -75,6 +75,10 @@ public abstract class AbstractMenuPanel extends JPanel {
     }
 
     protected void onResize() {
+        if (getWidth() == 0 || getHeight() == 0) {
+            return;
+        }
+
         // Calculate the size of TransparentPanel
         int height = (int) (getHeight() * heightRatio);
         int width = (int) (height * ratio);

@@ -9,10 +9,6 @@ import java.util.List;
 import java.util.Random;
 
 public class RandomAI implements ChessAI{
-    public String getName() {
-        return "RandomAI";
-    }
-
     public Move getMove(Game game) {
         // Random instance
         Random random = new Random();
@@ -44,5 +40,9 @@ public class RandomAI implements ChessAI{
 
         // No moves available
         throw new IllegalStateException("Error: No Moves Available");
+    }
+
+    public String toString() {
+        return "RandomAI";
     }
 }

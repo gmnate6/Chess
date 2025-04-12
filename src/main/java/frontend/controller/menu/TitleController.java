@@ -7,15 +7,20 @@ import frontend.view.menu.TitlePanel;
 
 import javax.swing.*;
 
-public class TitleMenuController implements BaseController {
+public class TitleController implements BaseController {
     private final TitlePanel titlePanel;
 
-    public TitleMenuController() {
+    public TitleController() {
         titlePanel = new TitlePanel();
+
+        // Offline Button Listener
+        titlePanel.offlineButton.addActionListener(
+                e -> MainController.switchTo(new OfflineController())
+        );
 
         // Settings Button Listener
         titlePanel.settingsButton.addActionListener(
-                e -> MainController.getInstance().switchTo(new SettingsMenuController())
+                e -> MainController.switchTo(new SettingsController())
         );
     }
 
