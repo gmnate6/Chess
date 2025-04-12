@@ -16,6 +16,7 @@ public class MainFrame extends JFrame {
         setSize(new Dimension(900, 600));
         setMinimumSize(new Dimension(900, 600));
         setLayout(new BorderLayout());
+        setIconImage(AssetManager.getInstance().getIcon());
 
         // Background
         background = new BackgroundImagedPanel();

@@ -11,6 +11,7 @@ public class AssetManager {
     private final FontManager fontManager;
     private final SoundManager soundManager;
     private final ThemeManager themeManager;
+    private final BufferedImage icon;
 
     private AssetManager() {
         avatarManager = new AvatarManager();
@@ -18,6 +19,7 @@ public class AssetManager {
         fontManager = new FontManager();
         soundManager = new SoundManager();
         themeManager = new ThemeManager();
+        icon = ImageManager.loadRasterImage("icon.png");
     }
 
     public static AssetManager getInstance() {
@@ -39,6 +41,7 @@ public class AssetManager {
     public void playSound(String key) {
         soundManager.playSound(key);
     }
+    public BufferedImage getIcon() { return icon; }
 
     public ThemeManager getThemeManager() { return themeManager; }
     public BufferedImage getThemeImage(String key) {
