@@ -27,7 +27,22 @@
     <!-- Batik for SVG files -->
     <dependency>
       <groupId>org.apache.xmlgraphics</groupId>
-      <artifactId>batik-all</artifactId>
+      <artifactId>batik-transcoder</artifactId>
+      <version>1.18</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-codec</artifactId>
+      <version>1.18</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-anim</artifactId>
+      <version>1.18</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-parser</artifactId>
       <version>1.18</version>
     </dependency>
     <dependency>
