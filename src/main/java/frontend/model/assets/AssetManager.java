@@ -6,11 +6,19 @@ import java.util.Map;
 
 public class AssetManager {
     private static AssetManager instance;
-    private final AvatarManager avatarManager = new AvatarManager();
-    private final CursorManager cursorManager = new CursorManager();
-    private final FontManager fontManager = new FontManager();
-    private final SoundManager soundManager = new SoundManager();
-    private final ThemeManager themeManager = new ThemeManager();
+    private final AvatarManager avatarManager;
+    private final CursorManager cursorManager;
+    private final FontManager fontManager;
+    private final SoundManager soundManager;
+    private final ThemeManager themeManager;
+
+    private AssetManager() {
+        avatarManager = new AvatarManager();
+        cursorManager = new CursorManager();
+        fontManager = new FontManager();
+        soundManager = new SoundManager();
+        themeManager = new ThemeManager();
+    }
 
     public static AssetManager getInstance() {
         if (instance == null) {

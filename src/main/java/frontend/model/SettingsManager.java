@@ -13,10 +13,10 @@ public class SettingsManager {
     private static SettingsManager instance;
 
     // ─── Defaults ────────────────────────────────────────
-    private static final String DEFAULT_USERNAME   = "Guest";
-    private static final String DEFAULT_AVATAR     = "default";
-    private static final String DEFAULT_THEME      = AssetManager.getInstance().getThemeManager().getDefaultTheme();
-    private static final String DEFAULT_SERVER_URL = "ws://localhost:8080";
+    public static final String DEFAULT_USERNAME   = "Guest";
+    public static final String DEFAULT_AVATAR     = "default";
+    public static final String DEFAULT_THEME      = "wood";
+    public static final String DEFAULT_SERVER_URL = "ws://localhost:8080";
     // ───────────────────────────────────────────────────────────
 
     private String username;
@@ -25,28 +25,37 @@ public class SettingsManager {
     private String serverURL;
 
     private SettingsManager() {
-        // 1) attempt to load from disk
+        // 1) Load Defaults
+        loadDefaults();
+
+        // 2) Read From Disk
         SettingsJsonHandler fromDisk;
         try {
             fromDisk = SettingsJsonHandler.load();
         } catch (UncheckedIOException e) {
-            // I/O problem reading file → just use defaults
-            fromDisk = new SettingsJsonHandler();
+            return;
         }
 
-        // 2) apply loaded values or fall back to defaults
-        setUsername(fromDisk.getUsername()  != null
-                ? fromDisk.getUsername()
-                : DEFAULT_USERNAME);
-        setAvatar(fromDisk.getAvatar()    != null
-                ? fromDisk.getAvatar()
-                : DEFAULT_AVATAR);
-        setTheme(fromDisk.getTheme()     != null
-                ? fromDisk.getTheme()
-                : DEFAULT_THEME);
-        setServerURL(fromDisk.getServerURL() != null
-                ? fromDisk.getServerURL()
-                : DEFAULT_SERVER_URL);
+        // 3) Write From Disk
+        if (validUsername(fromDisk.getUsername())) {
+            setUsername(fromDisk.getUsername());
+        }
+        if (validAvatar(fromDisk.getAvatar())) {
+            setAvatar(fromDisk.getAvatar());
+        }
+        if (validTheme(fromDisk.getTheme())) {
+            setTheme(fromDisk.getTheme());
+        }
+        if (validServerURL(fromDisk.getServerURL())) {
+            setServerURL(fromDisk.getServerURL());
+        }
+    }
+
+    private void loadDefaults() {
+        setUsername(DEFAULT_USERNAME);
+        setAvatar(DEFAULT_AVATAR);
+        setTheme(DEFAULT_THEME);
+        setServerURL(DEFAULT_SERVER_URL);
     }
 
     public static SettingsManager getInstance() {
@@ -122,7 +131,7 @@ public class SettingsManager {
     }
 
     public boolean validTheme(String theme) {
-        return AssetManager.getInstance().getThemeManager().getAvailableThemes().contains(theme);
+        return AssetManager.getInstance().getThemeManager().getThemes().contains(theme);
     }
 
     // Regex for matching an IPv4 address (0.0.0.0 – 255.255.255.255)

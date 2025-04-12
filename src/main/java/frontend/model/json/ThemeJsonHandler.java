@@ -8,9 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class ThemeJsonHandler {
-    private String defaultTheme;
-    private List<String> availableThemes;
-    private Map<String, String> themeNames;
+    private Map<String, String> themes;
 
     public static ThemeJsonHandler load(String path) {
         try (InputStreamReader reader = new InputStreamReader(
@@ -23,11 +21,5 @@ public class ThemeJsonHandler {
         }
     }
 
-    public void setDefaultTheme(String defaultTheme) { this.defaultTheme = defaultTheme; }
-    public void setAvailableThemes(List<String> availableThemes) { this.availableThemes = availableThemes; }
-    public void setThemeNames(Map<String, String> themeNames) { this.themeNames = themeNames; }
-
-    public String getDefaultTheme() { return defaultTheme; }
-    public List<String> getAvailableThemes() { return availableThemes; }
-    public Map<String, String> getThemeNames() { return themeNames; }
+    public Map<String, String> getThemes() { return themes; }
 }

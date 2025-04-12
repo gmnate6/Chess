@@ -9,6 +9,7 @@ import frontend.view.menu.SettingsPanel;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,20 +32,7 @@ public class SettingsMenuController implements BaseController {
         // Avatar
         settingsPanel.avatarDropdown.removeAllItems();
         List<String> avatars = new ArrayList<>(assetManager.getAvatars().keySet());
-        avatars.sort((a, b) -> {
-            boolean aIsNumber = a.matches("\\d+");
-            boolean bIsNumber = b.matches("\\d+");
-
-            if (aIsNumber && bIsNumber) {
-                return Integer.compare(Integer.parseInt(a), Integer.parseInt(b));
-            } else if (aIsNumber) {
-                return -1; // a is a number, it comes first
-            } else if (bIsNumber) {
-                return 1;  // b is a number, it comes first
-            } else {
-                return a.compareToIgnoreCase(b); // fallback to alphabetical for non-numeric
-            }
-        });
+        Collections.sort(avatars);
         for (String avatar : avatars) {
             settingsPanel.avatarDropdown.addItem(avatar);
         }
@@ -52,12 +40,12 @@ public class SettingsMenuController implements BaseController {
 
         // Theme
         settingsPanel.themeDropdown.removeAllItems();
-        List<String> Themes = new ArrayList<>(assetManager.getThemeManager().getThemeNames().values());
+        List<String> Themes = new ArrayList<>(assetManager.getThemeManager().getPrettyThemes());
         Collections.sort(Themes);
         for (String key : Themes) {
             settingsPanel.themeDropdown.addItem(key);
         }
-        settingsPanel.themeDropdown.setSelectedItem(assetManager.getThemeManager().getThemeNames().get(settingsManager.getTheme()));
+        settingsPanel.themeDropdown.setSelectedItem(assetManager.getThemeManager().getPrettyName(settingsManager.getTheme()));
 
         // Server URL
         settingsPanel.serverURLField.setText(settingsManager.getServerURL());
@@ -100,7 +88,7 @@ public class SettingsMenuController implements BaseController {
 
         // Theme
         String theme = (String) settingsPanel.themeDropdown.getSelectedItem();
-        theme = AssetManager.getInstance().getThemeManager().getThemeNameKey(theme);
+        theme = AssetManager.getInstance().getThemeManager().getThemeKey(theme);
         if (!settingsManager.validTheme(theme)) {
             JOptionPane.showMessageDialog(settingsPanel, "Invalid theme", "Error", JOptionPane.ERROR_MESSAGE);
             return;
