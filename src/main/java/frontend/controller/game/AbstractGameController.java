@@ -11,6 +11,8 @@ import frontend.controller.MainController;
 import frontend.controller.menu.TitleController;
 import frontend.model.SettingsManager;
 import frontend.model.assets.AssetManager;
+import frontend.view.components.button.ColorButton;
+import frontend.view.components.button.TranslucentButton;
 import frontend.view.game.BoardPanel;
 import frontend.view.game.GamePanel;
 import frontend.view.game.Square;
@@ -58,6 +60,12 @@ public abstract class AbstractGameController implements BaseController {
         return gamePanel;
     }
 
+    protected void rematch() {
+        if (game.inPlay()) {
+            throw new IllegalStateException("Cannot rematch while game is in play.");
+        }
+    }
+
     protected void startGame(Color color, ChessTimer chessTimer) {
         this.game = new Game(chessTimer);
         this.color = color;
@@ -79,31 +87,11 @@ public abstract class AbstractGameController implements BaseController {
         });
         swingTimer.start();
 
-        // Back Button Listener
-        gamePanel.backButton.addActionListener(
-                e -> MainController.switchTo(new TitleController())
-        );
+        // Setup Listeners
+        setListeners();
+    }
 
-        // Resign Button Listener
-        gamePanel.resignButton.addActionListener(e -> {
-            // Run the dialog box in a new thread to avoid blocking the game
-            new Thread(() -> {
-                int response = JOptionPane.showConfirmDialog(
-                        gamePanel,                             // Parent component
-                        "Are you sure you want to resign?",    // Message
-                        "Confirm Resignation",                 // Title
-                        JOptionPane.YES_NO_OPTION,             // Option type
-                        JOptionPane.QUESTION_MESSAGE           // Message type
-                );
-
-                // Handle the response
-                if (response == JOptionPane.YES_OPTION) {
-                    resign();
-                }
-            }).start();
-        });
-
-
+    private void setListeners() {
         // Board Listeners
         boardPanel.addMouseListener(new MouseAdapter() {
             @Override
@@ -132,6 +120,99 @@ public abstract class AbstractGameController implements BaseController {
                 }
             }
         });
+
+        // Resign Button Listener
+        gamePanel.resignButton.addActionListener(e -> {
+            // Run the dialog box in a new thread to avoid blocking the game
+            new Thread(() -> {
+                int response = JOptionPane.showConfirmDialog(
+                        gamePanel,                             // Parent component
+                        "Are you sure you want to resign?",    // Message
+                        "Confirm Resignation",                 // Title
+                        JOptionPane.YES_NO_OPTION,             // Option type
+                        JOptionPane.QUESTION_MESSAGE           // Message type
+                );
+
+                // Handle the response
+                if (response == JOptionPane.YES_OPTION) {
+                    resign();
+                }
+            }).start();
+        });
+
+        // Draw Button Listener
+        gamePanel.drawButton.addActionListener(e -> {
+
+        });
+
+        // First Move Button Listener
+        gamePanel.firstMoveButton.addActionListener(e -> {
+            game.stepFullBack();
+            afterStep();
+        });
+
+        // Previous Move Button Listener
+        gamePanel.previousMoveButton.addActionListener(e -> {
+            game.stepBack();
+            afterStep();
+        });
+
+        // Next Move Button Listener
+        gamePanel.nextMoveButton.addActionListener(e -> {
+            game.stepForward();
+            afterStep();
+        });
+
+        // Last Move Button Listener
+        gamePanel.lastMoveButton.addActionListener(e -> {
+            game.stepFullForward();
+            afterStep();
+        });
+
+        // Rematch Button Listener
+        gamePanel.rematchButton.addActionListener(
+                e -> rematch()
+        );
+
+        // Back Button Listener
+        gamePanel.backButton.addActionListener(
+                e -> MainController.switchTo(new TitleController())
+        );
+    }
+
+    private void afterStep() {
+        boardPanel.loadPieces(game);
+
+        // Re enable
+        gamePanel.firstMoveButton.setEnabled(true);
+        gamePanel.previousMoveButton.setEnabled(true);
+        gamePanel.nextMoveButton.setEnabled(true);
+        gamePanel.lastMoveButton.setEnabled(true);
+
+        // Disable Navigation if needed
+        int step = game.getMoveHistory().getCurrentMoveIndex();
+        int min = -1;
+        int max = game.getMoveHistory().getSize() - 1;
+
+        // Cant go back
+        if (step <= min) {
+            gamePanel.firstMoveButton.setEnabled(false);
+            gamePanel.previousMoveButton.setEnabled(false);
+        }
+
+        // Cant go forward
+        if (step >= max) {
+            gamePanel.nextMoveButton.setEnabled(false);
+            gamePanel.lastMoveButton.setEnabled(false);
+        }
+
+        // Play move sound
+        if (step >= 0) {
+            Move move = game.getMoveHistory().getLastMove();
+            game.stepBack();
+            playMoveSound(move);
+            game.stepForward();
+        }
     }
 
     protected void setPerspective(Color color) {
@@ -335,6 +416,9 @@ public abstract class AbstractGameController implements BaseController {
             playMoveSound(move);
         }
 
+        // Add move to history panel
+        gamePanel.historyPanel.addMove(MoveUtils.toAlgebraic(move, game));
+
         // Move
         game.move(move);
         boardPanel.loadPieces(game);
@@ -390,7 +474,7 @@ public abstract class AbstractGameController implements BaseController {
         swingTimer.stop();
 
         // Update view
-        gamePanel.showBackButton();
+        gamePanel.showPostGameActionPanel();
     }
 
     protected void playEndSound() {

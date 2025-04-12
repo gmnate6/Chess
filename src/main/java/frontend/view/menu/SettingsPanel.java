@@ -36,7 +36,7 @@ public class SettingsPanel extends AbstractMenuPanel {
     @Override
     protected void initializeComponents() {
         super.initializeComponents();
-        contentPanel.setLayout(new GridLayout(5, 2, 10, 10));
+        contentPanel.setLayout(new GridLayout(5, 2, 20, 20));
 
         // Username Label
         usernameLabel = new TranslucentLabel("Username:");

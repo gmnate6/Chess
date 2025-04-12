@@ -2,7 +2,7 @@ package frontend.controller.game;
 
 import engine.ai.ChessAI;
 import engine.types.Move;
-import frontend.model.assets.AssetManager;
+import frontend.controller.MainController;
 import utils.Color;
 
 import javax.swing.*;
@@ -27,6 +27,12 @@ public class BotGameController extends AbstractGameController {
         if (color == Color.BLACK) {
             playBotMove();
         }
+    }
+
+    @Override
+    protected void rematch() {
+        super.rematch();
+        MainController.switchTo(new BotGameController(color, ai));
     }
 
     public void playBotMove() {

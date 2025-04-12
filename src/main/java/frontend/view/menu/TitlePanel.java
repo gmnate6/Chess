@@ -19,40 +19,24 @@ public class TitlePanel extends AbstractMenuPanel {
     @Override
     protected void initializeComponents() {
         super.initializeComponents();
-        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.setLayout(new GridLayout(0, 1, 20, 20));
 
         // Online Button
         onlineButton = new TransparentButton("Play Online");
-        onlineButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         onlineButton.setEnabled(false);
         contentPanel.add(onlineButton);
 
-        // Spacer between buttons
-        contentPanel.add(Box.createVerticalStrut(20));
-
         // Bot Button
         botButton = new TransparentButton("Play Bot");
-        botButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentPanel.add(botButton);
-
-        // Spacer between buttons
-        contentPanel.add(Box.createVerticalStrut(20));
 
         // Solo Button
         soloButton = new TransparentButton("Play Solo");
-        soloButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentPanel.add(soloButton);
-
-        // Spacer between buttons
-        contentPanel.add(Box.createVerticalStrut(20));
 
         // Settings Button
         settingsButton = new TransparentButton("Settings");
-        settingsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentPanel.add(settingsButton);
-
-        // Add vertical glue to balance spacing
-        contentPanel.add(Box.createVerticalGlue());
     }
 
     @Override

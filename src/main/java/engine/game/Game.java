@@ -47,6 +47,54 @@ public class Game {
         }
     }
 
+    public void loadGameStateAt(int moveIndex) {
+        if (inPlay()) {
+            throw new IllegalStateException("Cannot load historical state while game is active.");
+        }
+
+        if (moveIndex < -1 || moveIndex >= moveHistory.getSize()) {
+            throw new IllegalArgumentException("Invalid move index: " + moveIndex);
+        }
+
+        // Fresh Board
+        Board newBoard = new Board();
+        Color newTurn = Color.WHITE;
+
+        // Replay Moves
+        for (int i = 0; i <= moveIndex; i++) {
+            Move move = moveHistory.getMoves().get(i);
+            Piece piece = newBoard.getPieceAt(move.initialPosition());
+
+            if (piece == null || !piece.isMoveValid(move, newBoard)) {
+                throw new IllegalStateException("Invalid move in move history at index " + i + ": " + move);
+            }
+
+            newBoard.executeMove(move);
+            newTurn = newTurn.inverse();
+        }
+
+        // Apply new board
+        this.board = newBoard;
+        this.turn = newTurn;
+        moveHistory.setCurrentMoveIndex(moveIndex);
+    }
+
+    public void stepFullBack() {
+        loadGameStateAt(-1);
+    }
+
+    public void stepBack() {
+        loadGameStateAt(moveHistory.getCurrentMoveIndex() - 1);
+    }
+
+    public void stepForward() {
+        loadGameStateAt(moveHistory.getCurrentMoveIndex() + 1);
+    }
+
+    public void stepFullForward() {
+        loadGameStateAt(moveHistory.getSize()-1);
+    }
+
     public Game getDeepCopy() {
         return new Game(
                 this.board.getDeepCopy(),

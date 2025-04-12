@@ -23,6 +23,13 @@ public class MoveHistory {
         return moves.get(currentMoveIndex);
     }
 
+    public void setCurrentMoveIndex(int index) {
+        if (index < -1 || index >= moves.size()) {
+            throw new IllegalArgumentException("Invalid index for move history.");
+        }
+        this.currentMoveIndex = index;
+    }
+
     public void addMove(Move move) {
         // If we undid moves and then make a new move, delete "future" moves
         if (currentMoveIndex < moves.size() - 1) {

@@ -1,6 +1,7 @@
 package frontend.controller.game;
 
 import engine.types.Move;
+import frontend.controller.MainController;
 import utils.Color;
 
 public class SoloGameController extends AbstractGameController {
@@ -10,10 +11,14 @@ public class SoloGameController extends AbstractGameController {
         startGame(color, null);
         setPerspective(color);
 
-        // Hide Banner Panels and Draw and Buttons Panel
-        gamePanel.topBannerPanel.setVisible(false);
-        gamePanel.bottomBannerPanel.setVisible(false);
-        gamePanel.showBackButton();
+        // Disable Draw
+        gamePanel.drawButton.setEnabled(false);
+    }
+
+    @Override
+    protected void rematch() {
+        super.rematch();
+        MainController.switchTo(new SoloGameController());
     }
 
     public void switchSides() {

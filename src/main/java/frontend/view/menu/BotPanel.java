@@ -20,14 +20,14 @@ public class BotPanel extends AbstractMenuPanel {
     public TranslucentButton backButton;
 
     public BotPanel() {
-        super("Play Bot", 2f);
+        super("Play Bot", 2.2f);
         heightRatio = .5f;
     }
 
     @Override
     protected void initializeComponents() {
         super.initializeComponents();
-        contentPanel.setLayout(new GridLayout(3, 2, 10, 10));
+        contentPanel.setLayout(new GridLayout(3, 2, 20, 20));
 
         // Bot Label
         botLabel = new TranslucentLabel("Bot:");
