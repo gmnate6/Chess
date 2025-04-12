@@ -9,3 +9,6 @@ target/
 
 # Ignore Maven files
 dependency-reduced-pom.xml
+
+# Ignore settings files
+settings.json
