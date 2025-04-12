@@ -96,22 +96,14 @@ public class SettingsController implements BaseController {
             return;
         }
 
-        // Save Settings
-        String finalTheme = theme;
-        new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() {
-                // Set
-                settingsManager.setUsername(username);
-                settingsManager.setAvatar(avatar);
-                settingsManager.setTheme(finalTheme);
-                settingsManager.setServerURL(serverURL);
+        // Set
+        settingsManager.setUsername(username);
+        settingsManager.setAvatar(avatar);
+        settingsManager.setTheme(theme);
+        settingsManager.setServerURL(serverURL);
 
-                // Save
-                settingsManager.save();
-                return null;
-            }
-        }.execute();
+        // Save
+        settingsManager.save();
 
         // Force Redraw
         MainController.forceRedraw();

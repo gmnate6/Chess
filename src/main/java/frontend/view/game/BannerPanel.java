@@ -2,16 +2,14 @@ package frontend.view.game;
 
 import frontend.model.assets.AssetManager;
 import frontend.view.components.panels.TranslucentPanel;
-import frontend.view.components.panels.DynamicImagedPanel;
-import frontend.view.utils.SquareLayoutManager;
+import frontend.view.utils.ProfilePanel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class BannerPanel extends JPanel {
-    public DynamicImagedPanel avatarPanel;
-    public JLabel usernameLabel;
+    public ProfilePanel profilePanel;
     public JLabel timerLabel;
     public JPanel timerBufferPanel;
 
@@ -22,29 +20,7 @@ public class BannerPanel extends JPanel {
         setOpaque(false);
 
         /// Add Profile
-        TranslucentPanel profilePanel = new TranslucentPanel(new BorderLayout());
-        profilePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-        // Avatar Buffer Panel
-        JPanel avatarBufferPanel = new JPanel(new SquareLayoutManager());
-        avatarBufferPanel.setOpaque(false);
-
-        // Avatar Panel
-        avatarPanel = new DynamicImagedPanel();
-        avatarPanel.setPreferredSize(new Dimension(50, 50));
-        avatarPanel.setImage(AssetManager.getInstance().getAvatar("default"));
-        avatarBufferPanel.add(avatarPanel);
-
-        // Add
-        profilePanel.add(avatarBufferPanel, BorderLayout.WEST);
-
-        // Username Label
-        usernameLabel = new JLabel("--Username--", SwingConstants.CENTER);
-        usernameLabel.setFont(AssetManager.getInstance().getFont("chess_font", 16));
-        usernameLabel.setForeground(AssetManager.getInstance().getThemeColor("text"));
-        profilePanel.add(usernameLabel, BorderLayout.CENTER);
-
-        // Add
+        profilePanel = new ProfilePanel();
         add(profilePanel, BorderLayout.WEST);
 
         /// Add Timer

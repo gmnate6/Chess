@@ -2,6 +2,7 @@ package frontend.controller.menu;
 
 import frontend.controller.BaseController;
 import frontend.controller.MainController;
+import frontend.model.SettingsManager;
 import frontend.view.components.button.CustomButton;
 import frontend.view.menu.TitlePanel;
 

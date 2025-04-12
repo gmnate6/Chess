@@ -1,7 +1,9 @@
 package frontend.view.menu;
 
+import frontend.model.SettingsManager;
 import frontend.model.assets.AssetManager;
 import frontend.view.components.panels.TranslucentPanel;
+import frontend.view.utils.ProfilePanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +24,14 @@ public abstract class AbstractMenuPanel extends JPanel {
 
         this.title = title;
         this.ratio = ratio;
+
+        // Profile Panel
+        ProfilePanel profilePanel = new ProfilePanel();
+        profilePanel.setAvatar(SettingsManager.getInstance().getAvatar());
+        profilePanel.setUsername(SettingsManager.getInstance().getUsername());
+        Dimension preferredSize = profilePanel.getPreferredSize();
+        profilePanel.setBounds(0, 0, preferredSize.width, preferredSize.height);
+        add(profilePanel);
 
         // Initialize Components
         initializeComponents();

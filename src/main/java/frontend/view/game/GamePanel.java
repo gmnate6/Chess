@@ -2,9 +2,7 @@ package frontend.view.game;
 
 import frontend.model.assets.AssetManager;
 import frontend.view.components.button.TranslucentButton;
-import frontend.view.components.button.TransparentButton;
 import frontend.view.components.panels.TranslucentPanel;
-import frontend.view.components.panels.BackgroundImagedPanel;
 import frontend.view.utils.SquareLayoutManager;
 
 import javax.swing.*;
@@ -16,10 +14,10 @@ public class GamePanel extends JPanel {
     public BannerPanel topBannerPanel;
     public BannerPanel bottomBannerPanel;
 
-    private JPanel rightContentPanel;
+    private final JPanel rightContentPanel;
     public JPanel buttonsPanel;
-    public TransparentButton drawButton;
-    public TransparentButton resignButton;
+    public TranslucentButton drawButton;
+    public TranslucentButton resignButton;
 
     public TranslucentButton backButton;
 
@@ -97,13 +95,13 @@ public class GamePanel extends JPanel {
         buttonsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         rightContentPanel.add(buttonsPanel, BorderLayout.SOUTH);
 
-        drawButton = new TransparentButton(new String(Character.toChars(0x2b)));
+        drawButton = new TranslucentButton(new String(Character.toChars(0x2b)));
         drawButton.setFont(AssetManager.getInstance().getFont("chess_glyph", 32));
         drawButton.setPreferredSize(new Dimension(120, 40));
         drawButton.setMargin(new Insets(10, 10, 10, 10));
         buttonsPanel.add(drawButton);
 
-        resignButton = new TransparentButton(new String(Character.toChars(0x59)));
+        resignButton = new TranslucentButton(new String(Character.toChars(0x59)));
         resignButton.setFont(AssetManager.getInstance().getFont("chess_glyph", 32));
         resignButton.setMargin(new Insets(10, 10, 10, 10));
         resignButton.setPreferredSize(new Dimension(120, 40));
@@ -122,13 +120,13 @@ public class GamePanel extends JPanel {
         bottomBannerPanel.timerLabel.setText(time);
     }
     public void setTopUsername(String username) {
-        topBannerPanel.usernameLabel.setText(username);
+        topBannerPanel.profilePanel.setUsername(username);
     }
     public void setBottomUsername(String username) {
-        bottomBannerPanel.usernameLabel.setText(username);
+        bottomBannerPanel.profilePanel.setUsername(username);
     }
-    public void setTopAvatar(Image avatar) { topBannerPanel.avatarPanel.setImage(avatar);}
-    public void setBottomAvatar(Image avatar) { bottomBannerPanel.avatarPanel.setImage(avatar);}
+    public void setTopAvatar(String avatar) { topBannerPanel.profilePanel.setAvatar(avatar);}
+    public void setBottomAvatar(String avatar) { bottomBannerPanel.profilePanel.setAvatar(avatar);}
 
     public void setTimerEnabled(boolean enabled) {
         topBannerPanel.timerBufferPanel.setVisible(enabled);

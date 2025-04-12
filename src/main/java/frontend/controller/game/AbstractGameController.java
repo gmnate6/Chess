@@ -67,7 +67,7 @@ public abstract class AbstractGameController implements BaseController {
         AssetManager.getInstance().playSound("game-start");
 
         // Set Bottom Banner
-        gamePanel.setBottomAvatar(AssetManager.getInstance().getAvatar(SettingsManager.getInstance().getAvatar()));
+        gamePanel.setBottomAvatar(SettingsManager.getInstance().getAvatar());
         gamePanel.setBottomUsername(SettingsManager.getInstance().getUsername());
 
         // Update Timer

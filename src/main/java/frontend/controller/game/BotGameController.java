@@ -17,7 +17,7 @@ public class BotGameController extends AbstractGameController {
 
         // Set AI
         this.ai = ai;
-        gamePanel.setTopAvatar(AssetManager.getInstance().getAvatar("bot"));
+        gamePanel.setTopAvatar("bot");
         gamePanel.setTopUsername(ai.toString());
 
         // Disable Draw

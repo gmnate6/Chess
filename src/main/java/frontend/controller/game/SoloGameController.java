@@ -13,7 +13,7 @@ public class SoloGameController extends AbstractGameController {
         // Hide Banner Panels and Draw and Buttons Panel
         gamePanel.topBannerPanel.setVisible(false);
         gamePanel.bottomBannerPanel.setVisible(false);
-        gamePanel.drawButton.setEnabled(false);
+        gamePanel.showBackButton();
     }
 
     public void switchSides() {
