@@ -35,7 +35,7 @@ public class BotController implements BaseController {
 
         // Back Button Listener
         botPanel.backButton.addActionListener(
-                e -> MainController.switchTo(new OfflineController())
+                e -> MainController.switchTo(new TitleController())
         );
     }
 

@@ -20,7 +20,7 @@ public class BotPanel extends AbstractMenuPanel {
     public TranslucentButton backButton;
 
     public BotPanel() {
-        super("Offline - Bot", 2f);
+        super("Play Bot", 2f);
         heightRatio = .5f;
     }
 

@@ -8,7 +8,8 @@ import java.awt.*;
 
 public class TitlePanel extends AbstractMenuPanel {
     public TransparentButton onlineButton;
-    public TransparentButton offlineButton;
+    public TransparentButton botButton;
+    public TransparentButton soloButton;
     public TransparentButton settingsButton;
 
     public TitlePanel() {
@@ -27,15 +28,23 @@ public class TitlePanel extends AbstractMenuPanel {
         contentPanel.add(onlineButton);
 
         // Spacer between buttons
-        contentPanel.add(Box.createVerticalStrut(10));
+        contentPanel.add(Box.createVerticalStrut(20));
 
-        // Offline Button
-        offlineButton = new TransparentButton("Play Offline");
-        offlineButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        contentPanel.add(offlineButton);
+        // Bot Button
+        botButton = new TransparentButton("Play Bot");
+        botButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentPanel.add(botButton);
 
         // Spacer between buttons
-        contentPanel.add(Box.createVerticalStrut(10));
+        contentPanel.add(Box.createVerticalStrut(20));
+
+        // Solo Button
+        soloButton = new TransparentButton("Play Solo");
+        soloButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentPanel.add(soloButton);
+
+        // Spacer between buttons
+        contentPanel.add(Box.createVerticalStrut(20));
 
         // Settings Button
         settingsButton = new TransparentButton("Settings");
@@ -55,7 +64,8 @@ public class TitlePanel extends AbstractMenuPanel {
 
         // Update button font sizes
         onlineButton.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
-        offlineButton.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
+        botButton.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
+        soloButton.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
         settingsButton.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
 
         // Revalidate and repaint the panel to apply changes

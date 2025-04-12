@@ -2,6 +2,7 @@ package frontend.controller.menu;
 
 import frontend.controller.BaseController;
 import frontend.controller.MainController;
+import frontend.controller.game.SoloGameController;
 import frontend.model.SettingsManager;
 import frontend.view.components.button.CustomButton;
 import frontend.view.menu.TitlePanel;
@@ -14,9 +15,14 @@ public class TitleController implements BaseController {
     public TitleController() {
         titlePanel = new TitlePanel();
 
-        // Offline Button Listener
-        titlePanel.offlineButton.addActionListener(
-                e -> MainController.switchTo(new OfflineController())
+        // Bot Button Listener
+        titlePanel.botButton.addActionListener(
+                e -> MainController.switchTo(new BotController())
+        );
+
+        // Solo Button Listener
+        titlePanel.soloButton.addActionListener(
+                e -> MainController.switchTo(new SoloGameController())
         );
 
         // Settings Button Listener
