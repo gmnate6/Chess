@@ -24,12 +24,16 @@
       <scope>test</scope>
     </dependency>
 
-
     <!-- Batik for SVG files -->
     <dependency>
       <groupId>org.apache.xmlgraphics</groupId>
       <artifactId>batik-all</artifactId>
       <version>1.18</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.17.0</version>
     </dependency>
 
     <!-- GSON for working with json files -->
