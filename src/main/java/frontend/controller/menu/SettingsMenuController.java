@@ -9,7 +9,6 @@ import frontend.view.menu.SettingsPanel;
 
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,13 +56,9 @@ public class SettingsMenuController implements BaseController {
             settingsPanel.avatarPanel.setImage(AssetManager.getInstance().getAvatars().get(selectedAvatar));
         });
 
-        settingsPanel.saveButton.addActionListener(e -> {
-            save();
-        });
+        settingsPanel.saveButton.addActionListener(e -> save());
 
-        settingsPanel.cancelButton.addActionListener(e -> {
-            goBack();
-        });
+        settingsPanel.cancelButton.addActionListener(e -> goBack());
     }
 
     private void save() {

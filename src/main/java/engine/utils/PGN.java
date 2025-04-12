@@ -8,28 +8,7 @@ import utils.Color;
 
 import java.util.List;
 
-/**
- * <p><strong>Class Purpose:</strong></p>
- * <p>The <code>PGN</code> class is a utility for working with Portable Game Notation (PGN), the standard
- * format for representing chess games. It provides methods to convert a <code>Game</code> object to
- * PGN notation and vice versa, enabling the storage, sharing, and reconstruction of chess games in a
- * universal format.</p>
- *
- * <p><strong>Key Features:</strong></p>
- * <ul>
- *   <li>Serialization of a <code>Game</code> object into PGN notation.</li>
- *   <li>Deserialization of a PGN notation string back into a <code>Game</code> object.</li>
- *   <li>Maintains adherence to proper chess rules and algebraic notation during conversions.</li>
- * </ul>
- */
 public class PGN {
-    /**
-     * Converts a chess <code>Game</code> object into its corresponding PGN string representation.
-     * This includes turn-by-turn move records in algebraic notation and the game's result.
-     *
-     * @param game The <code>Game</code> object to be converted into PGN notation.
-     * @return A <code>String</code> containing the PGN representation of the <code>Game</code>.
-     */
     public static String getPGN(Game game) {
         StringBuilder pgn = new StringBuilder();
 
@@ -64,13 +43,6 @@ public class PGN {
         return pgn.toString().trim();
     }
 
-    /**
-     * Parses a PGN notation string and reconstructs the corresponding <code>Game</code> object by simulating its moves.
-     *
-     * @param pgn The PGN string to be parsed into a <code>Game</code>.
-     * @param chessTimer The timer object to be used by <code>Game</code>.
-     * @return A <code>Game</code> object reconstructed from the provided PGN.
-     */
     public static Game getGame(String pgn, ChessTimer chessTimer) {
         Game game = new Game(chessTimer);
 

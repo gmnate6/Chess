@@ -6,9 +6,10 @@ import java.util.Map;
 import java.util.Objects;
 
 public class FontManager {
-    private final Map<String, Font> fonts = new HashMap<>();
+    private final Map<String, Font> fonts;
 
     public FontManager() {
+        fonts = new HashMap<>();
         loadFonts();
     }
 

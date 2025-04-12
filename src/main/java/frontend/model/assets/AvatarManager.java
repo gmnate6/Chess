@@ -1,14 +1,13 @@
 package frontend.model.assets;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.InputStream;
 import java.util.Map;
 
 public class AvatarManager {
-    private final ImageManager avatars = new ImageManager();
+    private final ImageManager avatars;
 
     public AvatarManager() {
+        avatars = new ImageManager();
         loadAvatars();
     }
 

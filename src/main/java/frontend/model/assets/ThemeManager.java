@@ -1,12 +1,11 @@
 package frontend.model.assets;
 
 import frontend.model.SettingsManager;
-import frontend.model.json.ThemeJsonHandler;
+import frontend.model.json.ThemesJsonHandler;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -16,8 +15,8 @@ public class ThemeManager {
 
     public ThemeManager() {
         // Load from json
-        ThemeJsonHandler themeJsonHandler = ThemeJsonHandler.load("themes/themes.json");
-        setThemes(themeJsonHandler.getThemes());
+        ThemesJsonHandler themesJsonHandler = ThemesJsonHandler.load("themes/themes.json");
+        setThemes(themesJsonHandler.getThemes());
 
         // Load Default
         loadTheme(SettingsManager.DEFAULT_THEME);

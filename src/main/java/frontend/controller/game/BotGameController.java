@@ -3,7 +3,6 @@ package frontend.controller.game;
 import engine.ai.ChessAI;
 import engine.types.Move;
 import frontend.model.assets.AssetManager;
-import frontend.view.game.GamePanel;
 import utils.Color;
 
 import javax.swing.*;

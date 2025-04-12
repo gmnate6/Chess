@@ -6,20 +6,9 @@ import engine.types.Move;
 import engine.utils.PieceUtils;
 import utils.Color;
 
-
-/**
- * Abstract base class for representing a chess piece.
- * This class provides common behavior and validations for all chess pieces
- * while allowing specific movement logic to be defined by concrete subclasses.
- */
 public abstract class Piece{
     private final Color color;
 
-    /**
-     * Constructor to initialize the piece's color.
-     *
-     * @param color The color of the piece (`Color.WHITE` or `Color.BLACK`).
-     */
     public Piece(Color color) {
         this.color = color;
     }

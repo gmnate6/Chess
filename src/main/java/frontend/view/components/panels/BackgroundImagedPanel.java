@@ -1,14 +1,8 @@
 package frontend.view.components.panels;
 
-import javax.swing.*;
 import java.awt.*;
 
-public class BackgroundImagedPanel extends JPanel {
-    private Image originalImage;
-    private Image cachedImage = null;
-    private int cachedWidth = -1;
-    private int cachedHeight = -1;
-
+public class BackgroundImagedPanel extends AbstractImagedPanel {
     public BackgroundImagedPanel(Image image) {
         super();
         setImage(image);
@@ -17,15 +11,22 @@ public class BackgroundImagedPanel extends JPanel {
         super();
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
+    protected Point getNewPoint() {
         int panelWidth = getWidth();
         int panelHeight = getHeight();
-        if (panelWidth == 0 || panelHeight == 0 || originalImage == null) {
-            return;
-        }
+
+        // Get New Dimension
+        Dimension newDimension = getNewDimension();
+
+        // Return Point
+        int xOffset = (panelWidth - newDimension.width) / 2;
+        int yOffset = (panelHeight - newDimension.height) / 2;
+        return new Point(xOffset, yOffset);
+    }
+
+    protected Dimension getNewDimension() {
+        int panelWidth = getWidth();
+        int panelHeight = getHeight();
 
         // Get the dimensions of the original image
         int imageWidth = originalImage.getWidth(null);
@@ -38,34 +39,9 @@ public class BackgroundImagedPanel extends JPanel {
         // Use the larger scale factor to ensure the image covers the panel
         double scale = Math.max(scaleX, scaleY);
 
+        // Return Dimension
         int newImageWidth = (int) (imageWidth * scale);
         int newImageHeight = (int) (imageHeight * scale);
-
-        // Calculate offsets to center the image
-        int xOffset = (panelWidth - newImageWidth) / 2;
-        int yOffset = (panelHeight - newImageHeight) / 2;
-
-        // Update cachedImage if necessary
-        if (hasChangedSize(newImageWidth, newImageHeight)) {
-            cachedImage = originalImage.getScaledInstance(newImageWidth, newImageHeight, Image.SCALE_SMOOTH);
-            cachedWidth = newImageWidth;
-            cachedHeight = newImageHeight;
-        }
-
-        // Draw the image centered within the panel
-        g.drawImage(cachedImage, xOffset, yOffset, this);
-    }
-
-
-    protected boolean hasChangedSize(int newWidth, int newHeight) {
-        return (cachedImage == null || cachedWidth != newWidth || cachedHeight != newHeight);
-    }
-
-    public void setImage(Image image) {
-        this.originalImage = image;
-        cachedImage = null;
-        cachedWidth = -1;
-        cachedHeight = -1;
-        this.repaint();
+        return new Dimension(newImageWidth, newImageHeight);
     }
 }

@@ -2,22 +2,7 @@ package engine.types;
 
 import engine.exceptions.IllegalMoveException;
 
-/**
- * The `Move` class represents a single move in a board-based game, encapsulating
- * the starting position, destination position, and an optional promotion piece.
- * It is immutable and enforces specific constraints, such as disallowing promotion to a king.
- */
 public record Move(Position initialPosition, Position finalPosition, char promotionPiece) {
-    /**
-     * Constructs a new `Move` instance.
-     *
-     * @param initialPosition        The starting position of the move.
-     * @param finalPosition          The destination position of the move.
-     * @param promotionPiece         The piece for promotion (if applicable). Pass '\u0000' if no promotion is needed.
-     *                               The promotion piece is stored in uppercase.
-     *                               Promotion to a king ('K') is prohibited.
-     * @throws IllegalMoveException  If the promotion piece is a king ('K').
-     */
     public Move(Position initialPosition, Position finalPosition, char promotionPiece) {
         this.initialPosition = initialPosition;
         this.finalPosition = finalPosition;
@@ -27,12 +12,6 @@ public record Move(Position initialPosition, Position finalPosition, char promot
         }
     }
 
-    /**
-     * Converts the move to its string representation.
-     *
-     * @return The string representation in the format "[initialPosition] -> [finalPosition]".
-     * For example: "A2 -> A4".
-     */
     public String toString() {
         return initialPosition.toString() + " -> " + finalPosition.toString() + " (" + promotionPiece + ")";
     }

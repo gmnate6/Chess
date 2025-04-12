@@ -6,9 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SoundManager {
-    private final Map<String, Clip> sounds = new HashMap<>();
+    private final Map<String, Clip> sounds;
 
     public SoundManager() {
+        sounds = new HashMap<>();
         loadSounds();
     }
 

@@ -6,29 +6,9 @@ import engine.types.Move;
 import engine.utils.PieceUtils;
 import utils.Color;
 
-/**
- * Represents a Pawn piece in chess.
- * Implements specific pawn movement logic, including special moves like double advance and en passant.
- */
 public class Pawn extends Piece {
-    /**
-     * Constructor to initialize a Pawn with a specific color.
-     *
-     * @param color The color of the Pawn (`Color.WHITE` or `Color.BLACK`).
-     */
     public Pawn(Color color) { super(color); }
 
-    /**
-     * Executes special moves such as "en passant", "castling", or "pawn promotion".
-     * Updates the board to reflect the effects of these moves (e.g., removing a pawn during en passant
-     * or moving the rook during castling).
-     * Assumes `Board.enPassantPosition` is set to `null` before being called.
-     * This method does nothing in the base class and must be overridden by pieces
-     * with special move behavior (e.g., `Pawn`, `King`).
-     *
-     * @param move  The move to execute, containing origin and destination positions.
-     * @param board The chess board, updated to reflect the special move.
-     */
     @Override
     public void specialMoveExecution(Move move, Board board) {
         // Collapse Move Obj
@@ -56,14 +36,6 @@ public class Pawn extends Piece {
         }
     }
 
-    /**
-     * Checks if the given move is a legal promotion for the Pawn.
-     * A legal promotion occurs when a Pawn reaches the 8th rank (for White) or the 1st rank (for Black).
-     *
-     * @param move  The move to validate.
-     * @param board The board to check for conditions related to promotion.
-     * @return `true` if the move results in a legal promotion, `false` otherwise.
-     */
     public boolean isLegalPromotion(Move move, Board board) {
         Position finalPosition = move.finalPosition();
 
@@ -75,13 +47,6 @@ public class Pawn extends Piece {
         return finalPosition.rank() == 0 || finalPosition.rank() == 7;
     }
 
-    /**
-     * Validates whether a given move adheres to the Pawn's movement rules.
-     *
-     * @param move  The move to validate (initial and final positions).
-     * @param board The current board to check for move legality.
-     * @return `true` if the move is valid for a Pawn; otherwise, `false`.
-     */
     @Override
     public boolean isPieceSpecificMoveValid(Move move, Board board) {
         // En Passant
@@ -97,13 +62,6 @@ public class Pawn extends Piece {
         return isLegalSingle(move, board);
     }
 
-    /**
-     * Validates a single-step forward move for the Pawn.
-     *
-     * @param move  The move to validate.
-     * @param board The current board to check for obstructions.
-     * @return `true` if the move is a valid single-step forward move; otherwise, `false`.
-     */
     private boolean isLegalSingle(Move move, Board board) {
         Position initialPosition = move.initialPosition();
         Position finalPosition = move.finalPosition();
@@ -119,13 +77,6 @@ public class Pawn extends Piece {
         return board.getPieceAt(finalPosition) == null;
     }
 
-    /**
-     * Validates a double-step forward move for the Pawn from its starting position.
-     *
-     * @param move  The move to validate.
-     * @param board The current board to check for obstructions.
-     * @return `true` if the move is a valid two-square forward move; otherwise, `false`.
-     */
     public boolean isLegalDouble(Move move, Board board) {
         Position initialPosition = move.initialPosition();
         Position finalPosition = move.finalPosition();
@@ -147,13 +98,6 @@ public class Pawn extends Piece {
         return board.getPieceAt(initialPosition.move(0, fileDirection)) == null;
     }
 
-    /**
-     * Validates a diagonal capture move for the Pawn.
-     *
-     * @param move  The move to validate.
-     * @param board The current board to check for the target piece.
-     * @return `true` if the move is a valid capture; otherwise, `false`.
-     */
     private boolean isLegalCapture(Move move, Board board) {
         Position initialPosition = move.initialPosition();
         Position finalPosition = move.finalPosition();
@@ -169,13 +113,6 @@ public class Pawn extends Piece {
         return board.getPieceAt(finalPosition) != null;
     }
 
-    /**
-     * Validates an en passant capture for the Pawn.
-     *
-     * @param move  The move to validate.
-     * @param board The current board to check for en passant conditions.
-     * @return `true` if the move is a valid en passant capture; otherwise, `false`.
-     */
     public boolean isLegalEnPassant(Move move, Board board) {
         Position initialPosition = move.initialPosition();
         Position finalPosition = move.finalPosition();

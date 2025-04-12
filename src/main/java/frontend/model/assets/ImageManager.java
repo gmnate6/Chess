@@ -12,11 +12,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ImageManager {
-    private final Map<String, BufferedImage> images = new HashMap<>();
+    private final Map<String, BufferedImage> images;
     private final static BufferedImage fallbackImage = new BufferedImage(
             1, 1, BufferedImage.TYPE_INT_RGB) {{
         setRGB(0, 0, 0xe64100);
     }};
+
+    public ImageManager() {
+        images = new HashMap<>();
+    }
 
     public static BufferedImage loadRasterImage(String path) {
         try (InputStream imageStream = ImageManager.class.getClassLoader().getResourceAsStream(path))
@@ -62,10 +66,8 @@ public class ImageManager {
 
         } catch (TranscoderException e) {
             System.err.println("Error transcoding SVG file: " + path);
-            e.printStackTrace();
         } catch (Exception e) {
             System.err.println("Error loading SVG file: " + path);
-            e.printStackTrace();
         }
 
         // Return rendered SVG

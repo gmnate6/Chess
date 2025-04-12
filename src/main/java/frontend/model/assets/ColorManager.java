@@ -7,7 +7,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ColorManager {
-    private final Map<String, Color> colors = new HashMap<>();
+    private final Map<String, Color> colors;
+
+    public ColorManager() {
+        colors = new HashMap<>();
+    }
 
     private static Color parseColor(String hex) {
         hex = hex.replace("#", "");

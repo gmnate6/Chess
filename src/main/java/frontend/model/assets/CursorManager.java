@@ -5,10 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CursorManager {
-    private final Map<String, Cursor> cursors = new HashMap<>();
+    private final Map<String, Cursor> cursors;
     int size = 32;
 
     public CursorManager() {
+        cursors = new HashMap<>();
         loadCursors();
     }
 

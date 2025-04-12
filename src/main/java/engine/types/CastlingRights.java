@@ -4,19 +4,12 @@ import engine.game.Board;
 import engine.pieces.Rook;
 import utils.Color;
 
-/**
- * The `CastlingRights` class represents the castling rights of a chess game for both players.
- * Castling rights determine whether each player can castle (king-side or queen-side) in the current game state.
- */
 public class CastlingRights {
     private boolean whiteKingSide;
     private boolean whiteQueenSide;
     private boolean blackKingSide;
     private boolean blackQueenSide;
 
-    /**
-     * Constructor to initialize a new set of castling rights with all rights enabled by default.
-     */
     public CastlingRights() {
         this.whiteKingSide = true;
         this.whiteQueenSide = true;
@@ -24,11 +17,6 @@ public class CastlingRights {
         this.blackQueenSide = true;
     }
 
-    /**
-     * Creates a deep copy of the current `CastlingRights` object.
-     *
-     * @return A new `CastlingRights` object with the same values as the current one.
-     */
     public CastlingRights getDeepCopy() {
         CastlingRights copy = new CastlingRights();
         copy.setWhiteKingSide(whiteKingSide);
@@ -50,13 +38,6 @@ public class CastlingRights {
         return !isBlackQueenSide();
     }
 
-    /**
-     * Determines if castling is allowed for a specific player and castling side.
-     *
-     * @param color The player color (`Color.WHITE` or `Color.BLACK`).
-     * @param kingSide `true` for king-side castling, `false` for queen-side castling.
-     * @return `true` if the requested castling is allowed; otherwise, `false`.
-     */
     public boolean isCastlingAllowed(Color color, boolean kingSide) {
         if (color == Color.WHITE) {
             if (kingSide) {

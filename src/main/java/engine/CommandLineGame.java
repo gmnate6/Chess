@@ -10,18 +10,10 @@ import engine.utils.PGN;
 
 import java.util.Scanner;
 
-/**
- * A command-line tool for playing a chess-like game.
- * Handles game initialization, input parsing, move validation, and game flow.
- */
 public class CommandLineGame {
     private static final int DEFAULT_GAME_DURATION_MS = 600_000; // 10 minutes
     private static final Scanner scanner = new Scanner(System.in);
 
-    /**
-     * Runs the main game flow.
-     * It initializes the game state, displays the game, and processes player input in a loop.
-     */
     private void run() {
         ChessTimer chessTimer = new ChessTimer(DEFAULT_GAME_DURATION_MS, 0);
         Game game = initializeGame(chessTimer); // Initialize the game
@@ -47,12 +39,6 @@ public class CommandLineGame {
         System.out.println("PGN: " + PGN.getPGN(game));
     }
 
-    /**
-     * Initializes the game by either starting a new game or loading from a FEN or PGN.
-     *
-     * @param chessTimer The game's timer to manage the duration.
-     * @return The initialized `Game` object.
-     */
     private Game initializeGame(ChessTimer chessTimer) {
         System.out.print("Import Game? (y, n): ");
         String input = scanner.nextLine();
@@ -86,45 +72,21 @@ public class CommandLineGame {
         return new Game(chessTimer); // Default game creation
     }
 
-    /**
-     * Displays the current state of the game on the command line.
-     *
-     * @param game The current `Game` object to display.
-     */
     private void displayGame(Game game) {
         System.out.println("\n");
         System.out.println(game.board);
         System.out.println(game.getTimer());
     }
 
-    /**
-     * Retrieves the current player's input from the command line.
-     *
-     * @param game The current `Game` object to provide player context.
-     * @return The raw string input from the player.
-     */
     private String getPlayerInput(Game game) {
         System.out.print(game.getTurn() + "'s Move: ");
         return scanner.nextLine();
     }
 
-    /**
-     * Checks whether the player entered the exit command (an empty input).
-     *
-     * @param input The player's raw input string.
-     * @return `true` if the input is empty, indicating an exit command.
-     */
     private boolean isExitCommand(String input) {
         return input.isEmpty();
     }
 
-    /**
-     * Processes the player's input by parsing it and either displaying legal moves
-     * or executing a move if valid.
-     *
-     * @param game  The current `Game` object.
-     * @param input The player's raw input string.
-     */
     private void processPlayerInput(String input, Game game) {
         // Display legal moves if only one position is provided
         if (input.length() == 2) {
@@ -147,12 +109,6 @@ public class CommandLineGame {
         handlePlayerMove(game, input);
     }
 
-    /**
-     * Handles the player's move by validating it and applying it to the game if legal.
-     *
-     * @param game         The current `Game` object.
-     * @param moveNotation A long algebraic notation of the move.
-     */
     private void handlePlayerMove(Game game, String moveNotation) {
         Move move;
 
@@ -179,10 +135,6 @@ public class CommandLineGame {
         }
     }
 
-    /**
-     * Entry point for the command-line game.
-     * Responsible for creating the CommandLineGame instance and running the game.
-     */
     public static void main(String[] args) {
         // Display instructions for the player
         System.out.println("Welcome to Command Line Chess Game!");

@@ -6,26 +6,9 @@ import engine.types.CastlingRights;
 import engine.types.Move;
 import utils.Color;
 
-/**
- * Represents the King piece in chess, including movement and castling logic.
- */
 public class King extends Piece {
-    /**
-     * Constructor to initialize a King piece with the specified color.
-     *
-     * @param color The color of the King (`Color.WHITE` or `Color.BLACK`).
-     */
     public King(Color color) { super(color); }
 
-    /**
-     * Executes special moves for the King, specifically castling.
-     * If the move is a valid castling attempt, both the King and the corresponding Rook
-     * are moved to their respective positions.
-     * Assumes `Board.enPassantPosition` is set to `null` before this method is called.
-     *
-     * @param move  The move being executed, containing details about the King's movement.
-     * @param board The chess board, updated to reflect the castling move if applicable.
-     */
     @Override
     public void specialMoveExecution(Move move, Board board) {
         super.specialMoveExecution(move, board);
@@ -67,13 +50,6 @@ public class King extends Piece {
         }
     }
 
-    /**
-     * Validates if a move is valid for the King, specific to its movement rules.
-     *
-     * @param move  The move to validate.
-     * @param board The current state of the chess board.
-     * @return `true` if the move is valid for a King; otherwise, `false`.
-     */
     @Override
     public boolean isPieceSpecificMoveValid(Move move, Board board) {
         Position initial = move.initialPosition();
@@ -91,13 +67,6 @@ public class King extends Piece {
         return isLegalCastle(move, board);
     }
 
-    /**
-     * Determines if a move is a valid castling move for the King.
-     *
-     * @param move  The move to validate.
-     * @param board The current state of the chess board.
-     * @return `true` if the castling move is valid; otherwise, `false`.
-     */
     public boolean isLegalCastle(Move move, Board board) {
         Position initial = move.initialPosition();
         Position finalPos = move.finalPosition();
@@ -114,13 +83,6 @@ public class King extends Piece {
         return rights.isCastlingAllowed(getColor(), kingSide) && isCastlingPathClear(initial, kingSide, board) && !isInCheckDuringCastling(initial, kingSide, board);
     }
 
-    /**
-     * Checks if the move is a proper castling attempt.
-     *
-     * @param move     The move to validate.
-     * @param kingSide `true` for king-side castling; `false` for queen-side castling.
-     * @return `true` if the move appears to be a castling attempt; otherwise, `false`.
-     */
     public boolean isCastleAttempt(Move move, boolean kingSide) {
         Position initialPosition = move.initialPosition();
         Position finalPosition = move.finalPosition();
@@ -143,14 +105,6 @@ public class King extends Piece {
         return isCastleAttempt(move, true) || isCastleAttempt(move, false);
     }
 
-    /**
-     * Checks if the path for castling is free of obstructions.
-     *
-     * @param initial  The initial position of the King.
-     * @param kingSide `true` for king-side castling; `false` for queen-side.
-     * @param board    The current state of the board.
-     * @return `true` if the path is clear; otherwise, `false`.
-     */
     private boolean isCastlingPathClear(Position initial, boolean kingSide, Board board) {
         int direction = kingSide ? 1 : -1;
         int range = kingSide ? 2 : 3; // Two or three squares must be clear
@@ -163,14 +117,6 @@ public class King extends Piece {
         return true;
     }
 
-    /**
-     * Checks if the King would be in check during any point in castling.
-     *
-     * @param initial  The initial position of the King.
-     * @param kingSide `true` for king-side castling; `false` for queen-side.
-     * @param board    The current state of the board.
-     * @return `true` if the King would be in check during castling; otherwise, `false`.
-     */
     private boolean isInCheckDuringCastling(Position initial, boolean kingSide, Board board) {
         int direction = kingSide ? 1 : -1;
         for (int i = 0; i <= 2; i++) { // Include intermediate square and final square
@@ -182,14 +128,6 @@ public class King extends Piece {
         return false;
     }
 
-    /**
-     * Checks if the King is in check at a given position.
-     * Considers all possible attackers on the board.
-     *
-     * @param position The position to check.
-     * @param board    The current state of the chess board.
-     * @return `true` if the King is in check; otherwise, `false`.
-     */
     public boolean isChecked(Position position, Board board) {
         for (int file = 0; file < 8; file++) {
             for (int rank = 0; rank < 8; rank++) {

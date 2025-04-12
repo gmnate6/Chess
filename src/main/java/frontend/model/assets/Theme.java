@@ -4,12 +4,15 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Theme {
-    private final ImageManager imageManager = new ImageManager();
-    private final ColorManager colorManager = new ColorManager();
+    private final ImageManager imageManager;
+    private final ColorManager colorManager;
     private final String themeName;
     private final String path;
 
     public Theme(String themeName) {
+        imageManager = new ImageManager();
+        colorManager = new ColorManager();
+
         this.themeName = themeName;
         this.path = "themes/" + themeName;
         loadImages();

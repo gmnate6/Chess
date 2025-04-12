@@ -46,10 +46,9 @@ public class StockfishAI implements ChessAI{
         String stringMove;
         String stockfishPath = getStockfishPath();
 
-        // Check if the Stockfish executable exists
-        File stockfishFile = new File(stockfishPath);
-        if (!stockfishFile.exists()) {
-            System.out.println("Stockfish Failed. Did Random Move.");
+        // Stockfish is missing
+        if (!doesStockfishExist()) {
+            System.out.println("Stockfish Missing. Did Random Move.");
             RandomAI randomAI = new RandomAI();
             return randomAI.getMove(game);
         }
@@ -88,7 +87,7 @@ public class StockfishAI implements ChessAI{
             System.out.println("Stockfish Failed.");
         }
 
-        // In Case
+        // Stockfish failed
         System.out.println("Did random move.");
         RandomAI randomAI = new RandomAI();
         return randomAI.getMove(game);

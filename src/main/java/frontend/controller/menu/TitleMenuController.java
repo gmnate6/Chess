@@ -14,9 +14,9 @@ public class TitleMenuController implements BaseController {
         titlePanel = new TitlePanel();
 
         // Settings Button Listener
-        titlePanel.settingsButton.addActionListener(e -> {
-            MainController.getInstance().switchTo(new SettingsMenuController());
-        });
+        titlePanel.settingsButton.addActionListener(
+                e -> MainController.getInstance().switchTo(new SettingsMenuController())
+        );
     }
 
     @Override
