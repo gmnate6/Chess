@@ -49,7 +49,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>frontend.ClientApplication</mainClass>
+              <mainClass>frontend.ClientApplicationOLD</mainClass>
             </manifest>
           </archive>
         </configuration>

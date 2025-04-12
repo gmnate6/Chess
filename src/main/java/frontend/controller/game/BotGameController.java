@@ -8,16 +8,17 @@ import utils.Color;
 
 import javax.swing.*;
 
-public class LocalBotGameController extends AbstractGameController {
+public class BotGameController extends AbstractGameController {
     private final ChessAI ai;
 
-    public LocalBotGameController(GamePanel gamePanel, Color color, ChessAI ai) {
-        super(gamePanel);
+    public BotGameController(Color color, ChessAI ai) {
+        super();
         startGame(color, null);
         setPerspective(color);
 
         // Set AI
         this.ai = ai;
+        gamePanel.setTopAvatar(AssetManager.getInstance().getAvatar("bot"));
         gamePanel.setTopUsername(ai.getName());
 
         // First move bot

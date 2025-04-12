@@ -6,6 +6,8 @@ import engine.pieces.Piece;
 import engine.types.Move;
 import engine.types.Position;
 import engine.utils.MoveUtils;
+import frontend.controller.BaseController;
+import frontend.model.SettingsManager;
 import frontend.model.assets.AssetManager;
 import frontend.view.game.BoardPanel;
 import frontend.view.game.GamePanel;
@@ -16,12 +18,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-public abstract class AbstractGameController {
+public abstract class AbstractGameController implements BaseController {
     protected final GamePanel gamePanel;
     protected final BoardPanel boardPanel;
     protected Game game;
     protected Color color;
+    protected Timer swingTimer;
 
     // State Vars
     protected boolean isPieceSelected = false; // Updated only during the up click event
@@ -29,9 +33,27 @@ public abstract class AbstractGameController {
     protected Position markedPosition = null;
     protected Move preMove = null;
 
-    public AbstractGameController(GamePanel gamePanel) {
-        this.gamePanel = gamePanel;
+    public AbstractGameController() {
+        this.gamePanel = new GamePanel();
         this.boardPanel = gamePanel.boardPanel;
+    }
+
+    @Override
+    public void dispose() {
+        // Remove Mouse Listeners
+        for (Component component : boardPanel.getComponents()) {
+            for (MouseListener listener : component.getMouseListeners()) {
+                component.removeMouseListener(listener);
+            }
+        }
+
+        // Stop Timer
+        swingTimer.stop();
+    }
+
+    @Override
+    public JPanel getPanel() {
+        return gamePanel;
     }
 
     public void startGame(Color color, ChessTimer chessTimer) {
@@ -42,9 +64,13 @@ public abstract class AbstractGameController {
         // Play Sound
         AssetManager.getInstance().playSound("game-start");
 
+        // Set Bottom Banner
+        gamePanel.setBottomAvatar(AssetManager.getInstance().getAvatar(SettingsManager.getInstance().getAvatar()));
+        gamePanel.setBottomUsername(SettingsManager.getInstance().getUsername());
+
         // Update Timer
         gamePanel.setTimerEnabled(game.getTimer() != null);
-        Timer swingTimer = new Timer(200, e -> {
+        swingTimer = new Timer(200, e -> {
             if (game.getTimer() == null) { return; }
             gamePanel.setTopTimer(game.getTimer().getFormatedTimeLeft(color.inverse()));
             gamePanel.setBottomTimer(game.getTimer().getFormatedTimeLeft(color));

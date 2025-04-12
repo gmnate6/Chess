@@ -1,11 +1,9 @@
 package frontend.view.game;
 
 import frontend.model.assets.AssetManager;
-import frontend.view.button.NeutralButton;
-import frontend.view.button.CustomButton;
-import frontend.view.button.TransparentButton;
-import frontend.view.menu.TransparentPanel;
-import frontend.view.utils.BackgroundImagedPanel;
+import frontend.view.components.button.TransparentButton;
+import frontend.view.components.panels.TranslucentPanel;
+import frontend.view.components.panels.BackgroundImagedPanel;
 import frontend.view.utils.SquareLayoutManager;
 
 import javax.swing.*;
@@ -63,7 +61,7 @@ public class GamePanel extends BackgroundImagedPanel {
         rightPanel.setBorder(new EmptyBorder(10, 0, 10, 10));
 
         // Right Content Panel
-        TransparentPanel rightContentPanel = new TransparentPanel(new BorderLayout());
+        TranslucentPanel rightContentPanel = new TranslucentPanel(new BorderLayout());
         rightPanel.add(rightContentPanel, BorderLayout.CENTER);
 
         // Title
@@ -80,7 +78,7 @@ public class GamePanel extends BackgroundImagedPanel {
         historyBufferPanel.setOpaque(false);
         historyBufferPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        TransparentPanel historyPanel = new TransparentPanel(new GridLayout(1, 2, 10, 0));
+        TranslucentPanel historyPanel = new TranslucentPanel(new GridLayout(1, 2, 10, 0));
         historyBufferPanel.add(historyPanel, BorderLayout.CENTER);
 
         rightContentPanel.add(historyBufferPanel, BorderLayout.CENTER);
@@ -91,11 +89,11 @@ public class GamePanel extends BackgroundImagedPanel {
         buttonsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         rightContentPanel.add(buttonsPanel, BorderLayout.SOUTH);
 
-        drawButton = new TransparentButton(0x2b);
+        drawButton = new TransparentButton(new String(Character.toChars(0x2b)));
         drawButton.setPreferredSize(new Dimension(120, 40));
         drawButton.setMargin(new Insets(10, 10, 10, 10));
 
-        resignButton = new TransparentButton(0x59);
+        resignButton = new TransparentButton(new String(Character.toChars(0x59)));
         resignButton.setMargin(new Insets(10, 10, 10, 10));
         resignButton.setPreferredSize(new Dimension(120, 40));
 
@@ -109,18 +107,17 @@ public class GamePanel extends BackgroundImagedPanel {
     public void setTopTimer(String time) {
         topBannerPanel.timerLabel.setText(time);
     }
-
     public void setBottomTimer(String time) {
         bottomBannerPanel.timerLabel.setText(time);
     }
-
     public void setTopUsername(String username) {
         topBannerPanel.usernameLabel.setText(username);
     }
-
     public void setBottomUsername(String username) {
         bottomBannerPanel.usernameLabel.setText(username);
     }
+    public void setTopAvatar(Image avatar) { topBannerPanel.avatarPanel.setImage(avatar);}
+    public void setBottomAvatar(Image avatar) { bottomBannerPanel.avatarPanel.setImage(avatar);}
 
     public void setTimerEnabled(boolean enabled) {
         topBannerPanel.timerBufferPanel.setVisible(enabled);

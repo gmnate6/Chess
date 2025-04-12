@@ -7,7 +7,7 @@ import engine.types.Position;
 import engine.pieces.Piece;
 
 import frontend.model.assets.AssetManager;
-import frontend.view.utils.DynamicImagedPanel;
+import frontend.view.components.panels.DynamicImagedPanel;
 import utils.Color;
 
 import javax.swing.event.MouseInputAdapter;

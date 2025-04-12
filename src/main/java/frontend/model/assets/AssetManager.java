@@ -2,6 +2,7 @@ package frontend.model.assets;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Map;
 
 public class AssetManager {
     private static AssetManager instance;
@@ -21,19 +22,19 @@ public class AssetManager {
     public BufferedImage getAvatar(String key) {
         return avatarManager.getAvatar(key);
     }
+    public Map<String, BufferedImage> getAvatars() { return avatarManager.getAvatars(); }
 
     public Cursor getCursor(String key) {
         return cursorManager.getCursor(key);
     }
-
     public Font getFont(String key, int size) {
         return fontManager.getFont(key, size);
     }
-
     public void playSound(String key) {
         soundManager.playSound(key);
     }
 
+    public ThemeManager getThemeManager() { return themeManager; }
     public BufferedImage getThemeImage(String key) {
         return themeManager.getImage(key);
     }

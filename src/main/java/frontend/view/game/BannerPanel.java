@@ -1,8 +1,8 @@
 package frontend.view.game;
 
 import frontend.model.assets.AssetManager;
-import frontend.view.menu.TransparentPanel;
-import frontend.view.utils.DynamicImagedPanel;
+import frontend.view.components.panels.TranslucentPanel;
+import frontend.view.components.panels.DynamicImagedPanel;
 import frontend.view.utils.SquareLayoutManager;
 
 import javax.swing.*;
@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class BannerPanel extends JPanel {
+    public DynamicImagedPanel avatarPanel;
     public JLabel usernameLabel;
     public JLabel timerLabel;
     public JPanel timerBufferPanel;
@@ -21,7 +22,7 @@ public class BannerPanel extends JPanel {
         setOpaque(false);
 
         /// Add Profile
-        TransparentPanel profilePanel = new TransparentPanel(new BorderLayout());
+        TranslucentPanel profilePanel = new TranslucentPanel(new BorderLayout());
         profilePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
         // Avatar Buffer Panel
@@ -29,7 +30,7 @@ public class BannerPanel extends JPanel {
         avatarBufferPanel.setOpaque(false);
 
         // Avatar Panel
-        DynamicImagedPanel avatarPanel = new DynamicImagedPanel();
+        avatarPanel = new DynamicImagedPanel();
         avatarPanel.setPreferredSize(new Dimension(50, 50));
         avatarPanel.setImage(AssetManager.getInstance().getAvatar("default"));
         avatarBufferPanel.add(avatarPanel);
@@ -38,7 +39,7 @@ public class BannerPanel extends JPanel {
         profilePanel.add(avatarBufferPanel, BorderLayout.WEST);
 
         // Username Label
-        usernameLabel = new JLabel("Username", SwingConstants.CENTER);
+        usernameLabel = new JLabel("--Username--", SwingConstants.CENTER);
         usernameLabel.setFont(AssetManager.getInstance().getFont("chess_font", 16));
         usernameLabel.setForeground(AssetManager.getInstance().getThemeColor("text"));
         profilePanel.add(usernameLabel, BorderLayout.CENTER);
@@ -53,7 +54,7 @@ public class BannerPanel extends JPanel {
         timerBufferPanel.setOpaque(false);
         add(timerBufferPanel, BorderLayout.EAST);
 
-        TransparentPanel timerPanel = new TransparentPanel(new BorderLayout());
+        TranslucentPanel timerPanel = new TranslucentPanel(new BorderLayout());
         timerBufferPanel.add(timerPanel);
 
         // Timer Label

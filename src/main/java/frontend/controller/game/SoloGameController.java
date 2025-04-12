@@ -6,8 +6,8 @@ import frontend.view.game.GamePanel;
 import utils.Color;
 
 public class SoloGameController extends AbstractGameController {
-    public SoloGameController(GamePanel gamePanel) {
-        super(gamePanel);
+    public SoloGameController() {
+        super();
         color = Color.WHITE;
         startGame(color, null);
         setPerspective(color);

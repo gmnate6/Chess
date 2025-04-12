@@ -21,9 +21,9 @@ public class ThemeManager {
         loadDefaultTheme();
     }
 
-    public void setDefault_theme(String default_theme) { this.default_theme = default_theme; }
-    public void setAvailable_themes(List<String> available_themes) { this.available_themes = available_themes; }
-    public void setTheme_names(Map<String, String> theme_names) { this.theme_names = theme_names; }
+    private void setDefault_theme(String default_theme) { this.default_theme = default_theme; }
+    private void setAvailable_themes(List<String> available_themes) { this.available_themes = available_themes; }
+    private void setTheme_names(Map<String, String> theme_names) { this.theme_names = theme_names; }
 
     public String getDefault_theme() { return default_theme; }
     public List<String> getAvailable_themes() { return available_themes; }
