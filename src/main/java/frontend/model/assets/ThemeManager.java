@@ -8,34 +8,42 @@ import java.util.List;
 import java.util.Map;
 
 public class ThemeManager {
-    private String default_theme;
-    private List<String> available_themes;
-    private Map<String, String> theme_names;
+    private String defaultTheme;
+    private List<String> availableThemes;
+    private Map<String, String> themeNames;
     private Theme currentTheme;
 
     public ThemeManager() {
         ThemeJsonHandler themeJsonHandler = ThemeJsonHandler.load("themes/themes.json");
-        setDefault_theme(themeJsonHandler.getDefault_theme());
-        setAvailable_themes(themeJsonHandler.getAvailable_themes());
-        setTheme_names(themeJsonHandler.getTheme_names());
+        setDefaultTheme(themeJsonHandler.getDefaultTheme());
+        setAvailableThemes(themeJsonHandler.getAvailableThemes());
+        setThemeNames(themeJsonHandler.getThemeNames());
         loadDefaultTheme();
     }
 
-    private void setDefault_theme(String default_theme) { this.default_theme = default_theme; }
-    private void setAvailable_themes(List<String> available_themes) { this.available_themes = available_themes; }
-    private void setTheme_names(Map<String, String> theme_names) { this.theme_names = theme_names; }
+    public String getThemeNameKey(String name) {
+        Map<String, String> reversedMap = new java.util.HashMap<>();
+        for (Map.Entry<String, String> entry : themeNames.entrySet()) {
+            reversedMap.put(entry.getValue(), entry.getKey());
+        }
+        return reversedMap.get(name);
+    }
 
-    public String getDefault_theme() { return default_theme; }
-    public List<String> getAvailable_themes() { return available_themes; }
-    public Map<String, String> getTheme_names() { return theme_names; }
+    private void setDefaultTheme(String defaultTheme) { this.defaultTheme = defaultTheme; }
+    private void setAvailableThemes(List<String> availableThemes) { this.availableThemes = availableThemes; }
+    private void setThemeNames(Map<String, String> themeNames) { this.themeNames = themeNames; }
+
+    public String getDefaultTheme() { return defaultTheme; }
+    public List<String> getAvailableThemes() { return availableThemes; }
+    public Map<String, String> getThemeNames() { return themeNames; }
 
     public void loadTheme(String themeName) {
-        if (!available_themes.contains(themeName)) {
+        if (!availableThemes.contains(themeName)) {
             throw new IllegalArgumentException("Invalid theme name: " + themeName);
         }
         currentTheme = new Theme(themeName);
     }
-    public void loadDefaultTheme() { loadTheme(default_theme); }
+    public void loadDefaultTheme() { loadTheme(defaultTheme); }
     public Theme getCurrentTheme() { return currentTheme; }
 
     public BufferedImage getImage(String key) { return currentTheme.getImage(key); }

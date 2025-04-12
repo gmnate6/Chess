@@ -12,37 +12,33 @@ public class AvatarManager {
         loadAvatars();
     }
 
-    private void loadAvatars() {
-        String path = "avatars/";
+    private void loadAvatar(String fileName) {
+        String path = "avatars/" + fileName + ".svg";
         int size = 100;
-
-        // Load Avatars
-        avatars.loadSVG("default", path + "default.svg", size, size);
-        avatars.loadSVG("bot", path + "bot.svg", size, size);
-
-        // Load the rest
-        int index = 1;
-        while (true) {
-            String fileName = path + index + ".svg";
-            InputStream stream = getClass().getClassLoader().getResourceAsStream(fileName);
-
-            // Ran out
-            if (stream == null) {
-                break;
-            }
-
-            // Try to load
-            avatars.loadSVG(Integer.toString(index), fileName, size, size);
-            index++;
-        }
+        avatars.loadSVG(fileName, path, size, size);
     }
 
-    private String getFileExtension(String fileName) {
-        int dotIndex = fileName.lastIndexOf('.');
-        if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
-            return fileName.substring(dotIndex + 1);
-        }
-        return "";
+    private void loadAvatars() {
+        loadAvatar("bot");
+        loadAvatar("Boy_1");
+        loadAvatar("Boy_2");
+        loadAvatar("Boy_3");
+        loadAvatar("Boy_4");
+        loadAvatar("Boy_5");
+        loadAvatar("Boy_6");
+        loadAvatar("Boy_7");
+        loadAvatar("Boy_8");
+        loadAvatar("Boy_9");
+        loadAvatar("default");
+        loadAvatar("Girl_1");
+        loadAvatar("Girl_2");
+        loadAvatar("Girl_3");
+        loadAvatar("Girl_4");
+        loadAvatar("Girl_5");
+        loadAvatar("Girl_6");
+        loadAvatar("Girl_7");
+        loadAvatar("Girl_8");
+        loadAvatar("Girl_9");
     }
 
     public BufferedImage getAvatar(String key) {

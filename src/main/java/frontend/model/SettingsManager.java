@@ -15,7 +15,7 @@ public class SettingsManager {
     // ─── Defaults ────────────────────────────────────────
     private static final String DEFAULT_USERNAME   = "Guest";
     private static final String DEFAULT_AVATAR     = "default";
-    private static final String DEFAULT_THEME      = AssetManager.getInstance().getThemeManager().getDefault_theme();
+    private static final String DEFAULT_THEME      = AssetManager.getInstance().getThemeManager().getDefaultTheme();
     private static final String DEFAULT_SERVER_URL = "ws://localhost:8080";
     // ───────────────────────────────────────────────────────────
 
@@ -35,18 +35,18 @@ public class SettingsManager {
         }
 
         // 2) apply loaded values or fall back to defaults
-        this.username  = fromDisk.getUsername()  != null
+        setUsername(fromDisk.getUsername()  != null
                 ? fromDisk.getUsername()
-                : DEFAULT_USERNAME;
-        this.avatar    = fromDisk.getAvatar()    != null
+                : DEFAULT_USERNAME);
+        setAvatar(fromDisk.getAvatar()    != null
                 ? fromDisk.getAvatar()
-                : DEFAULT_AVATAR;
-        this.theme     = fromDisk.getTheme()     != null
+                : DEFAULT_AVATAR);
+        setTheme(fromDisk.getTheme()     != null
                 ? fromDisk.getTheme()
-                : DEFAULT_THEME;
-        this.serverURL = fromDisk.getServerURL() != null
+                : DEFAULT_THEME);
+        setServerURL(fromDisk.getServerURL() != null
                 ? fromDisk.getServerURL()
-                : DEFAULT_SERVER_URL;
+                : DEFAULT_SERVER_URL);
     }
 
     public static SettingsManager getInstance() {
@@ -78,6 +78,9 @@ public class SettingsManager {
     }
 
     public void setTheme(String theme) {
+        if (!validTheme(theme)) {
+            return;
+        }
         AssetManager.getInstance().getThemeManager().loadTheme(theme);
         this.theme = theme;
     }
@@ -114,6 +117,14 @@ public class SettingsManager {
         return username.length() <= 16;
     }
 
+    public boolean validAvatar(String avatar) {
+        return AssetManager.getInstance().getAvatars().containsKey(avatar);
+    }
+
+    public boolean validTheme(String theme) {
+        return AssetManager.getInstance().getThemeManager().getAvailableThemes().contains(theme);
+    }
+
     // Regex for matching an IPv4 address (0.0.0.0 – 255.255.255.255)
     private static final Pattern IPV4_PATTERN = Pattern.compile(
             "^((25[0-5]|2[0-4]\\d|[01]?\\d?\\d)\\.){3}"
@@ -131,7 +142,7 @@ public class SettingsManager {
      *   ws://<IPv4-address>:<port>
      * where the IPv4 address is in 0–255 range per octet and port is 1–65535.
      */
-    public static boolean validServerURL(String url) {
+    public boolean validServerURL(String url) {
         if (url == null) {
             return false;
         }
@@ -158,9 +169,5 @@ public class SettingsManager {
         // 3) must specify a port in [1, 65535]
         int port = uri.getPort();
         return port >= 1 && port <= 65_535;
-    }
-
-    public boolean validAvatar(String avatar) {
-        return AssetManager.getInstance().getAvatars().containsKey(avatar);
     }
 }

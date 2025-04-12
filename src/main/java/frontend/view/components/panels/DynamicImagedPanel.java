@@ -1,5 +1,8 @@
 package frontend.view.components.panels;
 
+import frontend.model.SettingsManager;
+import frontend.model.assets.AssetManager;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -29,7 +32,7 @@ public class DynamicImagedPanel extends JPanel {
         if (originalImage == null) { return; }
 
         // Update cachedImage if size changed
-        if (hasChangedSize()) {
+        if (needsRedraw()) {
             cachedImage = originalImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
             cachedWidth = width;
             cachedHeight = height;
@@ -37,7 +40,7 @@ public class DynamicImagedPanel extends JPanel {
         g.drawImage(cachedImage, 0, 0, width, height, this);
     }
 
-    protected boolean hasChangedSize() {
+    protected boolean needsRedraw() {
         int width = getWidth();
         int height = getHeight();
         return (cachedImage == null || width != cachedWidth || height != cachedHeight);
@@ -45,6 +48,13 @@ public class DynamicImagedPanel extends JPanel {
 
     public void setImage(Image image) {
         this.originalImage = image;
+        forceRedraw();
+    }
+
+    public void forceRedraw() {
+        cachedImage = null;
+        cachedWidth = -1;
+        cachedHeight = -1;
         this.repaint();
     }
 }

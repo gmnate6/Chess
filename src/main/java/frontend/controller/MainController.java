@@ -1,6 +1,8 @@
 package frontend.controller;
 
 import frontend.controller.menu.TitleMenuController;
+import frontend.model.SettingsManager;
+import frontend.model.assets.AssetManager;
 import frontend.view.MainFrame;
 
 public class MainController {
@@ -11,6 +13,12 @@ public class MainController {
     public MainController(MainFrame mainFrame) {
         instance = this;
         this.mainFrame = mainFrame;
+
+        // Load Assets / Settings
+        AssetManager.getInstance();
+        SettingsManager.getInstance();
+
+        // Load Title
         switchTo(new TitleMenuController());
     }
 

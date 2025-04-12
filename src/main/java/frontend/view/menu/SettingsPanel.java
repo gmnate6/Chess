@@ -17,7 +17,7 @@ public class SettingsPanel extends AbstractMenuPanel {
     private JLabel usernameLabel;
     public JTextField usernameField;
 
-    private JPanel avatarPanel;
+    public DynamicImagedPanel avatarPanel;
     public JComboBox<String> avatarDropdown;
 
     private JLabel themeLabel;

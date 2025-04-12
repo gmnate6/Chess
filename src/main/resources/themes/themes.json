@@ -1,7 +1,7 @@
 {
-  "default_theme": "wood",
-  "available_themes": ["wood", "icy", "metal"],
-  "theme_names": {
+  "defaultTheme": "wood",
+  "availableThemes": ["wood", "icy", "metal"],
+  "themeNames": {
     "wood": "Wood",
     "icy": "Icy Sea",
     "metal": "Metal"

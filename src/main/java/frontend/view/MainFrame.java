@@ -20,17 +20,27 @@ public class MainFrame extends JFrame {
         // Background
         background = new BackgroundImagedPanel();
         background.setLayout(new BorderLayout());
-        background.setImage(AssetManager.getInstance().getThemeImage("background"));
         add(background, BorderLayout.CENTER);
+
+        // Set Content
+        setContentPanel(null);
     }
 
-    public void setContentPanel(JPanel contentPanel) {
-        if (this.contentPanel != null) {
-            background.remove(this.contentPanel);
+    public void setContentPanel(JPanel newContent) {
+        // Remove old content if present
+        if (contentPanel != null) {
+            background.remove(contentPanel);
         }
-        this.contentPanel = contentPanel;
-        background.add(contentPanel, BorderLayout.CENTER);
-        revalidate();
-        repaint();
+
+        // Add new content if provided
+        contentPanel = newContent;
+        if (contentPanel != null) {
+            background.add(contentPanel, BorderLayout.CENTER);
+        }
+
+        // Refresh background and layout
+        background.setImage(AssetManager.getInstance().getThemeImage("background"));
+        background.revalidate();
+        background.repaint();
     }
 }

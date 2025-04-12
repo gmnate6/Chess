@@ -19,9 +19,7 @@ public class AssetManager {
         return instance;
     }
 
-    public BufferedImage getAvatar(String key) {
-        return avatarManager.getAvatar(key);
-    }
+    public BufferedImage getAvatar(String key) { return avatarManager.getAvatar(key); }
     public Map<String, BufferedImage> getAvatars() { return avatarManager.getAvatars(); }
 
     public Cursor getCursor(String key) {
