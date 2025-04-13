@@ -20,8 +20,8 @@ public class BotPanel extends AbstractMenuPanel {
     public TranslucentButton backButton;
 
     public BotPanel() {
-        super("Play Bot", 2.2f);
-        heightRatio = .5f;
+        super("Play Bot", 2.1f);
+        heightRatio = .47f;
     }
 
     @Override
@@ -65,7 +65,7 @@ public class BotPanel extends AbstractMenuPanel {
         super.onResize();
 
         // Calculate font sizes dynamically
-        int baseFontSize = (int) (getBaseFontSize() * 1.5);
+        int baseFontSize = getBaseFontSize();
 
         // Update font sizes
         botLabel.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));

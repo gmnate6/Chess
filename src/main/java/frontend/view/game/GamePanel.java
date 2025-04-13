@@ -90,8 +90,13 @@ public class GamePanel extends JPanel {
         rightContentPanel.add(titlePanel, BorderLayout.NORTH);
 
         // History
+        JPanel historyBufferPanel = new JPanel(new BorderLayout());
+        historyBufferPanel.setOpaque(false);
+        historyBufferPanel.setBorder(new EmptyBorder(10, 10, 0, 10));
+        rightContentPanel.add(historyBufferPanel, BorderLayout.CENTER);
+
         historyPanel = new HistoryPanel();
-        rightContentPanel.add(historyPanel, BorderLayout.CENTER);
+        historyBufferPanel.add(historyPanel, BorderLayout.CENTER);
 
         // Game Action Panel
         createGameActionPanel();

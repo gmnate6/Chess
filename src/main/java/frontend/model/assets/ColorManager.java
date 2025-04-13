@@ -52,7 +52,8 @@ public class ColorManager {
 
     public Color getColor(String key) {
         if (!colors.containsKey(key)) {
-            System.err.println("Color with key '" + key + "' not found.");
+            System.err.println("Color with key '" + key + "' not found.\n");
+            Thread.dumpStack();
             return Color.BLACK;
         }
         Color color = colors.get(key);

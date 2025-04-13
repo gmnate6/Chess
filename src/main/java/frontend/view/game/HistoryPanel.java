@@ -20,7 +20,6 @@ public class HistoryPanel extends TranslucentPanel {
     public HistoryPanel() {
         super();
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
         // --- content goes here ---
         contentPanel = new JPanel();
@@ -44,7 +43,7 @@ public class HistoryPanel extends TranslucentPanel {
         vBar.setBackground(new Color(0,0,0,0));
         vBar.setUI(new BasicScrollBarUI() {
             @Override protected void configureScrollBarColors() {
-                thumbColor = AssetManager.getInstance().getThemeColor("transparent");
+                thumbColor = AssetManager.getInstance().getThemeColor("translucent");
                 trackColor = new Color(0,0,0,0);
             }
             @Override protected JButton createDecreaseButton(int orientation) {

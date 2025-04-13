@@ -18,6 +18,7 @@ public class ProfilePanel extends TranslucentPanel {
 
         // Avatar Buffer Panel
         JPanel avatarBufferPanel = new JPanel(new SquareLayoutManager());
+        avatarBufferPanel.setBorder(new EmptyBorder(0, 0, 0, 10));
         avatarBufferPanel.setOpaque(false);
         add(avatarBufferPanel, BorderLayout.WEST);
 
@@ -29,6 +30,7 @@ public class ProfilePanel extends TranslucentPanel {
 
         // Username Label
         usernameLabel = new JLabel("--Username--", SwingConstants.CENTER);
+        usernameLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         usernameLabel.setFont(AssetManager.getInstance().getFont("chess_font", 16));
         usernameLabel.setForeground(AssetManager.getInstance().getThemeColor("text"));
         add(usernameLabel, BorderLayout.CENTER);

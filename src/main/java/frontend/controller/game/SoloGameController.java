@@ -12,6 +12,8 @@ public class SoloGameController extends AbstractGameController {
         setPerspective(color);
 
         // Disable Draw
+        gamePanel.topBannerPanel.setVisible(false);
+        gamePanel.bottomBannerPanel.setVisible(false);
         gamePanel.drawButton.setEnabled(false);
     }
 
