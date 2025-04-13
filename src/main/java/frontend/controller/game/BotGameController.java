@@ -1,6 +1,7 @@
 package frontend.controller.game;
 
 import engine.ai.ChessAI;
+import engine.ai.StockfishAI;
 import engine.types.Move;
 import frontend.controller.MainController;
 import utils.Color;
@@ -15,7 +16,11 @@ public class BotGameController extends AbstractGameController {
         this.ai = ai;
 
         // Update top banner to show AI info.
-        gamePanel.setTopAvatar("bot");
+        if (ai instanceof StockfishAI) {
+            gamePanel.setTopAvatar("engine");
+        } else {
+            gamePanel.setTopAvatar("bot");
+        }
         gamePanel.setTopUsername(ai.toString());
 
         // Disable Draw

@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class AvatarManager {
     private final ImageManager avatars;
+    private final String path = "avatars/";
 
     public AvatarManager() {
         avatars = new ImageManager();
@@ -12,13 +13,16 @@ public class AvatarManager {
     }
 
     private void loadAvatar(String fileName) {
-        String path = "avatars/" + fileName + ".svg";
-        int size = 100;
-        avatars.loadSVG(fileName, path, size, size);
+        String fullPath = path + fileName + ".svg";
+        int size = 300;
+        avatars.loadSVG(fileName, fullPath, size, size);
     }
 
     private void loadAvatars() {
         loadAvatar("bot");
+        loadAvatar("default");
+        avatars.loadImage("engine", path + "engine.png");
+
         loadAvatar("Boy_1");
         loadAvatar("Boy_2");
         loadAvatar("Boy_3");
@@ -28,7 +32,6 @@ public class AvatarManager {
         loadAvatar("Boy_7");
         loadAvatar("Boy_8");
         loadAvatar("Boy_9");
-        loadAvatar("default");
         loadAvatar("Girl_1");
         loadAvatar("Girl_2");
         loadAvatar("Girl_3");
