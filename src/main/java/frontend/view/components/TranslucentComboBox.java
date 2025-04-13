@@ -19,7 +19,7 @@ public class TranslucentComboBox<E> extends JComboBox<E> {
     private void configure() {
         setOpaque(false);
         setForeground(AssetManager.getInstance().getThemeColor("text"));
-        setBackground(Color.BLACK);
+        setBackground(AssetManager.getInstance().getThemeColor("opaque"));
     }
 
     @Override
