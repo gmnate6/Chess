@@ -27,8 +27,8 @@ public abstract class AbstractGameController implements BaseController {
     protected Color color;
 
     // View elements
-    protected final GamePanel gamePanel;
-    protected final BoardPanel boardPanel;
+    public final GamePanel gamePanel;
+    public final BoardPanel boardPanel;
 
     // Helper classes
     protected TimerManager timerManager;
