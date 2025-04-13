@@ -30,7 +30,7 @@ public abstract class AbstractMenuPanel extends JPanel {
         profilePanel.setAvatar(SettingsManager.getInstance().getAvatar());
         profilePanel.setUsername(SettingsManager.getInstance().getUsername());
         Dimension preferredSize = profilePanel.getPreferredSize();
-        profilePanel.setBounds(0, 0, preferredSize.width, preferredSize.height);
+        profilePanel.setBounds(10, 10, preferredSize.width, preferredSize.height);
         add(profilePanel);
 
         // Initialize Components
