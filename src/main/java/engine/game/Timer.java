@@ -15,6 +15,9 @@ public class Timer {
         this.blackTime = initialTime;
         this.increment = increment;
         this.turn = Color.WHITE;
+
+        // Start
+        start();
     }
 
     public Timer(long whiteTime, long blackTime, long increment, Color turn) {

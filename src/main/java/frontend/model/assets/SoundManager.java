@@ -48,6 +48,8 @@ public class SoundManager {
         loadSound("premove", "/sounds/premove.wav");
         loadSound("promote", "/sounds/promote.wav");
         loadSound("ten-seconds", "/sounds/ten-seconds.wav");
+
+        loadSound("menu-click", "/sounds/menu-click.wav");
     }
 
     public Clip getSound(String key) {

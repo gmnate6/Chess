@@ -1,5 +1,6 @@
 package frontend.controller;
 
+import frontend.controller.game.AbstractGameController;
 import frontend.controller.menu.TitleController;
 import frontend.model.SettingsManager;
 import frontend.model.assets.AssetManager;
@@ -32,6 +33,12 @@ public class MainController {
     public static void switchTo(BaseController controller) {
         MainController instance = MainController.getInstance();
         if (instance.activeController != null) {
+
+            // Play Transition Sound
+            if (!(controller instanceof AbstractGameController)) {
+                AssetManager.getInstance().playSound("menu-click");
+            }
+
             instance.activeController.dispose();
         }
         instance.activeController = controller;

@@ -6,10 +6,7 @@ import utils.Color;
 
 public class SoloGameController extends AbstractGameController {
     public SoloGameController() {
-        super();
-        color = Color.WHITE;
-        startGame(color, null);
-        setPerspective(color);
+        super(Color.WHITE, null);
 
         // Disable Draw
         gamePanel.topBannerPanel.setVisible(false);

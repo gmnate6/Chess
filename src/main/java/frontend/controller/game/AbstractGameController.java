@@ -37,9 +37,40 @@ public abstract class AbstractGameController implements BaseController {
     protected Position markedPosition = null;
     protected Move preMove = null;
 
-    public AbstractGameController() {
+    public AbstractGameController(Color color, ChessTimer chessTimer) {
+        this.game = new Game(chessTimer);
+        this.color = color;
+
+        // Setup View
         this.gamePanel = new GamePanel();
         this.boardPanel = gamePanel.boardPanel;
+        boardPanel.setPerspective(color);
+        boardPanel.loadPieces(game);
+
+        // Play Sound
+        AssetManager.getInstance().playSound("game-start");
+
+        // Set Bottom Banner
+        gamePanel.setBottomAvatar(SettingsManager.getInstance().getAvatar());
+        gamePanel.setBottomUsername(SettingsManager.getInstance().getUsername());
+
+        // Update Timer
+        gamePanel.setTimerEnabled(game.getTimer() != null);
+        swingTimer = new Timer(200, e -> {
+            if (game.getTimer() == null) { return; }
+
+            // 10 Seconds Left
+            if (game.getTimer().getTimeLeft(color) <= 10_000) {
+                AssetManager.getInstance().playSound("ten-seconds");
+            }
+
+            gamePanel.setTopTimer(game.getTimer().getFormatedTimeLeft(color.inverse()));
+            gamePanel.setBottomTimer(game.getTimer().getFormatedTimeLeft(color));
+        });
+        swingTimer.start();
+
+        // Setup Listeners
+        setListeners();
     }
 
     @Override
@@ -64,31 +95,6 @@ public abstract class AbstractGameController implements BaseController {
         if (game.inPlay()) {
             throw new IllegalStateException("Cannot rematch while game is in play.");
         }
-    }
-
-    protected void startGame(Color color, ChessTimer chessTimer) {
-        this.game = new Game(chessTimer);
-        this.color = color;
-        boardPanel.loadPieces(game);
-
-        // Play Sound
-        AssetManager.getInstance().playSound("game-start");
-
-        // Set Bottom Banner
-        gamePanel.setBottomAvatar(SettingsManager.getInstance().getAvatar());
-        gamePanel.setBottomUsername(SettingsManager.getInstance().getUsername());
-
-        // Update Timer
-        gamePanel.setTimerEnabled(game.getTimer() != null);
-        swingTimer = new Timer(200, e -> {
-            if (game.getTimer() == null) { return; }
-            gamePanel.setTopTimer(game.getTimer().getFormatedTimeLeft(color.inverse()));
-            gamePanel.setBottomTimer(game.getTimer().getFormatedTimeLeft(color));
-        });
-        swingTimer.start();
-
-        // Setup Listeners
-        setListeners();
     }
 
     private void setListeners() {
@@ -123,21 +129,9 @@ public abstract class AbstractGameController implements BaseController {
 
         // Resign Button Listener
         gamePanel.resignButton.addActionListener(e -> {
-            // Run the dialog box in a new thread to avoid blocking the game
-            new Thread(() -> {
-                int response = JOptionPane.showConfirmDialog(
-                        gamePanel,                             // Parent component
-                        "Are you sure you want to resign?",    // Message
-                        "Confirm Resignation",                 // Title
-                        JOptionPane.YES_NO_OPTION,             // Option type
-                        JOptionPane.QUESTION_MESSAGE           // Message type
-                );
-
-                // Handle the response
-                if (response == JOptionPane.YES_OPTION) {
-                    resign();
-                }
-            }).start();
+            if (confirm("Are you sure you want to resign?")) {
+                resign();
+            }
         });
 
         // Draw Button Listener
@@ -178,6 +172,18 @@ public abstract class AbstractGameController implements BaseController {
         gamePanel.backButton.addActionListener(
                 e -> MainController.switchTo(new TitleController())
         );
+    }
+
+    protected boolean confirm(String message) {
+        AssetManager.getInstance().playSound("notify");
+        int response = JOptionPane.showConfirmDialog(
+                gamePanel,                             // Parent component
+                message,                               // Message
+                "Confirm",                             // Title
+                JOptionPane.YES_NO_OPTION,             // Option type
+                JOptionPane.QUESTION_MESSAGE           // Message type
+        );
+        return response == JOptionPane.YES_OPTION;
     }
 
     private void afterStep() {
