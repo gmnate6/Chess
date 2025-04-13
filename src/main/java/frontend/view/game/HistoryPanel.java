@@ -1,10 +1,10 @@
 package frontend.view.game;
 
 import frontend.model.assets.AssetManager;
+import frontend.view.components.scrollbar.TranslucentScrollBar;
 import frontend.view.components.panels.TranslucentPanel;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 
 public class HistoryPanel extends TranslucentPanel {
@@ -36,32 +36,7 @@ public class HistoryPanel extends TranslucentPanel {
         scrollPane.getViewport().setBackground(new Color(0,0,0,0));
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-
-        // --- customize the vertical scrollbar to a simple black thumb ---
-        JScrollBar vBar = scrollPane.getVerticalScrollBar();
-        vBar.setOpaque(false);
-        vBar.setBackground(new Color(0,0,0,0));
-        vBar.setUI(new BasicScrollBarUI() {
-            @Override protected void configureScrollBarColors() {
-                thumbColor = AssetManager.getInstance().getThemeColor("translucent");
-                trackColor = new Color(0,0,0,0);
-            }
-            @Override protected JButton createDecreaseButton(int orientation) {
-                return makeZeroButton();
-            }
-            @Override protected JButton createIncreaseButton(int orientation) {
-                return makeZeroButton();
-            }
-            private JButton makeZeroButton() {
-                JButton btn = new JButton();
-                btn.setPreferredSize(new Dimension(0,0));
-                btn.setMinimumSize(new Dimension(0,0));
-                btn.setMaximumSize(new Dimension(0,0));
-                return btn;
-            }
-        });
-        vBar.setUnitIncrement(rowHeight); // scroll speed = one row at a time
-
+        scrollPane.setVerticalScrollBar(new TranslucentScrollBar(Adjustable.VERTICAL, rowHeight));
         add(scrollPane, BorderLayout.CENTER);
     }
 

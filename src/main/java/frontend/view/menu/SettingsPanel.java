@@ -2,7 +2,7 @@ package frontend.view.menu;
 
 import frontend.model.SettingsManager;
 import frontend.model.assets.AssetManager;
-import frontend.view.components.TranslucentComboBox;
+import frontend.view.components.OpaqueComboBox;
 import frontend.view.components.TranslucentLabel;
 import frontend.view.components.TranslucentTextField;
 import frontend.view.components.button.ColorButton;
@@ -59,7 +59,7 @@ public class SettingsPanel extends AbstractMenuPanel {
         avatarPreviewBufferPanel.add(avatarPanel);
 
         // Avatar Dropdown
-        avatarDropdown = new TranslucentComboBox<>();
+        avatarDropdown = new OpaqueComboBox<>();
         avatarDropdown.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentPanel.add(avatarDropdown);
 
@@ -69,7 +69,7 @@ public class SettingsPanel extends AbstractMenuPanel {
         contentPanel.add(themeLabel);
 
         // Theme Dropdown
-        themeDropdown = new TranslucentComboBox<>();
+        themeDropdown = new OpaqueComboBox<>();
         themeDropdown.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentPanel.add(themeDropdown);
 

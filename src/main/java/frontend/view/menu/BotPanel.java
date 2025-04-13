@@ -2,7 +2,7 @@ package frontend.view.menu;
 
 import engine.ai.ChessAI;
 import frontend.model.assets.AssetManager;
-import frontend.view.components.TranslucentComboBox;
+import frontend.view.components.OpaqueComboBox;
 import frontend.view.components.TranslucentLabel;
 import frontend.view.components.button.ColorButton;
 import frontend.view.components.button.TranslucentButton;
@@ -35,7 +35,7 @@ public class BotPanel extends AbstractMenuPanel {
         contentPanel.add(botLabel);
 
         // Bot Dropdown
-        botDropdown = new TranslucentComboBox<>();
+        botDropdown = new OpaqueComboBox<>();
         botDropdown.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentPanel.add(botDropdown);
 
@@ -45,7 +45,7 @@ public class BotPanel extends AbstractMenuPanel {
         contentPanel.add(colorLabel);
 
         // Color Dropdown
-        colorDropdown = new TranslucentComboBox<>();
+        colorDropdown = new OpaqueComboBox<>();
         colorDropdown.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentPanel.add(colorDropdown);
 
