@@ -474,6 +474,10 @@ public abstract class AbstractGameController implements BaseController {
         swingTimer.stop();
 
         // Update view
+        gamePanel.firstMoveButton.setEnabled(true);
+        gamePanel.previousMoveButton.setEnabled(true);
+        gamePanel.nextMoveButton.setEnabled(false);
+        gamePanel.lastMoveButton.setEnabled(false);
         gamePanel.showPostGameActionPanel();
     }
 
