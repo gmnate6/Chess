@@ -2,40 +2,38 @@ package frontend.controller.game;
 
 import engine.game.ChessTimer;
 import engine.game.Game;
-import engine.pieces.Piece;
 import engine.types.Move;
 import engine.types.Position;
-import engine.utils.MoveUtils;
 import frontend.controller.BaseController;
 import frontend.controller.MainController;
+import frontend.controller.game.listeners.BoardMouseListener;
+import frontend.controller.game.managers.MoveProcessor;
+import frontend.controller.game.managers.SelectionManager;
+import frontend.controller.game.managers.TimerManager;
 import frontend.controller.menu.TitleController;
 import frontend.model.SettingsManager;
 import frontend.model.assets.AssetManager;
-import frontend.view.components.button.ColorButton;
-import frontend.view.components.button.TranslucentButton;
 import frontend.view.game.BoardPanel;
 import frontend.view.game.GamePanel;
-import frontend.view.game.Square;
 import utils.Color;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public abstract class AbstractGameController implements BaseController {
-    protected final GamePanel gamePanel;
-    protected final BoardPanel boardPanel;
+    // Core objects
     protected Game game;
     protected Color color;
-    protected Timer swingTimer;
 
-    // State Vars
-    protected boolean isPieceSelected = false; // Updated only during the up click event
-    protected Position selectedPosition = null;
-    protected Position markedPosition = null;
-    protected Move preMove = null;
+    // View elements
+    protected final GamePanel gamePanel;
+    protected final BoardPanel boardPanel;
+
+    // Helper classes
+    protected TimerManager timerManager;
+    protected MoveProcessor moveProcessor;
+    protected SelectionManager selectionManager;
 
     public AbstractGameController(Color color, ChessTimer chessTimer) {
         this.game = new Game(chessTimer);
@@ -47,27 +45,20 @@ public abstract class AbstractGameController implements BaseController {
         boardPanel.setPerspective(color);
         boardPanel.loadPieces(game);
 
-        // Play Sound
         AssetManager.getInstance().playSound("game-start");
 
-        // Set Bottom Banner
+        // Setup Bottom Banner
         gamePanel.setBottomAvatar(SettingsManager.getInstance().getAvatar());
         gamePanel.setBottomUsername(SettingsManager.getInstance().getUsername());
 
-        // Update Timer
+        // Timer Manager (encapsulates Swing timer logic)
         gamePanel.setTimerEnabled(game.getTimer() != null);
-        swingTimer = new Timer(200, e -> {
-            if (game.getTimer() == null) { return; }
+        timerManager = new TimerManager(game, gamePanel, color);
+        timerManager.start();
 
-            // 10 Seconds Left
-            if (game.getTimer().getTimeLeft(color) <= 10_000) {
-                AssetManager.getInstance().playSound("ten-seconds");
-            }
-
-            gamePanel.setTopTimer(game.getTimer().getFormatedTimeLeft(color.inverse()));
-            gamePanel.setBottomTimer(game.getTimer().getFormatedTimeLeft(color));
-        });
-        swingTimer.start();
+        // Initialize helper classes for move processing and selection management
+        moveProcessor = new MoveProcessor(game, boardPanel, gamePanel, color);
+        selectionManager = new SelectionManager(boardPanel, game, color);
 
         // Setup Listeners
         setListeners();
@@ -83,7 +74,7 @@ public abstract class AbstractGameController implements BaseController {
         }
 
         // Stop Timer
-        swingTimer.stop();
+        timerManager.stop();
     }
 
     @Override
@@ -98,77 +89,43 @@ public abstract class AbstractGameController implements BaseController {
     }
 
     private void setListeners() {
-        // Board Listeners
-        boardPanel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                // Get Position
-                Position pressedPosition = boardPanel.pointToPosition(e.getPoint());
+        // Use dedicated BoardMouseListener for board events
+        boardPanel.addMouseListener(new BoardMouseListener(this));
 
-                // Call method
-                if (SwingUtilities.isLeftMouseButton(e)) {
-                    onSquareButtonLeftDown(pressedPosition);
-                } else if (SwingUtilities.isRightMouseButton(e)) {
-                    onSquareButtonRightDown(pressedPosition);
-                }
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                // Get Position
-                Position releasePosition = boardPanel.pointToPosition(e.getPoint());
-
-                // Call method
-                if (SwingUtilities.isLeftMouseButton(e)) {
-                    onSquareButtonLeftUp(releasePosition);
-                } else if (SwingUtilities.isRightMouseButton(e)) {
-                    onSquareButtonRightUp(releasePosition);
-                }
-            }
-        });
-
-        // Resign Button Listener
         gamePanel.resignButton.addActionListener(e -> {
             if (confirm("Are you sure you want to resign?")) {
                 resign();
             }
         });
 
-        // Draw Button Listener
         gamePanel.drawButton.addActionListener(e -> {
 
         });
 
-        // First Move Button Listener
         gamePanel.firstMoveButton.addActionListener(e -> {
             game.stepFullBack();
             afterStep();
         });
 
-        // Previous Move Button Listener
         gamePanel.previousMoveButton.addActionListener(e -> {
             game.stepBack();
             afterStep();
         });
 
-        // Next Move Button Listener
         gamePanel.nextMoveButton.addActionListener(e -> {
             game.stepForward();
             afterStep();
         });
 
-        // Last Move Button Listener
         gamePanel.lastMoveButton.addActionListener(e -> {
             game.stepFullForward();
             afterStep();
         });
 
-        // Rematch Button Listener
         gamePanel.rematchButton.addActionListener(
                 e -> rematch()
         );
 
-        // Back Button Listener
         gamePanel.backButton.addActionListener(
                 e -> MainController.switchTo(new TitleController())
         );
@@ -177,46 +134,45 @@ public abstract class AbstractGameController implements BaseController {
     protected boolean confirm(String message) {
         AssetManager.getInstance().playSound("notify");
         int response = JOptionPane.showConfirmDialog(
-                gamePanel,                             // Parent component
-                message,                               // Message
-                "Confirm",                             // Title
-                JOptionPane.YES_NO_OPTION,             // Option type
-                JOptionPane.QUESTION_MESSAGE           // Message type
+                gamePanel, message, "Confirm",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE
         );
         return response == JOptionPane.YES_OPTION;
     }
 
-    private void afterStep() {
-        boardPanel.loadPieces(game);
-
-        // Re enable
+    private void updateEnableNavigationButtons() {
+        // Enable navigation buttons by default
         gamePanel.firstMoveButton.setEnabled(true);
         gamePanel.previousMoveButton.setEnabled(true);
         gamePanel.nextMoveButton.setEnabled(true);
         gamePanel.lastMoveButton.setEnabled(true);
 
-        // Disable Navigation if needed
+        // Disable navigation as needed based on move history
         int step = game.getMoveHistory().getCurrentMoveIndex();
         int min = -1;
         int max = game.getMoveHistory().getSize() - 1;
 
-        // Cant go back
         if (step <= min) {
             gamePanel.firstMoveButton.setEnabled(false);
             gamePanel.previousMoveButton.setEnabled(false);
         }
-
-        // Cant go forward
         if (step >= max) {
             gamePanel.nextMoveButton.setEnabled(false);
             gamePanel.lastMoveButton.setEnabled(false);
         }
+    }
 
-        // Play move sound
+    private void afterStep() {
+        boardPanel.loadPieces(game);
+
+        updateEnableNavigationButtons();
+
+        // Play move sound for last move in history if available
+        int step = game.getMoveHistory().getCurrentMoveIndex();
         if (step >= 0) {
             Move move = game.getMoveHistory().getLastMove();
             game.stepBack();
-            playMoveSound(move);
+            moveProcessor.playMoveSound(move);
             game.stepForward();
         }
     }
@@ -230,175 +186,103 @@ public abstract class AbstractGameController implements BaseController {
         boardPanel.loadPieces(game);
     }
 
-    // Helper method for onSquareButtonLeftDown, returns true if selection can be made
-    private boolean canSelectPosition(Position position) {
-        assert position != null;
-        Piece piece = game.board.getPieceAt(position);
+    // --- Methods delegated to helper classes ---
 
-        // Cannot select non piece
-        if (piece == null) { return false; }
-
-        // My piece
-        if (piece.getColor() == color) { return true; }
-
-        // Select opponents piece if nothing is selected
-        if (selectedPosition == null) { return true; }
-
-        // Select opponents piece if move not legal
-        Move move = new Move(selectedPosition, position, '\0');
-        return !game.isMoveLegal(move);
-    }
-
-    private void onSquareButtonLeftDown(Position position) {
+    public void onSquareButtonLeftDown(Position position) {
         if (position == null) {
             throw new IllegalArgumentException("Error: Position is null.");
         }
 
-        // Select
-        if (canSelectPosition(position)) {
-            // Deselect
-            if (!position.equals(selectedPosition)) {
-                deselect();
+        // First check if a selection can be made.
+        if (selectionManager.canSelectPosition(position)) {
+            if (!position.equals(selectionManager.getSelectedPosition())) {
+                selectionManager.deselect();
             }
-            select(position);
+            selectionManager.select(position);
             return;
         }
 
-        // Process Move
-        if (selectedPosition == null) { return; }
-        Move move = new Move(selectedPosition, position, '\0');
+        if (selectionManager.getSelectedPosition() == null) {
+            return;
+        }
+
+        Move move = new Move(selectionManager.getSelectedPosition(), position, '\0');
         processPlayerMove(move);
     }
 
-    private void onSquareButtonLeftUp(Position position) {
+    public void onSquareButtonLeftUp(Position position) {
         if (position == null) {
             throw new IllegalArgumentException("Error: Position is null.");
         }
-        if (selectedPosition == null) { return; }
 
-        // Drop Piece
+        if (selectionManager.getSelectedPosition() == null) {
+            return;
+        }
+
         boardPanel.dropPiece();
 
-        // Dragged Move
-        if (!selectedPosition.equals(position)) {
-            isPieceSelected = true;
-            processPlayerMove(new Move(selectedPosition, position, '\0'));
+        if (!selectionManager.getSelectedPosition().equals(position)) {
+            selectionManager.setPieceSelected(true);
+            processPlayerMove(new Move(selectionManager.getSelectedPosition(), position, '\0'));
             return;
         }
 
-        // Update isPieceSelected
-        if (!isPieceSelected) {
-            isPieceSelected = true;
+        if (!selectionManager.isPieceSelected()) {
+            selectionManager.setPieceSelected(true);
             return;
         }
 
-        // Deselect if selected already selected piece
-        deselect();
+        selectionManager.deselect();
     }
 
-    private void onSquareButtonRightDown(Position position) {
-        if (position == null) { return; }
-        markedPosition = position;
-        setPreMove(null);
-    }
-
-    private void onSquareButtonRightUp(Position position) {
-        if (position == null || markedPosition == null) { return; }
-
-        // Mark Red
-        if (position.equals(markedPosition)) {
-            Square square = boardPanel.getSquare(position);
-            boardPanel.setMarkedRed(position, !square.isMarkedRed());
-        }
-        markedPosition = null;
-    }
-
-    private void select(Position position) {
+    public void onSquareButtonRightDown(Position position) {
         if (position == null) {
-            throw new IllegalArgumentException("Error: Selected Position is null.");
+            return;
         }
-
-        // Clear Marked Red
-        boardPanel.clearMarkedRed();
-
-        // Update Selected Position
-        selectedPosition = position;
-
-        // Add Highlight
-        boardPanel.setHighlight(position, true);
-
-        // Add Hints
-        if (game.getTurn() == color) {
-            for (Position pos : game.getLegalMoves(position)) {
-                boardPanel.setHint(pos, true);
-            }
-        }
-
-        // Grab Piece
-        boardPanel.grabPiece(position);
+        selectionManager.setMarkedPosition(position);
+        moveProcessor.clearPreMove();
     }
 
-    private void deselect() {
-        if (selectedPosition != null) {
-            boardPanel.setHighlight(selectedPosition, false);
-        }
-        boardPanel.clearHints();
-        boardPanel.dropPiece();
-        selectedPosition = null;
-        isPieceSelected = false;
-    }
-
-    private void setPreMove(Move move) {
-        if (move == null && preMove == null) { return; }
-
-        // Remove
-        if (move == null) {
-            boardPanel.setMarkedRed(preMove.initialPosition(), false);
-            boardPanel.setMarkedRed(preMove.finalPosition(), false);
-            preMove = null;
+    public void onSquareButtonRightUp(Position position) {
+        if (position == null || selectionManager.getMarkedPosition() == null) {
             return;
         }
 
-        // Set
-        boardPanel.setMarkedRed(move.initialPosition(), true);
-        boardPanel.setMarkedRed(move.finalPosition(), true);
-        preMove = move;
-
-        // Play PreMove Sound
-        AssetManager.getInstance().playSound("premove");
+        if (position.equals(selectionManager.getMarkedPosition())) {
+            boardPanel.setMarkedRed(position, !boardPanel.getSquare(position).isMarkedRed());
+        }
+        selectionManager.clearMarkedPosition();
     }
 
     protected void processPlayerMove(Move move) {
-        if (!game.inPlay()) { return; }
-
-        // Deselect
-        deselect();
-
-        // Not your piece
-        Piece piece = game.board.getPieceAt(move.initialPosition());
-        if (piece != null && piece.getColor() != color) {
+        if (!game.inPlay()) {
             return;
         }
 
-        // Remove Pre move
-        if (preMove != null) {
-            setPreMove(null);
+        selectionManager.deselect();
+
+        // Only allow moves with the controller’s own color piece.
+        if (
+                game.board.getPieceAt(move.initialPosition()) != null &&
+                game.board.getPieceAt(move.initialPosition()).getColor() != color
+        ) {
+            return;
         }
 
-        // Not your move -> set preMove
+        moveProcessor.clearPreMove();
+
         if (game.getTurn() != color) {
-            setPreMove(move);
+            moveProcessor.setPreMove(move);
             return;
         }
 
-        // If move is promotion
-        if (MoveUtils.causesPromotion(move, game)) {
+        // Check promotion possibility
+        if (moveProcessor.causesPromotion(move)) {
             move = new Move(move.initialPosition(), move.finalPosition(), 'Q'); // TODO: Ask player for promotion piece
         }
 
-        // Move must be legal
         if (!game.isMoveLegal(move)) {
-            // Puts king in check
+            // Check for unsafe move (e.g., putting king in check)
             if (!game.isMoveSafe(move)) {
                 AssetManager.getInstance().playSound("illegal");
                 boardPanel.setMarkedRed(game.board.getKingPosition(color), true);
@@ -406,28 +290,14 @@ public abstract class AbstractGameController implements BaseController {
             return;
         }
 
-        // Execute Move
         executeMove(move);
     }
 
-    protected void resign() {
-        // Resign game
-        game.resign(color);
-        endGame();
-    }
-
     protected void executeMove(Move move) {
-        // Play Move sound
-        if (!MoveUtils.causesCheckmate(move, game)) {
-            playMoveSound(move);
+        if (!game.inPlay()) {
+            return;
         }
-
-        // Add move to history panel
-        gamePanel.historyPanel.addMove(MoveUtils.toAlgebraic(move, game));
-
-        // Move
-        game.move(move);
-        boardPanel.loadPieces(game);
+        moveProcessor.executeMove(move);
 
         // End Game
         if (!game.inPlay()) {
@@ -435,36 +305,9 @@ public abstract class AbstractGameController implements BaseController {
         }
     }
 
-    // Call before executing move
-    protected void playMoveSound(Move move) {
-        // Check
-        if (MoveUtils.causesCheck(move, game)) {
-            AssetManager.getInstance().playSound("move-check");
-            return;
-        }
-
-        // Capture
-        if (MoveUtils.isCapture(move, game)) {
-            AssetManager.getInstance().playSound("capture");
-            return;
-        }
-
-        // Castle
-        if (MoveUtils.isCastlingMove(move, game)) {
-            AssetManager.getInstance().playSound("castle");
-            return;
-        }
-
-        // Opponent Move
-        if (game.getTurn() != color) {
-            AssetManager.getInstance().playSound("move-opponent");
-            return;
-        }
-
-        // Self Move
-        if (game.getTurn() == color) {
-            AssetManager.getInstance().playSound("move-self");
-        }
+    protected void resign() {
+        game.resign(color);
+        endGame();
     }
 
     protected void endGame() {
@@ -473,37 +316,9 @@ public abstract class AbstractGameController implements BaseController {
             return;
         }
 
-        // Play sound
-        playEndSound();
-
-        // Stop Timer
-        swingTimer.stop();
-
-        // Update view
-        gamePanel.firstMoveButton.setEnabled(true);
-        gamePanel.previousMoveButton.setEnabled(true);
-        gamePanel.nextMoveButton.setEnabled(false);
-        gamePanel.lastMoveButton.setEnabled(false);
+        moveProcessor.playEndSound();
+        timerManager.stop();
         gamePanel.showPostGameActionPanel();
-    }
-
-    protected void playEndSound() {
-        if (game.inPlay()) { return; }
-        Color winner = game.getResult().getWinner();
-
-        // Draw
-        if (winner == null) {
-            AssetManager.getInstance().playSound("game-draw");
-            return;
-        }
-
-        // Win
-        if (color == winner) {
-            AssetManager.getInstance().playSound("game-win");
-            return;
-        }
-
-        // Lose
-        AssetManager.getInstance().playSound("game-end");
+        updateEnableNavigationButtons();
     }
 }

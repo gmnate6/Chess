@@ -7,8 +7,10 @@ import utils.Color;
 public class SoloGameController extends AbstractGameController {
     public SoloGameController() {
         super(Color.WHITE, null);
+        configureSoloGameSettings();
+    }
 
-        // Disable Draw
+    private void configureSoloGameSettings() {
         gamePanel.topBannerPanel.setVisible(false);
         gamePanel.bottomBannerPanel.setVisible(false);
         gamePanel.drawButton.setEnabled(false);

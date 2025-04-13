@@ -12,16 +12,16 @@ public class BotGameController extends AbstractGameController {
 
     public BotGameController(Color color, ChessAI ai) {
         super(color, null);
-
-        // Set AI
         this.ai = ai;
+
+        // Update top banner to show AI info.
         gamePanel.setTopAvatar("bot");
         gamePanel.setTopUsername(ai.toString());
 
         // Disable Draw
         gamePanel.drawButton.setEnabled(false);
 
-        // First move bot
+        // If the bot is meant to move first, initiate the bot move.
         if (color == Color.BLACK) {
             playBotMove();
         }
@@ -37,26 +37,30 @@ public class BotGameController extends AbstractGameController {
         new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() {
-                executeMove(ai.getMove(game));
-                if (preMove != null) {
-                    processPlayerMove(preMove);
-                }
+                Move botMove = ai.getMove(game);
+
+                // Execute move on the EDT.
+                SwingUtilities.invokeLater(() -> processBotMove(botMove));
                 return null;
             }
         }.execute();
+    }
+
+    private void processBotMove(Move botMove) {
+        executeMove(botMove);
+
+        // Process Pre Move
+        if (moveProcessor.hasPreMove()) {
+            processPlayerMove(moveProcessor.getPreMove());
+        }
     }
 
     @Override
     public void executeMove(Move move) {
         super.executeMove(move);
 
-        // Play sound
-        if (!game.inPlay()) {
-            playEndSound();
-        }
-
         // Play Bot Move
-        if (game.getTurn() != color) {
+        if (game.inPlay() && game.getTurn() != color) {
             playBotMove();
         }
     }
