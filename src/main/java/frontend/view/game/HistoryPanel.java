@@ -59,8 +59,8 @@ public class HistoryPanel extends TranslucentPanel {
             countLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
             countLabel.setHorizontalAlignment(SwingConstants.LEFT);
             countLabel.setVerticalAlignment(SwingConstants.CENTER);
-            countLabel.setFont(AssetManager.getInstance().getFont("chess_font", 16));
-            countLabel.setForeground(AssetManager.getInstance().getThemeColor("text"));
+            countLabel.setFont(AssetManager.getFont("chess_font", 16));
+            countLabel.setForeground(AssetManager.getThemeColor("text"));
             countLabel.setOpaque(false);
             countLabel.setPreferredSize(new Dimension(40, rowHeight));
             currentRow.add(countLabel, BorderLayout.WEST);
@@ -79,8 +79,8 @@ public class HistoryPanel extends TranslucentPanel {
         JLabel moveLabel = new JLabel(move);
         moveLabel.setVerticalAlignment(SwingConstants.CENTER);
         moveLabel.setOpaque(false);
-        moveLabel.setFont(AssetManager.getInstance().getFont("chess_font", 16));
-        moveLabel.setForeground(AssetManager.getInstance().getThemeColor("text"));
+        moveLabel.setFont(AssetManager.getFont("chess_font", 16));
+        moveLabel.setForeground(AssetManager.getThemeColor("text"));
         moveLabel.setHorizontalAlignment(completed
                 ? SwingConstants.CENTER  // second move
                 : SwingConstants.LEFT);  // first (or only) move

@@ -16,7 +16,7 @@ public class TranslucentScrollBar extends JScrollBar {
         setUI(new BasicScrollBarUI() {
             @Override
             protected void configureScrollBarColors() {
-                thumbColor = AssetManager.getInstance().getThemeColor("translucent");
+                thumbColor = AssetManager.getThemeColor("translucent");
                 trackColor = new Color(0, 0, 0, 0);
             }
 

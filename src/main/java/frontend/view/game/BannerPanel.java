@@ -35,8 +35,8 @@ public class BannerPanel extends JPanel {
 
         // Timer Label
         timerLabel = new JLabel("--:--", SwingConstants.CENTER);
-        timerLabel.setFont(AssetManager.getInstance().getFont("chess_font", 32));
-        timerLabel.setForeground(AssetManager.getInstance().getThemeColor("text"));
+        timerLabel.setFont(AssetManager.getFont("chess_font", 32));
+        timerLabel.setForeground(AssetManager.getThemeColor("text"));
         timerPanel.add(timerLabel, BorderLayout.CENTER);
     }
 }

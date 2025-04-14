@@ -22,38 +22,35 @@ public class SettingsController implements BaseController {
     }
 
     private void setInitialValues() {
-        SettingsManager settingsManager = SettingsManager.getInstance();
-        AssetManager assetManager = AssetManager.getInstance();
-
         // Username
-        settingsPanel.usernameField.setText(settingsManager.getUsername());
+        settingsPanel.usernameField.setText(SettingsManager.getUsername());
 
         // Avatar
         settingsPanel.avatarDropdown.removeAllItems();
-        List<String> avatars = new ArrayList<>(assetManager.getAvatars().keySet());
+        List<String> avatars = new ArrayList<>(AssetManager.getAvatars().keySet());
         Collections.sort(avatars);
         for (String avatar : avatars) {
             settingsPanel.avatarDropdown.addItem(avatar);
         }
-        settingsPanel.avatarDropdown.setSelectedItem(settingsManager.getAvatar());
+        settingsPanel.avatarDropdown.setSelectedItem(SettingsManager.getAvatar());
 
         // Theme
         settingsPanel.themeDropdown.removeAllItems();
-        List<String> Themes = new ArrayList<>(assetManager.getThemeManager().getPrettyThemes());
+        List<String> Themes = new ArrayList<>(AssetManager.getThemeManager().getPrettyThemes());
         Collections.sort(Themes);
         for (String key : Themes) {
             settingsPanel.themeDropdown.addItem(key);
         }
-        settingsPanel.themeDropdown.setSelectedItem(assetManager.getThemeManager().getPrettyName(settingsManager.getTheme()));
+        settingsPanel.themeDropdown.setSelectedItem(AssetManager.getThemeManager().getPrettyName(SettingsManager.getTheme()));
 
         // Server URL
-        settingsPanel.serverURLField.setText(settingsManager.getServerURL());
+        settingsPanel.serverURLField.setText(SettingsManager.getServerURL());
     }
 
     public void setListeners() {
         settingsPanel.avatarDropdown.addActionListener(e -> {
             String selectedAvatar = (String) settingsPanel.avatarDropdown.getSelectedItem();
-            settingsPanel.avatarPanel.setImage(AssetManager.getInstance().getAvatars().get(selectedAvatar));
+            settingsPanel.avatarPanel.setImage(AssetManager.getAvatars().get(selectedAvatar));
         });
 
         // Save Button Listener
@@ -64,18 +61,16 @@ public class SettingsController implements BaseController {
     }
 
     private void save() {
-        SettingsManager settingsManager = SettingsManager.getInstance();
-
         // Username
         String username = settingsPanel.usernameField.getText();
-        if (!settingsManager.validUsername(username)) {
+        if (!SettingsManager.validUsername(username)) {
             JOptionPane.showMessageDialog(settingsPanel, "Invalid username", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         // Avatar
         String avatar = (String) settingsPanel.avatarDropdown.getSelectedItem();
-        if (!settingsManager.validAvatar(avatar)) {
+        if (!SettingsManager.validAvatar(avatar)) {
             System.err.println("Invalid avatar");
             JOptionPane.showMessageDialog(settingsPanel, "Invalid avatar", "Error", JOptionPane.ERROR_MESSAGE);
             return;
@@ -83,27 +78,27 @@ public class SettingsController implements BaseController {
 
         // Theme
         String theme = (String) settingsPanel.themeDropdown.getSelectedItem();
-        theme = AssetManager.getInstance().getThemeManager().getThemeKey(theme);
-        if (!settingsManager.validTheme(theme)) {
+        theme = AssetManager.getThemeManager().getThemeKey(theme);
+        if (!SettingsManager.validTheme(theme)) {
             JOptionPane.showMessageDialog(settingsPanel, "Invalid theme", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         // Server URL
         String serverURL = settingsPanel.serverURLField.getText();
-        if (!settingsManager.validServerURL(serverURL)) {
+        if (!SettingsManager.validServerURL(serverURL)) {
             JOptionPane.showMessageDialog(settingsPanel, "Invalid server URL", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         // Set
-        settingsManager.setUsername(username);
-        settingsManager.setAvatar(avatar);
-        settingsManager.setTheme(theme);
-        settingsManager.setServerURL(serverURL);
+        SettingsManager.setUsername(username);
+        SettingsManager.setAvatar(avatar);
+        SettingsManager.setTheme(theme);
+        SettingsManager.setServerURL(serverURL);
 
         // Save
-        settingsManager.save();
+        SettingsManager.save();
 
         // Force Redraw
         MainController.forceRedraw();

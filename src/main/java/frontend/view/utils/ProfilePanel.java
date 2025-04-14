@@ -25,19 +25,19 @@ public class ProfilePanel extends TranslucentPanel {
         // Avatar Panel
         avatarPanel = new DynamicImagedPanel();
         avatarPanel.setPreferredSize(new Dimension(50, 50));
-        avatarPanel.setImage(AssetManager.getInstance().getAvatar("default"));
+        avatarPanel.setImage(AssetManager.getAvatar("default"));
         avatarBufferPanel.add(avatarPanel);
 
         // Username Label
         usernameLabel = new JLabel("--Username--", SwingConstants.CENTER);
         usernameLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
-        usernameLabel.setFont(AssetManager.getInstance().getFont("chess_font", 16));
-        usernameLabel.setForeground(AssetManager.getInstance().getThemeColor("text"));
+        usernameLabel.setFont(AssetManager.getFont("chess_font", 16));
+        usernameLabel.setForeground(AssetManager.getThemeColor("text"));
         add(usernameLabel, BorderLayout.CENTER);
     }
 
     public void setAvatar(String avatar) {
-        avatarPanel.setImage(AssetManager.getInstance().getAvatar(avatar));
+        avatarPanel.setImage(AssetManager.getAvatar(avatar));
     }
     public void setUsername(String username) {
         usernameLabel.setText(username);

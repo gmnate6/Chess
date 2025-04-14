@@ -1,6 +1,5 @@
 package frontend.model;
 
-import frontend.controller.MainController;
 import frontend.model.assets.AssetManager;
 import frontend.model.json.SettingsJsonHandler;
 
@@ -13,12 +12,12 @@ import java.util.regex.Pattern;
 public class SettingsManager {
     private static SettingsManager instance;
 
-    // ─── Defaults ────────────────────────────────────────
+    // ─── Defaults ───────────────────────────────────────────────
     public static final String DEFAULT_USERNAME   = "Guest";
     public static final String DEFAULT_AVATAR     = "default";
     public static final String DEFAULT_THEME      = "wood";
     public static final String DEFAULT_SERVER_URL = "ws://localhost:8080";
-    // ───────────────────────────────────────────────────────────
+    // ────────────────────────────────────────────────────────────
 
     private String username;
     private String avatar;
@@ -26,10 +25,40 @@ public class SettingsManager {
     private String serverURL;
 
     private SettingsManager() {
+        instance = this;
+
         // 1) Load Defaults
         loadDefaults();
 
-        // 2) Read From Disk
+        // 2) Load From Disk
+        load();
+    }
+
+    public static void initialize() {
+        if (instance != null) {
+            throw new IllegalStateException("AssetManager has already been initialized.");
+        }
+        new SettingsManager();
+    }
+
+    private static SettingsManager getInstance() {
+        if (instance == null) {
+            System.err.println("Warning: SettingsManager not initialized before use");
+            initialize();
+        }
+        return instance;
+    }
+
+    // ─── Save & Load ────────────────────────────────────────
+    private static void loadDefaults() {
+        setUsername(DEFAULT_USERNAME);
+        setAvatar(DEFAULT_AVATAR);
+        setTheme(DEFAULT_THEME);
+        setServerURL(DEFAULT_SERVER_URL);
+    }
+
+    public static void load() {
+        // 1) Read From Disk
         SettingsJsonHandler fromDisk;
         try {
             fromDisk = SettingsJsonHandler.load();
@@ -37,7 +66,7 @@ public class SettingsManager {
             return;
         }
 
-        // 3) Write From Disk
+        // 2) Write From Disk
         if (validUsername(fromDisk.getUsername())) {
             setUsername(fromDisk.getUsername());
         }
@@ -52,88 +81,84 @@ public class SettingsManager {
         }
     }
 
-    private void loadDefaults() {
-        setUsername(DEFAULT_USERNAME);
-        setAvatar(DEFAULT_AVATAR);
-        setTheme(DEFAULT_THEME);
-        setServerURL(DEFAULT_SERVER_URL);
+    public static void save() {
+        SettingsJsonHandler toDisk = new SettingsJsonHandler();
+        toDisk.setUsername(getUsername());
+        toDisk.setAvatar(getAvatar());
+        toDisk.setTheme(getTheme());
+        toDisk.setServerURL(getServerURL());
+        toDisk.save();
     }
+    // ────────────────────────────────────────────────────────
 
-    public static SettingsManager getInstance() {
-        if (instance == null) {
-            instance = new SettingsManager();
-        }
-        return instance;
-    }
-
-    // ─── Public API ────────────────────────────────────────────
-    public void setUsername(String username) {
+    // ─── Username ───────────────────────────────────────────
+    public static void setUsername(String username) {
         if (!validUsername(username)) {
             throw new IllegalArgumentException("Invalid username");
         }
-        this.username = username;
-    }
-    public String getUsername() {
-        return username;
+        getInstance().username = username;
     }
 
-    public void setAvatar(String avatar) {
+    public static String getUsername() {
+        return getInstance().username;
+    }
+    // ────────────────────────────────────────────────────────
+
+    // ─── Avatar ─────────────────────────────────────────────
+    public static void setAvatar(String avatar) {
         if (!validAvatar(avatar)) {
             throw new IllegalArgumentException("Invalid avatar");
         }
-        this.avatar = avatar;
-    }
-    public String getAvatar() {
-        return avatar;
+        getInstance().avatar = avatar;
     }
 
-    public void setTheme(String theme) {
+    public static String getAvatar() {
+        return getInstance().avatar;
+    }
+    // ────────────────────────────────────────────────────────
+
+    // ─── Theme ──────────────────────────────────────────────
+    public static void setTheme(String theme) {
         if (!validTheme(theme)) {
             return;
         }
-        AssetManager.getInstance().getThemeManager().loadTheme(theme);
-        MainController.forceRedraw();
-        this.theme = theme;
-    }
-    public String getTheme() {
-        return theme;
+        AssetManager.getThemeManager().loadTheme(theme);
+        getInstance().theme = theme;
     }
 
-    public void setServerURL(String serverURL) {
+    public static String getTheme() {
+        return getInstance().theme;
+    }
+    // ────────────────────────────────────────────────────────
+
+    // ─── Server URL ─────────────────────────────────────────
+    public static void setServerURL(String serverURL) {
         if (!validServerURL(serverURL)) {
             throw new IllegalArgumentException("Invalid server URL");
         }
-        this.serverURL = serverURL;
-    }
-    public String getServerURL() {
-        return serverURL;
+        getInstance().serverURL = serverURL;
     }
 
-    /** Push the current in‑memory settings back out to disk. */
-    public void save() {
-        SettingsJsonHandler toDisk = new SettingsJsonHandler();
-        toDisk.setUsername(this.username);
-        toDisk.setAvatar(this.avatar);
-        toDisk.setTheme(this.theme);
-        toDisk.setServerURL(this.serverURL);
-        toDisk.save();
+    public static String getServerURL() {
+        return getInstance().serverURL;
     }
+    // ────────────────────────────────────────────────────────
 
-    // ─── validation methods (as you already have them) ──────────
+    // ─── Validation Methods ─────────────────────────────────
 
-    public boolean validUsername(String username) {
+    public static boolean validUsername(String username) {
         if (username == null || username.isEmpty()) {
             return false;
         }
         return username.length() <= 16;
     }
 
-    public boolean validAvatar(String avatar) {
-        return AssetManager.getInstance().getAvatars().containsKey(avatar);
+    public static boolean validAvatar(String avatar) {
+        return AssetManager.getAvatars().containsKey(avatar);
     }
 
-    public boolean validTheme(String theme) {
-        return AssetManager.getInstance().getThemeManager().getThemes().contains(theme);
+    public static boolean validTheme(String theme) {
+        return AssetManager.getThemeManager().getThemes().contains(theme);
     }
 
     // Regex for matching an IPv4 address (0.0.0.0 – 255.255.255.255)
@@ -148,12 +173,8 @@ public class SettingsManager {
         return m.matches();
     }
 
-    /**
-     * Returns true if the input is a valid WebSocket server URL of the form:
-     *   ws://<IPv4-address>:<port>
-     * where the IPv4 address is in 0–255 range per octet and port is 1–65535.
-     */
-    public boolean validServerURL(String url) {
+    // Validate: IPv4 address using websocket protocol
+    public static boolean validServerURL(String url) {
         if (url == null) {
             return false;
         }

@@ -7,12 +7,12 @@ import java.awt.*;
 
 public class CustomButton extends JButton {
     public int fontSize = 32;
-    public final Color textColor = AssetManager.getInstance().getThemeColor("text");
+    public final Color textColor = AssetManager.getThemeColor("text");
 
     public CustomButton() {
         super();
         setForeground(textColor);
-        setFont(AssetManager.getInstance().getFont("chess_font", fontSize));
+        setFont(AssetManager.getFont("chess_font", fontSize));
         setBorderPainted(false);
         setFocusPainted(false);
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

@@ -7,8 +7,8 @@ import javax.swing.*;
 public class ColorButton extends CustomButton {
     public ColorButton() {
         super();
-        setForeground(AssetManager.getInstance().getThemeColor("text"));
-        setBackground(AssetManager.getInstance().getThemeColor("color"));
+        setForeground(AssetManager.getThemeColor("text"));
+        setBackground(AssetManager.getThemeColor("color"));
         setBorder(BorderFactory.createEmptyBorder());
         setOpaque(true);
         setFocusPainted(false);

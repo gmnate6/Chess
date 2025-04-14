@@ -10,7 +10,7 @@ public class TranslucentTextField extends JTextField {
     public TranslucentTextField() {
         super();
         setOpaque(false);
-        setForeground(AssetManager.getInstance().getThemeColor("text"));
+        setForeground(AssetManager.getThemeColor("text"));
     }
 
     @Override

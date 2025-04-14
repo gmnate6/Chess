@@ -30,29 +30,27 @@ public class PromotionPanel extends JPanel {
         setLayout(new GridLayout(4, 1));
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        AssetManager assetManager = AssetManager.getInstance();
-        setBackground(assetManager.getThemeColor("boardWhite"));
-        setBorder(new LineBorder(assetManager.getThemeColor("boardBlack")));
+        setBackground(AssetManager.getThemeColor("boardWhite"));
+        setBorder(new LineBorder(AssetManager.getThemeColor("boardBlack")));
 
         build();
         addListeners();
     }
 
     private void build() {
-        AssetManager assetManager = AssetManager.getInstance();
         boolean isWhite = color == Color.WHITE;
 
         queenPanel = new DynamicImagedPanel();
-        queenPanel.setImage(assetManager.getThemeImage(getPieceKey('q', isWhite)));
+        queenPanel.setImage(AssetManager.getThemeImage(getPieceKey('q', isWhite)));
 
         rookPanel = new DynamicImagedPanel();
-        rookPanel.setImage(assetManager.getThemeImage(getPieceKey('r', isWhite)));
+        rookPanel.setImage(AssetManager.getThemeImage(getPieceKey('r', isWhite)));
 
         bishopPanel = new DynamicImagedPanel();
-        bishopPanel.setImage(assetManager.getThemeImage(getPieceKey('b', isWhite)));
+        bishopPanel.setImage(AssetManager.getThemeImage(getPieceKey('b', isWhite)));
 
         knightPanel = new DynamicImagedPanel();
-        knightPanel.setImage(assetManager.getThemeImage(getPieceKey('n', isWhite)));
+        knightPanel.setImage(AssetManager.getThemeImage(getPieceKey('n', isWhite)));
 
         if (rightSideUp) {
             add(queenPanel);

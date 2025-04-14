@@ -11,7 +11,7 @@ public class TranslucentLabel extends JLabel {
         super();
         setOpaque(false);
         setFontSize(32);
-        setForeground(AssetManager.getInstance().getThemeColor("text"));
+        setForeground(AssetManager.getThemeColor("text"));
         setHorizontalAlignment(SwingConstants.CENTER);
         setVerticalAlignment(SwingConstants.CENTER);
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -22,7 +22,7 @@ public class TranslucentLabel extends JLabel {
     }
 
     public void setFontSize(int size) {
-        setFont(AssetManager.getInstance().getFont("chess_font", size));
+        setFont(AssetManager.getFont("chess_font", size));
     }
 
     @Override

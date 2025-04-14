@@ -15,19 +15,8 @@ public class MainController {
         instance = this;
         this.mainFrame = mainFrame;
 
-        // Load Assets / Settings
-        AssetManager.getInstance();
-        SettingsManager.getInstance();
-
         // Load Title
         switchTo(new TitleController());
-    }
-
-    private static MainController getInstance() {
-        if (instance == null) {
-            throw new IllegalStateException("MainController is not initialized");
-        }
-        return instance;
     }
 
     public static void switchTo(BaseController controller) {
@@ -35,7 +24,7 @@ public class MainController {
 
             // Play Transition Sound
             if (!(controller instanceof AbstractGameController)) {
-                AssetManager.getInstance().playSound("menu-click");
+                AssetManager.playSound("menu-click");
             }
 
             instance.activeController.dispose();
@@ -45,7 +34,6 @@ public class MainController {
     }
 
     public static void forceRedraw() {
-        MainController instance = MainController.getInstance();
         instance.mainFrame.forceRedraw();
     }
 }

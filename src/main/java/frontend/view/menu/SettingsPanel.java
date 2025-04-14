@@ -54,7 +54,7 @@ public class SettingsPanel extends AbstractMenuPanel {
         contentPanel.add(avatarPreviewBufferPanel);
 
         // Avatar Preview
-        Image avatar = AssetManager.getInstance().getAvatar(SettingsManager.getInstance().getAvatar());
+        Image avatar = AssetManager.getAvatar(SettingsManager.getAvatar());
         avatarPanel = new DynamicImagedPanel(avatar);
         avatarPreviewBufferPanel.add(avatarPanel);
 
@@ -103,15 +103,15 @@ public class SettingsPanel extends AbstractMenuPanel {
         int baseFontSize = (int) (getBaseFontSize() / 1.5);
 
         // Update font sizes
-        usernameLabel.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
-        usernameField.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
-        avatarDropdown.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
-        themeLabel.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
-        themeDropdown.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
-        serverURLLabel.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
-        serverURLField.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
-        saveButton.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
-        cancelButton.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
+        usernameLabel.setFont(AssetManager.getFont("chess_font", baseFontSize));
+        usernameField.setFont(AssetManager.getFont("chess_font", baseFontSize));
+        avatarDropdown.setFont(AssetManager.getFont("chess_font", baseFontSize));
+        themeLabel.setFont(AssetManager.getFont("chess_font", baseFontSize));
+        themeDropdown.setFont(AssetManager.getFont("chess_font", baseFontSize));
+        serverURLLabel.setFont(AssetManager.getFont("chess_font", baseFontSize));
+        serverURLField.setFont(AssetManager.getFont("chess_font", baseFontSize));
+        saveButton.setFont(AssetManager.getFont("chess_font", baseFontSize));
+        cancelButton.setFont(AssetManager.getFont("chess_font", baseFontSize));
 
         // Revalidate and repaint the panel to apply changes
         revalidate();

@@ -22,23 +22,23 @@ public class OpaqueComboBox<E> extends JComboBox<E> {
 
     private void configure() {
         setOpaque(false);
-        setForeground(AssetManager.getInstance().getThemeColor("text"));
-        setBackground(AssetManager.getInstance().getThemeColor("opaque"));
+        setForeground(AssetManager.getThemeColor("text"));
+        setBackground(AssetManager.getThemeColor("opaque"));
 
         setUI(new BasicComboBoxUI() {
             // Arrow
             @Override
             protected JButton createArrowButton() {
                 JButton arrow = new JButton("?");
-                arrow.setFont(AssetManager.getInstance().getFont("chess_glyph", 16));
-                arrow.setForeground(AssetManager.getInstance().getThemeColor("text"));
-                arrow.setBackground(AssetManager.getInstance().getThemeColor("opaque"));
+                arrow.setFont(AssetManager.getFont("chess_glyph", 16));
+                arrow.setForeground(AssetManager.getThemeColor("text"));
+                arrow.setBackground(AssetManager.getThemeColor("opaque"));
                 arrow.setFocusable(false);
                 arrow.setHorizontalAlignment(SwingConstants.CENTER);
 
                 // Border
                 arrow.setBorder(BorderFactory.createLineBorder(
-                        AssetManager.getInstance().getThemeColor("text"), 1));
+                        AssetManager.getThemeColor("text"), 1));
 
                 return arrow;
             }
@@ -55,7 +55,7 @@ public class OpaqueComboBox<E> extends JComboBox<E> {
                         sp.setVerticalScrollBar(bar);
                         sp.setOpaque(false);
                         sp.getViewport().setOpaque(false);
-                        sp.getViewport().setBackground(AssetManager.getInstance().getThemeColor("opaque"));
+                        sp.getViewport().setBackground(AssetManager.getThemeColor("opaque"));
 
                         return sp;
                     }

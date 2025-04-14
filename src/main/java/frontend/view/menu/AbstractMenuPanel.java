@@ -27,8 +27,8 @@ public abstract class AbstractMenuPanel extends JPanel {
 
         // Profile Panel
         ProfilePanel profilePanel = new ProfilePanel();
-        profilePanel.setAvatar(SettingsManager.getInstance().getAvatar());
-        profilePanel.setUsername(SettingsManager.getInstance().getUsername());
+        profilePanel.setAvatar(SettingsManager.getAvatar());
+        profilePanel.setUsername(SettingsManager.getUsername());
         Dimension preferredSize = profilePanel.getPreferredSize();
         profilePanel.setBounds(10, 10, preferredSize.width, preferredSize.height);
         add(profilePanel);
@@ -61,14 +61,14 @@ public abstract class AbstractMenuPanel extends JPanel {
         // Title Label
         titleLabel = new JLabel(title, SwingConstants.CENTER);
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        titleLabel.setForeground(AssetManager.getInstance().getThemeColor("text"));
+        titleLabel.setForeground(AssetManager.getThemeColor("text"));
         titlePanel.add(Box.createVerticalGlue());
         titlePanel.add(titleLabel);
 
         // Spacer Line
         separator = new JSeparator(SwingConstants.HORIZONTAL);
         separator.setOpaque(true);
-        separator.setBackground(AssetManager.getInstance().getThemeColor("text"));
+        separator.setBackground(AssetManager.getThemeColor("text"));
         titlePanel.add(Box.createVerticalStrut(10)); // Add some space before the separator
         titlePanel.add(separator);
         titlePanel.add(Box.createVerticalStrut(10)); // Add some space after the separator
@@ -109,7 +109,7 @@ public abstract class AbstractMenuPanel extends JPanel {
         int titleFontSize = baseFontSize * 2;
 
         // Update title label font size
-        titleLabel.setFont(AssetManager.getInstance().getFont("chess_font", titleFontSize));
+        titleLabel.setFont(AssetManager.getFont("chess_font", titleFontSize));
 
         // Update separator size (80% of the panel width)
         int separatorWidth = Math.min(getWidth(), (int) (translucentPanel.getWidth() * 0.8f));

@@ -16,12 +16,13 @@ public class MainFrame extends JFrame {
         setSize(new Dimension(900, 600));
         setMinimumSize(new Dimension(900, 600));
         setLayout(new BorderLayout());
-        setIconImage(AssetManager.getInstance().getIcon());
+        setIconImage(AssetManager.getIcon());
 
         // Background
         background = new BackgroundImagedPanel();
         background.setLayout(new BorderLayout());
         add(background, BorderLayout.CENTER);
+        forceRedraw();
 
         // Set Content
         setContentPanel(null);
@@ -45,7 +46,7 @@ public class MainFrame extends JFrame {
     }
 
     public void forceRedraw () {
-        background.setImage(AssetManager.getInstance().getThemeImage("background"));
+        background.setImage(AssetManager.getThemeImage("background"));
         background.revalidate();
         background.repaint();
     }

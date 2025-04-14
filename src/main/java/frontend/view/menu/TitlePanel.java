@@ -47,10 +47,10 @@ public class TitlePanel extends AbstractMenuPanel {
         int baseFontSize = getBaseFontSize();
 
         // Update button font sizes
-        onlineButton.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
-        botButton.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
-        soloButton.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
-        settingsButton.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
+        onlineButton.setFont(AssetManager.getFont("chess_font", baseFontSize));
+        botButton.setFont(AssetManager.getFont("chess_font", baseFontSize));
+        soloButton.setFont(AssetManager.getFont("chess_font", baseFontSize));
+        settingsButton.setFont(AssetManager.getFont("chess_font", baseFontSize));
 
         // Revalidate and repaint the panel to apply changes
         revalidate();

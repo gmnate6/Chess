@@ -29,7 +29,7 @@ public class BoardPanel extends DynamicImagedPanel {
     private Point mousePosition;
 
     public BoardPanel() {
-        super(AssetManager.getInstance().getThemeImage("board"));
+        super(AssetManager.getThemeImage("board"));
 
         // Setup
         setBackground(new java.awt.Color(0xE5E5E5));
@@ -88,13 +88,13 @@ public class BoardPanel extends DynamicImagedPanel {
 
         // Closed Grab
         if (pickedUpPosition != null) {
-            setCursor(AssetManager.getInstance().getCursor("grabbing"));
+            setCursor(AssetManager.getCursor("grabbing"));
             return;
         }
 
         // Open Grab
         if (square.getPiece() != null ) {
-            setCursor(AssetManager.getInstance().getCursor("grab"));
+            setCursor(AssetManager.getCursor("grab"));
             return;
         }
 
@@ -121,7 +121,6 @@ public class BoardPanel extends DynamicImagedPanel {
         int squareWidth = getWidth() / SIZE;
         int squareHeight = getHeight() / SIZE;
         squareWidth += 2; squareHeight += 2;
-        AssetManager assetManager = AssetManager.getInstance();
 
         // Draw Piece / Overlays
         for (int rank = 0; rank < SIZE; rank++) {
@@ -134,13 +133,13 @@ public class BoardPanel extends DynamicImagedPanel {
                 // Highlight
                 boolean isLastMove = lastMove != null && (lastMove.initialPosition().equals(position) || lastMove.finalPosition().equals(position));
                 if (square.isHighlighted() || isLastMove) {
-                    g.setColor(assetManager.getThemeColor("highlight"));
+                    g.setColor(AssetManager.getThemeColor("highlight"));
                     g.fillRect(point.x, point.y, squareWidth, squareHeight);
                 }
 
                 // Draw Piece
                 if (square.getPiece() != null) {
-                    BufferedImage pieceImage = assetManager.getThemeImage(square.getPiece());
+                    BufferedImage pieceImage = AssetManager.getThemeImage(square.getPiece());
 
                     // Skip PickUpPiece
                     if (!position.equals(pickedUpPosition)) {
@@ -150,15 +149,15 @@ public class BoardPanel extends DynamicImagedPanel {
 
                 // Marked Red
                 if (square.isMarkedRed()) {
-                    g.setColor(assetManager.getThemeColor("markedRed"));
+                    g.setColor(AssetManager.getThemeColor("markedRed"));
                     g.fillRect(point.x, point.y, squareWidth, squareHeight);
                 }
 
                 // Hint
                 if (square.isHinted()) {
                     g.drawImage(square.getPiece() == null ?
-                                    assetManager.getThemeImage("hint") :
-                                    assetManager.getThemeImage("capture_hint"),
+                                    AssetManager.getThemeImage("hint") :
+                                    AssetManager.getThemeImage("capture_hint"),
                             point.x, point.y, squareWidth, squareHeight, this);
                 }
             }
@@ -168,11 +167,10 @@ public class BoardPanel extends DynamicImagedPanel {
     private void paintCoordinates(Graphics g) {
         int squareWidth = getWidth() / SIZE;
         int squareHeight = getHeight() / SIZE;
-        AssetManager assetManager = AssetManager.getInstance();
 
         int fontSize = (int) (squareHeight * .15);
         int offset = (int) (squareHeight * 0.04);
-        Font font = assetManager.getFont("chess_font", fontSize);
+        Font font = AssetManager.getFont("chess_font", fontSize);
         g.setFont(font);
         FontMetrics metrics = g.getFontMetrics(font);
 
@@ -192,14 +190,14 @@ public class BoardPanel extends DynamicImagedPanel {
             if (perspective == Color.WHITE) {
                 g.setColor(
                         i % 2 == 0 ?
-                                assetManager.getThemeColor("boardBlack") :
-                                assetManager.getThemeColor("boardWhite")
+                                AssetManager.getThemeColor("boardBlack") :
+                                AssetManager.getThemeColor("boardWhite")
                 );
             } else {
                 g.setColor(
                         i % 2 == 0 ?
-                                assetManager.getThemeColor("boardWhite") :
-                                assetManager.getThemeColor("boardBlack")
+                                AssetManager.getThemeColor("boardWhite") :
+                                AssetManager.getThemeColor("boardBlack")
                 );
             }
 
@@ -224,14 +222,14 @@ public class BoardPanel extends DynamicImagedPanel {
             if (perspective == Color.WHITE) {
                 g.setColor(
                         i % 2 == 0 ?
-                                assetManager.getThemeColor("boardBlack") :
-                                assetManager.getThemeColor("boardWhite")
+                                AssetManager.getThemeColor("boardBlack") :
+                                AssetManager.getThemeColor("boardWhite")
                 );
             } else {
                 g.setColor(
                         i % 2 == 0 ?
-                                assetManager.getThemeColor("boardWhite") :
-                                assetManager.getThemeColor("boardBlack")
+                                AssetManager.getThemeColor("boardWhite") :
+                                AssetManager.getThemeColor("boardBlack")
                 );
             }
 
@@ -246,10 +244,9 @@ public class BoardPanel extends DynamicImagedPanel {
         // Get Some stuff
         int squareWidth = getWidth() / SIZE;
         int squareHeight = getHeight() / SIZE;
-        AssetManager assetManager = AssetManager.getInstance();
         Square square = getSquare(pickedUpPosition);
         if (square.getPiece() == null) { return; }
-        BufferedImage pieceImage = assetManager.getThemeImage(square.getPiece());
+        BufferedImage pieceImage = AssetManager.getThemeImage(square.getPiece());
 
         // Draw piece at mouse
         int x = mousePosition.x - (squareWidth / 2);

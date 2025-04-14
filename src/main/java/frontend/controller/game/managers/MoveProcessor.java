@@ -41,7 +41,7 @@ public class MoveProcessor {
         boardPanel.setMarkedRed(move.initialPosition(), true);
         boardPanel.setMarkedRed(move.finalPosition(), true);
         preMove = move;
-        AssetManager.getInstance().playSound("premove");
+        AssetManager.playSound("premove");
     }
 
     public boolean hasPreMove() {
@@ -68,23 +68,23 @@ public class MoveProcessor {
 
     public void playMoveSound(Move move) {
         if (MoveUtils.causesCheck(move, game)) {
-            AssetManager.getInstance().playSound("move-check");
+            AssetManager.playSound("move-check");
             return;
         }
         if (MoveUtils.isCapture(move, game)) {
-            AssetManager.getInstance().playSound("capture");
+            AssetManager.playSound("capture");
             return;
         }
         if (MoveUtils.isCastlingMove(move, game)) {
-            AssetManager.getInstance().playSound("castle");
+            AssetManager.playSound("castle");
             return;
         }
         if (game.getTurn() != color) {
-            AssetManager.getInstance().playSound("move-opponent");
+            AssetManager.playSound("move-opponent");
             return;
         }
         if (game.getTurn() == color) {
-            AssetManager.getInstance().playSound("move-self");
+            AssetManager.playSound("move-self");
         }
     }
 
@@ -93,13 +93,13 @@ public class MoveProcessor {
             return;
         Color winner = game.getResult().getWinner();
         if (winner == null) {
-            AssetManager.getInstance().playSound("game-draw");
+            AssetManager.playSound("game-draw");
             return;
         }
         if (color == winner) {
-            AssetManager.getInstance().playSound("game-win");
+            AssetManager.playSound("game-win");
             return;
         }
-        AssetManager.getInstance().playSound("game-end");
+        AssetManager.playSound("game-end");
     }
 }

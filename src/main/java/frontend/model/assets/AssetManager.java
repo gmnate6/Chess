@@ -11,46 +11,82 @@ public class AssetManager {
     private final FontManager fontManager;
     private final SoundManager soundManager;
     private final ThemeManager themeManager;
-    private final BufferedImage icon;
+
+    private static final BufferedImage icon = ImageManager.loadRasterImage("icon.png");
 
     private AssetManager() {
+        instance = this;
         avatarManager = new AvatarManager();
         cursorManager = new CursorManager();
         fontManager = new FontManager();
         soundManager = new SoundManager();
         themeManager = new ThemeManager();
-        icon = ImageManager.loadRasterImage("icon.png");
     }
 
-    public static AssetManager getInstance() {
+    public static void initialize() {
+        if (instance != null) {
+            throw new IllegalStateException("AssetManager has already been initialized.");
+        }
+        new AssetManager();
+    }
+
+    private static AssetManager getInstance() {
         if (instance == null) {
-            instance = new AssetManager();
+            System.err.println("Warning: AssetManager not initialized before use");
+            initialize();
         }
         return instance;
     }
 
-    public BufferedImage getAvatar(String key) { return avatarManager.getAvatar(key); }
-    public Map<String, BufferedImage> getAvatars() { return avatarManager.getAvatars(); }
+    // ─── Avatar ─────────────────────────────────────────────
+    public static BufferedImage getAvatar(String key) {
+        return getInstance().avatarManager.getAvatar(key);
+    }
 
-    public Cursor getCursor(String key) {
-        return cursorManager.getCursor(key);
+    public static Map<String, BufferedImage> getAvatars() {
+        return getInstance().avatarManager.getAvatars();
     }
-    public Font getFont(String key, int size) {
-        return fontManager.getFont(key, size);
-    }
-    public void playSound(String key) {
-        soundManager.playSound(key);
-    }
-    public BufferedImage getIcon() { return icon; }
+    // ────────────────────────────────────────────────────────
 
-    public ThemeManager getThemeManager() { return themeManager; }
-    public BufferedImage getThemeImage(String key) {
-        return themeManager.getImage(key);
+    // ─── Cursor ─────────────────────────────────────────────
+    public static Cursor getCursor(String key) {
+        return getInstance().cursorManager.getCursor(key);
     }
-    public BufferedImage getThemeImage(Character key) {
-        return themeManager.getImage(key.toString());
+    // ────────────────────────────────────────────────────────
+
+    // ─── Font ───────────────────────────────────────────────
+    public static Font getFont(String key, int size) {
+        return getInstance().fontManager.getFont(key, size);
     }
-    public Color getThemeColor(String key) {
-        return themeManager.getColor(key);
+    // ────────────────────────────────────────────────────────
+
+    // ─── Sound ──────────────────────────────────────────────
+    public static void playSound(String key) {
+        getInstance().soundManager.playSound(key);
     }
+    // ────────────────────────────────────────────────────────
+
+    // ─── Static Icon ────────────────────────────────────────
+    public static BufferedImage getIcon() {
+        return icon;
+    }
+    // ────────────────────────────────────────────────────────
+
+    // ─── Theme ──────────────────────────────────────────────
+    public static ThemeManager getThemeManager() {
+        return getInstance().themeManager;
+    }
+
+    public static BufferedImage getThemeImage(String key) {
+        return getInstance().themeManager.getImage(key);
+    }
+
+    public static BufferedImage getThemeImage(Character key) {
+        return getInstance().themeManager.getImage(key.toString());
+    }
+
+    public static Color getThemeColor(String key) {
+        return getInstance().themeManager.getColor(key);
+    }
+    // ────────────────────────────────────────────────────────
 }

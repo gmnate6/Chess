@@ -68,12 +68,12 @@ public class BotPanel extends AbstractMenuPanel {
         int baseFontSize = getBaseFontSize();
 
         // Update font sizes
-        botLabel.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
-        botDropdown.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
-        colorLabel.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
-        colorDropdown.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
-        playButton.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
-        backButton.setFont(AssetManager.getInstance().getFont("chess_font", baseFontSize));
+        botLabel.setFont(AssetManager.getFont("chess_font", baseFontSize));
+        botDropdown.setFont(AssetManager.getFont("chess_font", baseFontSize));
+        colorLabel.setFont(AssetManager.getFont("chess_font", baseFontSize));
+        colorDropdown.setFont(AssetManager.getFont("chess_font", baseFontSize));
+        playButton.setFont(AssetManager.getFont("chess_font", baseFontSize));
+        backButton.setFont(AssetManager.getFont("chess_font", baseFontSize));
 
         // Revalidate and repaint the panel to apply changes
         revalidate();

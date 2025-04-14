@@ -48,11 +48,11 @@ public abstract class AbstractGameController implements BaseController {
         boardPanel.setPerspective(color);
         boardPanel.loadPieces(game);
 
-        AssetManager.getInstance().playSound("game-start");
+        AssetManager.playSound("game-start");
 
         // Setup Bottom Banner
-        gamePanel.setBottomAvatar(SettingsManager.getInstance().getAvatar());
-        gamePanel.setBottomUsername(SettingsManager.getInstance().getUsername());
+        gamePanel.setBottomAvatar(SettingsManager.getAvatar());
+        gamePanel.setBottomUsername(SettingsManager.getUsername());
 
         // Timer Manager (encapsulates Swing timer logic)
         gamePanel.setTimerEnabled(game.getTimer() != null);
@@ -138,7 +138,7 @@ public abstract class AbstractGameController implements BaseController {
     }
 
     protected boolean confirm(String message) {
-        AssetManager.getInstance().playSound("notify");
+        AssetManager.playSound("notify");
         int response = JOptionPane.showConfirmDialog(
                 gamePanel, message, "Confirm",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE
@@ -331,7 +331,7 @@ public abstract class AbstractGameController implements BaseController {
         if (!game.isMoveLegal(move)) {
             // Check for unsafe move (e.g., putting king in check)
             if (!game.isMoveSafe(move)) {
-                AssetManager.getInstance().playSound("illegal");
+                AssetManager.playSound("illegal");
                 boardPanel.setMarkedRed(game.board.getKingPosition(color), true);
             }
             return;

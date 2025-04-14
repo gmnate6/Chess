@@ -27,7 +27,7 @@ public class TimerManager {
 
             // 10 Seconds Left Warning
             if (game.getTimer().getTimeLeft(color) <= 10_000) {
-                AssetManager.getInstance().playSound("ten-seconds");
+                AssetManager.playSound("ten-seconds");
             }
 
             gamePanel.setTopTimer(game.getTimer().getFormatedTimeLeft(color.inverse()));

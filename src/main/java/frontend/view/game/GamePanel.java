@@ -84,8 +84,8 @@ public class GamePanel extends JPanel {
         JPanel titlePanel = new JPanel(new BorderLayout());
         titlePanel.setOpaque(false);
         JLabel titleLabel = new JLabel("Chess", SwingConstants.CENTER);
-        titleLabel.setFont(AssetManager.getInstance().getFont("chess_font", 60));
-        titleLabel.setForeground(AssetManager.getInstance().getThemeColor("text"));
+        titleLabel.setFont(AssetManager.getFont("chess_font", 60));
+        titleLabel.setForeground(AssetManager.getThemeColor("text"));
         titlePanel.add(titleLabel, BorderLayout.CENTER);
         rightContentPanel.add(titlePanel, BorderLayout.NORTH);
 
@@ -113,13 +113,13 @@ public class GamePanel extends JPanel {
         rightContentPanel.add(gameActionPanel, BorderLayout.SOUTH);
 
         drawButton = new TranslucentButton(new String(Character.toChars(0x2b)));
-        drawButton.setFont(AssetManager.getInstance().getFont("chess_glyph", 32));
+        drawButton.setFont(AssetManager.getFont("chess_glyph", 32));
         drawButton.setPreferredSize(new Dimension(120, 40));
         drawButton.setMargin(new Insets(10, 10, 10, 10));
         gameActionPanel.add(drawButton);
 
         resignButton = new TranslucentButton(new String(Character.toChars(0x59)));
-        resignButton.setFont(AssetManager.getInstance().getFont("chess_glyph", 32));
+        resignButton.setFont(AssetManager.getFont("chess_glyph", 32));
         resignButton.setMargin(new Insets(10, 10, 10, 10));
         resignButton.setPreferredSize(new Dimension(120, 40));
         gameActionPanel.add(resignButton);
@@ -136,19 +136,19 @@ public class GamePanel extends JPanel {
         postGameActionPanel.add(navigationTopPanel);
 
         firstMoveButton = new TranslucentButton(new String(Character.toChars(0x23)));
-        firstMoveButton.setFont(AssetManager.getInstance().getFont("chess_glyph", 32));
+        firstMoveButton.setFont(AssetManager.getFont("chess_glyph", 32));
         navigationTopPanel.add(firstMoveButton);
 
         previousMoveButton = new TranslucentButton(new String(Character.toChars(0x2c)));
-        previousMoveButton.setFont(AssetManager.getInstance().getFont("chess_glyph", 32));
+        previousMoveButton.setFont(AssetManager.getFont("chess_glyph", 32));
         navigationTopPanel.add(previousMoveButton);
 
         nextMoveButton = new TranslucentButton(new String(Character.toChars(0x2026)));
-        nextMoveButton.setFont(AssetManager.getInstance().getFont("chess_glyph", 32));
+        nextMoveButton.setFont(AssetManager.getFont("chess_glyph", 32));
         navigationTopPanel.add(nextMoveButton);
 
         lastMoveButton = new TranslucentButton(new String(Character.toChars(0x40)));
-        lastMoveButton.setFont(AssetManager.getInstance().getFont("chess_glyph", 32));
+        lastMoveButton.setFont(AssetManager.getFont("chess_glyph", 32));
         navigationTopPanel.add(lastMoveButton);
 
         // Navigation Bottom Panel

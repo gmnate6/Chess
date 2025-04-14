@@ -6,7 +6,7 @@ import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 
 public class TranslucentBackgroundPainter {
-    private static final Color color = AssetManager.getInstance().getThemeColor("translucent");
+    private static final Color color = AssetManager.getThemeColor("translucent");
     private static final int arcSize = 10;
 
     private static void paint(Graphics g, int width, int height, Color color) {
