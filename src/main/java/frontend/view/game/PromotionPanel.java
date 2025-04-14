@@ -16,22 +16,24 @@ public class PromotionPanel extends JPanel {
     private final boolean rightSideUp;
     private final Consumer<Character> onPieceChosen;
 
+    public final int rowCount = 4;
+    public final int columnCount = 1;
+
     private DynamicImagedPanel queenPanel;
     private DynamicImagedPanel rookPanel;
     private DynamicImagedPanel bishopPanel;
     private DynamicImagedPanel knightPanel;
 
-    public PromotionPanel(Color color, boolean rightSideUp, int squareSize, Consumer<Character> onPieceChosen) {
+    public PromotionPanel(Color color, boolean rightSideUp, Consumer<Character> onPieceChosen) {
         this.color = color;
         this.rightSideUp = rightSideUp;
         this.onPieceChosen = onPieceChosen;
 
-        setPreferredSize(new Dimension(squareSize, 4 * squareSize));
-        setLayout(new GridLayout(4, 1));
+        setLayout(new GridLayout(rowCount, columnCount));
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         setBackground(AssetManager.getThemeColor("boardWhite"));
-        setBorder(new LineBorder(AssetManager.getThemeColor("boardBlack")));
+        setBorder(new LineBorder(AssetManager.getThemeColor("boardBlack"), 2));
 
         build();
         addListeners();
@@ -83,5 +85,9 @@ public class PromotionPanel extends JPanel {
 
     private String getPieceKey(char piece, boolean isWhite) {
         return String.valueOf(isWhite ? Character.toUpperCase(piece) : Character.toLowerCase(piece));
+    }
+
+    public void setSquareSize(int squareSize) {
+        setPreferredSize(new Dimension(squareSize * columnCount, squareSize * rowCount));
     }
 }

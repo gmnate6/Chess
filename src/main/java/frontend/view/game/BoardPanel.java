@@ -346,7 +346,7 @@ public class BoardPanel extends DynamicImagedPanel {
         AtomicReference<PromotionPanel> panelRef = new AtomicReference<>();
         AtomicReference<ComponentAdapter> adapterRef = new AtomicReference<>();
 
-        panelRef.set(new PromotionPanel(color, rightSideUp, getWidth() / SIZE, chosen -> {
+        panelRef.set(new PromotionPanel(color, rightSideUp, chosen -> {
             future.complete(chosen);
             remove(panelRef.get());
             removeComponentListener(adapterRef.get());
@@ -355,7 +355,7 @@ public class BoardPanel extends DynamicImagedPanel {
 
         Runnable setBounds = () -> {
             PromotionPanel panel = panelRef.get();
-            panel.setPreferredSize(new Dimension(getWidth() / SIZE, (getHeight() / SIZE) * 4));
+            panel.setSquareSize(getWidth() / SIZE);
             panel.revalidate();
             panel.repaint();
             Rectangle bounds = new Rectangle(positionToPoint(position), panel.getPreferredSize());
