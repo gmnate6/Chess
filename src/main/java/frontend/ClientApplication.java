@@ -15,7 +15,7 @@ public class ClientApplication {
             SplashScreen splash = new SplashScreen();
             splash.setVisible(true);
 
-            // Use a SwingWorker to perform long-running initialization in a background thread.
+            // Initialize off EDT -> Start App on EDT
             new SwingWorker<Void, Void>() {
                 @Override
                 protected Void doInBackground() {
@@ -30,7 +30,7 @@ public class ClientApplication {
                     // Dispose of the splash screen.
                     splash.dispose();
 
-                    // Start the main application.
+                    // Start application.
                     MainFrame mainFrame = new MainFrame();
                     mainFrame.setLocationRelativeTo(null);
                     new MainController(mainFrame);

@@ -4,6 +4,7 @@ import engine.game.ChessTimer;
 import engine.game.Game;
 import engine.types.Move;
 import engine.types.Position;
+import engine.utils.MoveUtils;
 import frontend.controller.BaseController;
 import frontend.controller.MainController;
 import frontend.controller.game.listeners.BoardMouseListener;
@@ -307,7 +308,7 @@ public abstract class AbstractGameController implements BaseController {
         }
 
         // Check promotion possibility
-        if (moveProcessor.causesPromotion(move)) {
+        if (MoveUtils.causesPromotion(move, game)) {
             CompletableFuture<Character> future = boardPanel.promptPromotion(move.finalPosition(), color);
 
             // Remove Board Mouse Listener

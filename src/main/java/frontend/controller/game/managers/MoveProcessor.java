@@ -52,10 +52,6 @@ public class MoveProcessor {
         return preMove;
     }
 
-    public boolean causesPromotion(Move move) {
-        return engine.utils.MoveUtils.causesPromotion(move, game);
-    }
-
     public void executeMove(Move move) {
         if (!MoveUtils.causesCheckmate(move, game)) {
             playMoveSound(move);

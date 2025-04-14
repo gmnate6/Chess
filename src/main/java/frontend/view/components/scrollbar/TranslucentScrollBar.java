@@ -7,11 +7,11 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 
 public class TranslucentScrollBar extends JScrollBar {
-    public TranslucentScrollBar(int orientation, int rowHeight) {
+    public TranslucentScrollBar(int orientation, int unitIncrement) {
         super(orientation);
         setOpaque(false);
         setBackground(new Color(0, 0, 0, 0));
-        setUnitIncrement(rowHeight);
+        setUnitIncrement(unitIncrement);
 
         setUI(new BasicScrollBarUI() {
             @Override
