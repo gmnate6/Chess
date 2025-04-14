@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 
 public class PromotionPanel extends JPanel {
     private final Color color;
+    private final boolean rightSideUp;
     private final Consumer<Character> onPieceChosen;
 
     private DynamicImagedPanel queenPanel;
@@ -19,8 +20,9 @@ public class PromotionPanel extends JPanel {
     private DynamicImagedPanel knightPanel;
 
 
-    public PromotionPanel(Color color, int squareSize, Consumer<Character> onPieceChosen) {
+    public PromotionPanel(Color color, boolean rightSideUp, int squareSize, Consumer<Character> onPieceChosen) {
         this.color = color;
+        this.rightSideUp = rightSideUp;
         this.onPieceChosen = onPieceChosen;
 
         setPreferredSize(new Dimension(squareSize, 4 * squareSize));
@@ -41,19 +43,28 @@ public class PromotionPanel extends JPanel {
 
         queenPanel = new DynamicImagedPanel();
         queenPanel.setImage(assetManager.getThemeImage(capital ? "q".toUpperCase() : "q"));
-        add(queenPanel);
 
         rookPanel = new DynamicImagedPanel();
         rookPanel.setImage(assetManager.getThemeImage(capital ? "r".toUpperCase() : "r"));
-        add(rookPanel);
 
         bishopPanel = new DynamicImagedPanel();
         bishopPanel.setImage(assetManager.getThemeImage(capital ? "b".toUpperCase() : "b"));
-        add(bishopPanel);
 
         knightPanel = new DynamicImagedPanel();
         knightPanel.setImage(assetManager.getThemeImage(capital ? "n".toUpperCase() : "n"));
-        add(knightPanel);
+
+        // Add
+        if (rightSideUp) {
+            add(queenPanel);
+            add(rookPanel);
+            add(bishopPanel);
+            add(knightPanel);
+        } else {
+            add(knightPanel);
+            add(bishopPanel);
+            add(rookPanel);
+            add(queenPanel);
+        }
     }
 
     private void addListeners() {

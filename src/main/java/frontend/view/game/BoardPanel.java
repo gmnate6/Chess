@@ -342,9 +342,11 @@ public class BoardPanel extends DynamicImagedPanel {
 
     public CompletableFuture<Character> promptPromotion(Position position, Color color) {
         CompletableFuture<Character> future = new CompletableFuture<>();
+        int squareWidth = getWidth() / SIZE;
+        boolean rightSideUp = positionToPoint(position).y == 0;
 
         final PromotionPanel[] panelHolder = new PromotionPanel[1]; // Wrapper to hold the panel
-        panelHolder[0] = new PromotionPanel(color, getWidth() / SIZE, chosen -> {
+        panelHolder[0] = new PromotionPanel(color, rightSideUp, squareWidth, chosen -> {
             future.complete(chosen);
             remove(panelHolder[0]); // Access the panel through the wrapper
             repaint();
@@ -354,7 +356,7 @@ public class BoardPanel extends DynamicImagedPanel {
         // Set Bounds
         Rectangle bounds = new Rectangle(positionToPoint(position), panel.getPreferredSize());
         if (bounds.y + panel.getPreferredSize().height > getHeight()) {
-            bounds.y -= panel.getPreferredSize().height;
+            bounds.y -= panel.getPreferredSize().height - squareWidth;
         }
 
         panel.setBounds(bounds);
