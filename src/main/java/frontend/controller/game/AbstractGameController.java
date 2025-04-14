@@ -36,6 +36,7 @@ public abstract class AbstractGameController implements BaseController {
     protected TimerManager timerManager;
     protected MoveProcessor moveProcessor;
     protected SelectionManager selectionManager;
+    protected BoardMouseListener boardMouseListener;
 
     public AbstractGameController(Color color, ChessTimer chessTimer) {
         this.game = new Game(chessTimer);
@@ -92,7 +93,8 @@ public abstract class AbstractGameController implements BaseController {
 
     private void setListeners() {
         // Use dedicated BoardMouseListener for board events
-        boardPanel.addMouseListener(new BoardMouseListener(this));
+        boardMouseListener = new BoardMouseListener(this);
+        boardPanel.addMouseListener(boardMouseListener);
 
         gamePanel.resignButton.addActionListener(e -> {
             if (confirm("Are you sure you want to resign?")) {
@@ -131,16 +133,6 @@ public abstract class AbstractGameController implements BaseController {
         gamePanel.backButton.addActionListener(
                 e -> MainController.switchTo(new TitleController())
         );
-    }
-
-    private void removeListeners() {
-        for (MouseListener listener : boardPanel.getMouseListeners()) {
-            boardPanel.removeMouseListener(listener);
-        }
-
-        for (MouseListener listener : gamePanel.getMouseListeners()) {
-            gamePanel.removeMouseListener(listener);
-        }
     }
 
     protected boolean confirm(String message) {
@@ -311,8 +303,8 @@ public abstract class AbstractGameController implements BaseController {
         if (moveProcessor.causesPromotion(move)) {
             CompletableFuture<Character> future = boardPanel.promptPromotion(move.finalPosition(), color);
 
-            // Disable Listeners
-            removeListeners();
+            // Remove Board Mouse Listener
+            boardPanel.removeMouseListener(boardMouseListener);
 
             // Get promotion piece
             char selectedPiece;
@@ -322,8 +314,8 @@ public abstract class AbstractGameController implements BaseController {
                 selectedPiece = 'Q';
             }
 
-            // Enable Listeners
-            setListeners();
+            // Re add  Board Mouse Listener
+            boardPanel.addMouseListener(boardMouseListener);
 
             // Apply promotion piece
             move = new Move(move.initialPosition(), move.finalPosition(), selectedPiece);
