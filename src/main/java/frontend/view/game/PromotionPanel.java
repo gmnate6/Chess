@@ -7,6 +7,8 @@ import utils.Color;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.function.Consumer;
 
 public class PromotionPanel extends JPanel {
@@ -18,7 +20,6 @@ public class PromotionPanel extends JPanel {
     private DynamicImagedPanel rookPanel;
     private DynamicImagedPanel bishopPanel;
     private DynamicImagedPanel knightPanel;
-
 
     public PromotionPanel(Color color, boolean rightSideUp, int squareSize, Consumer<Character> onPieceChosen) {
         this.color = color;
@@ -39,21 +40,20 @@ public class PromotionPanel extends JPanel {
 
     private void build() {
         AssetManager assetManager = AssetManager.getInstance();
-        boolean capital = color == Color.WHITE;
+        boolean isWhite = color == Color.WHITE;
 
         queenPanel = new DynamicImagedPanel();
-        queenPanel.setImage(assetManager.getThemeImage(capital ? "q".toUpperCase() : "q"));
+        queenPanel.setImage(assetManager.getThemeImage(getPieceKey('q', isWhite)));
 
         rookPanel = new DynamicImagedPanel();
-        rookPanel.setImage(assetManager.getThemeImage(capital ? "r".toUpperCase() : "r"));
+        rookPanel.setImage(assetManager.getThemeImage(getPieceKey('r', isWhite)));
 
         bishopPanel = new DynamicImagedPanel();
-        bishopPanel.setImage(assetManager.getThemeImage(capital ? "b".toUpperCase() : "b"));
+        bishopPanel.setImage(assetManager.getThemeImage(getPieceKey('b', isWhite)));
 
         knightPanel = new DynamicImagedPanel();
-        knightPanel.setImage(assetManager.getThemeImage(capital ? "n".toUpperCase() : "n"));
+        knightPanel.setImage(assetManager.getThemeImage(getPieceKey('n', isWhite)));
 
-        // Add
         if (rightSideUp) {
             add(queenPanel);
             add(rookPanel);
@@ -68,32 +68,22 @@ public class PromotionPanel extends JPanel {
     }
 
     private void addListeners() {
-        queenPanel.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent e) {
-                onPieceChosen.accept('Q');
-            }
-        });
+        addPieceListener(queenPanel, 'Q');
+        addPieceListener(rookPanel, 'R');
+        addPieceListener(bishopPanel, 'B');
+        addPieceListener(knightPanel, 'N');
+    }
 
-        rookPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+    private void addPieceListener(DynamicImagedPanel panel, char pieceChar) {
+        panel.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(java.awt.event.MouseEvent e) {
-                onPieceChosen.accept('R');
+            public void mouseClicked(MouseEvent e) {
+                onPieceChosen.accept(pieceChar);
             }
         });
+    }
 
-        bishopPanel.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent e) {
-                onPieceChosen.accept('B');
-            }
-        });
-
-        knightPanel.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent e) {
-                onPieceChosen.accept('N');
-            }
-        });
+    private String getPieceKey(char piece, boolean isWhite) {
+        return String.valueOf(isWhite ? Character.toUpperCase(piece) : Character.toLowerCase(piece));
     }
 }

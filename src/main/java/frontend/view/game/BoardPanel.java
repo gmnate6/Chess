@@ -12,9 +12,11 @@ import utils.Color;
 
 import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class BoardPanel extends DynamicImagedPanel {
     private final Square[][] squares = new Square[SIZE][SIZE];
@@ -342,25 +344,42 @@ public class BoardPanel extends DynamicImagedPanel {
 
     public CompletableFuture<Character> promptPromotion(Position position, Color color) {
         CompletableFuture<Character> future = new CompletableFuture<>();
-        int squareWidth = getWidth() / SIZE;
         boolean rightSideUp = positionToPoint(position).y == 0;
 
-        final PromotionPanel[] panelHolder = new PromotionPanel[1]; // Wrapper to hold the panel
-        panelHolder[0] = new PromotionPanel(color, rightSideUp, squareWidth, chosen -> {
+        AtomicReference<PromotionPanel> panelRef = new AtomicReference<>();
+        AtomicReference<ComponentAdapter> adapterRef = new AtomicReference<>();
+
+        panelRef.set(new PromotionPanel(color, rightSideUp, getWidth() / SIZE, chosen -> {
             future.complete(chosen);
-            remove(panelHolder[0]); // Access the panel through the wrapper
+            remove(panelRef.get());
+            removeComponentListener(adapterRef.get());
             repaint();
-        });
-        PromotionPanel panel = panelHolder[0];
+        }));
 
-        // Set Bounds
-        Rectangle bounds = new Rectangle(positionToPoint(position), panel.getPreferredSize());
-        if (bounds.y + panel.getPreferredSize().height > getHeight()) {
-            bounds.y -= panel.getPreferredSize().height - squareWidth;
-        }
+        Runnable setBounds = () -> {
+            PromotionPanel panel = panelRef.get();
+            panel.setPreferredSize(new Dimension(getWidth() / SIZE, (getHeight() / SIZE) * 4));
+            panel.revalidate();
+            panel.repaint();
+            Rectangle bounds = new Rectangle(positionToPoint(position), panel.getPreferredSize());
+            if (bounds.y + panel.getPreferredSize().height > getHeight()) {
+                bounds.y -= panel.getPreferredSize().height - getWidth() / SIZE;
+            }
+            panel.setBounds(bounds);
+        };
 
-        panel.setBounds(bounds);
-        add(panel);
+        setBounds.run();
+
+        ComponentAdapter adapter = new ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                setBounds.run();
+            }
+        };
+        adapterRef.set(adapter);
+        addComponentListener(adapter);
+
+        add(panelRef.get());
         revalidate();
         repaint();
 
