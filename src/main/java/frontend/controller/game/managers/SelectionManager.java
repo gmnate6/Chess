@@ -13,7 +13,7 @@ import utils.Color;
 public class SelectionManager {
     private final BoardPanel boardPanel;
     private final Game game;
-    private final Color color;
+    private Color color;
 
     private Position selectedPosition = null;
     private Position markedPosition = null;
@@ -67,6 +67,10 @@ public class SelectionManager {
         boardPanel.dropPiece();
         selectedPosition = null;
         pieceSelected = false;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 
     public Position getSelectedPosition() {

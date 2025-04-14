@@ -103,7 +103,9 @@ public abstract class AbstractGameController implements BaseController {
         });
 
         gamePanel.drawButton.addActionListener(e -> {
-
+            if (confirm("Are you sure you want to offer draw?")) {
+                System.out.println("Offering draw...");
+            }
         });
 
         gamePanel.firstMoveButton.addActionListener(e -> {
@@ -179,6 +181,11 @@ public abstract class AbstractGameController implements BaseController {
             moveProcessor.playMoveSound(move);
             game.stepForward();
         }
+    }
+
+    protected void setColor(Color color) {
+        this.color = color;
+        selectionManager.setColor(color);
     }
 
     protected void setPerspective(Color color) {

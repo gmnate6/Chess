@@ -23,7 +23,7 @@ public class SoloGameController extends AbstractGameController {
     }
 
     public void switchSides() {
-        color = color.inverse();
+        setColor(color.inverse());
         setPerspective(color);
     }
 
