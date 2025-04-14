@@ -104,28 +104,14 @@ public class BoardPanel extends DynamicImagedPanel {
         // Draw Board
         super.paintComponent(g);
 
-        // Paint Squares
+        // Paint Coordinates
+        paintCoordinates(g);
+
+        // Paint Pieces
         paintPieces(g);
 
         // Draw PickedUpPiece
         paintPickedUpPiece(g);
-    }
-
-    private void paintPickedUpPiece(Graphics g) {
-        if (pickedUpPosition == null || mousePosition == null) { return; }
-
-        // Get Some stuff
-        int squareWidth = getWidth() / SIZE;
-        int squareHeight = getHeight() / SIZE;
-        AssetManager assetManager = AssetManager.getInstance();
-        Square square = getSquare(pickedUpPosition);
-        if (square.getPiece() == null) { return; }
-        BufferedImage pieceImage = assetManager.getThemeImage(square.getPiece());
-
-        // Draw piece at mouse
-        int x = mousePosition.x - (squareWidth / 2);
-        int y = mousePosition.y - (squareHeight / 2);
-        g.drawImage(pieceImage, x, y, squareWidth, squareHeight, this);
     }
 
     private void paintPieces(Graphics g) {
@@ -174,6 +160,98 @@ public class BoardPanel extends DynamicImagedPanel {
                 }
             }
         }
+    }
+
+    private void paintCoordinates(Graphics g) {
+        int squareWidth = getWidth() / SIZE;
+        int squareHeight = getHeight() / SIZE;
+        AssetManager assetManager = AssetManager.getInstance();
+
+        int fontSize = (int) (squareHeight * .15);
+        int offset = (int) (squareHeight * 0.04);
+        Font font = assetManager.getFont("chess_font", fontSize);
+        g.setFont(font);
+        FontMetrics metrics = g.getFontMetrics(font);
+
+        // Paint Ranks
+        for (int i = 1; i <= SIZE; i++) {
+            String rank = "" + i;
+
+            // Calc Position
+            int y;
+            if (perspective == Color.WHITE) {
+                y = getHeight() - i * squareHeight + offset + metrics.getAscent();
+            } else {
+                y = (i-1) * squareHeight + offset + metrics.getAscent();
+            }
+
+            // Set Color
+            if (perspective == Color.WHITE) {
+                g.setColor(
+                        i % 2 == 0 ?
+                                assetManager.getThemeColor("boardBlack") :
+                                assetManager.getThemeColor("boardWhite")
+                );
+            } else {
+                g.setColor(
+                        i % 2 == 0 ?
+                                assetManager.getThemeColor("boardWhite") :
+                                assetManager.getThemeColor("boardBlack")
+                );
+            }
+
+            // Paint Rank
+            g.drawString(rank, offset, y);
+        }
+
+        // Paint File
+        for (int i = 1; i <= SIZE; i++) {
+            String file = String.valueOf((char) ('a' + (i-1)));
+
+            // Calc Position
+            int x;
+            int y = getHeight() - offset;
+            if (perspective == Color.WHITE) {
+                x = i * squareWidth - offset - metrics.stringWidth(file);
+            } else {
+                x = getWidth() - (i-1) * squareWidth - offset - metrics.stringWidth(file);
+            }
+
+            // Set Color
+            if (perspective == Color.WHITE) {
+                g.setColor(
+                        i % 2 == 0 ?
+                                assetManager.getThemeColor("boardBlack") :
+                                assetManager.getThemeColor("boardWhite")
+                );
+            } else {
+                g.setColor(
+                        i % 2 == 0 ?
+                                assetManager.getThemeColor("boardWhite") :
+                                assetManager.getThemeColor("boardBlack")
+                );
+            }
+
+            // Paint Rank
+            g.drawString(file, x, y);
+        }
+    }
+
+    private void paintPickedUpPiece(Graphics g) {
+        if (pickedUpPosition == null || mousePosition == null) { return; }
+
+        // Get Some stuff
+        int squareWidth = getWidth() / SIZE;
+        int squareHeight = getHeight() / SIZE;
+        AssetManager assetManager = AssetManager.getInstance();
+        Square square = getSquare(pickedUpPosition);
+        if (square.getPiece() == null) { return; }
+        BufferedImage pieceImage = assetManager.getThemeImage(square.getPiece());
+
+        // Draw piece at mouse
+        int x = mousePosition.x - (squareWidth / 2);
+        int y = mousePosition.y - (squareHeight / 2);
+        g.drawImage(pieceImage, x, y, squareWidth, squareHeight, this);
     }
 
     public void setPerspective(Color perspective) {

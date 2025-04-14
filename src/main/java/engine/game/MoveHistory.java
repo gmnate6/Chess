@@ -30,6 +30,10 @@ public class MoveHistory {
         this.currentMoveIndex = index;
     }
 
+    public boolean isAtLastMove() {
+        return (currentMoveIndex == getSize());
+    }
+
     public void addMove(Move move) {
         // If we undid moves and then make a new move, delete "future" moves
         if (currentMoveIndex < moves.size() - 1) {

@@ -48,10 +48,6 @@ public class Game {
     }
 
     public void loadGameStateAt(int moveIndex) {
-        if (inPlay()) {
-            throw new IllegalStateException("Cannot load historical state while game is active.");
-        }
-
         if (moveIndex < -1 || moveIndex >= moveHistory.getSize()) {
             throw new IllegalArgumentException("Invalid move index: " + moveIndex);
         }
@@ -314,6 +310,11 @@ public class Game {
         this.checkWinConditions();
         if (getResult() != GameResult.ON_GOING) {
             throw new IllegalMoveException("Illegal Move: Cannot make move after game is finished.");
+        }
+
+        // If board is not present
+        if (moveHistory.isAtLastMove()) {
+            throw new IllegalStateException("Cannot move while board is not up to date. Call Game.stepToLastMove() first");
         }
 
         // Convert Stuff

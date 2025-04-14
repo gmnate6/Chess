@@ -1,6 +1,8 @@
 {
   "highlight": "#7f5b91b3",
   "markedRed": "#cceb614c",
+  "boardWhite": "#c9c9c9",
+  "boardBlack": "#6e6e6e",
 
   "translucent": "#24000000",
   "opaque": "#202020",
