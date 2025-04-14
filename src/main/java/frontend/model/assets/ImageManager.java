@@ -88,6 +88,9 @@ public class ImageManager {
     }
 
     public BufferedImage getImage(String key) {
+        if (!images.containsKey(key)) {
+            System.err.println("Image with key '" + key + "' not found.");
+        }
         return images.get(key);
     }
 

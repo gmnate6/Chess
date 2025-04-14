@@ -56,7 +56,13 @@ public class BotGameController extends AbstractGameController {
 
         // Process Pre Move
         if (moveProcessor.hasPreMove()) {
-            processPlayerMove(moveProcessor.getPreMove());
+            new SwingWorker<Void, Void>() {
+                @Override
+                protected Void doInBackground() {
+                    processPlayerMove(moveProcessor.getPreMove());
+                    return null;
+                }
+            }.execute();
         }
     }
 

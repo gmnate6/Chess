@@ -11,6 +11,7 @@ public abstract class AbstractImagedPanel extends JPanel {
 
     public AbstractImagedPanel() {
         super();
+        setLayout(null);
         setOpaque(false);
     }
 

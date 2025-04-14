@@ -31,7 +31,6 @@ public class MainController {
     }
 
     public static void switchTo(BaseController controller) {
-        MainController instance = MainController.getInstance();
         if (instance.activeController != null) {
 
             // Play Transition Sound

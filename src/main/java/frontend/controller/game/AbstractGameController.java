@@ -20,6 +20,8 @@ import utils.Color;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseListener;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public abstract class AbstractGameController implements BaseController {
     // Core objects
@@ -131,6 +133,16 @@ public abstract class AbstractGameController implements BaseController {
         );
     }
 
+    private void removeListeners() {
+        for (MouseListener listener : boardPanel.getMouseListeners()) {
+            boardPanel.removeMouseListener(listener);
+        }
+
+        for (MouseListener listener : gamePanel.getMouseListeners()) {
+            gamePanel.removeMouseListener(listener);
+        }
+    }
+
     protected boolean confirm(String message) {
         AssetManager.getInstance().playSound("notify");
         int response = JOptionPane.showConfirmDialog(
@@ -186,8 +198,6 @@ public abstract class AbstractGameController implements BaseController {
         boardPanel.loadPieces(game);
     }
 
-    // --- Methods delegated to helper classes ---
-
     public void onSquareButtonLeftDown(Position position) {
         if (position == null) {
             throw new IllegalArgumentException("Error: Position is null.");
@@ -206,8 +216,15 @@ public abstract class AbstractGameController implements BaseController {
             return;
         }
 
-        Move move = new Move(selectionManager.getSelectedPosition(), position, '\0');
-        processPlayerMove(move);
+        // Process Player Move
+        new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() {
+                Move move = new Move(selectionManager.getSelectedPosition(), position, '\0');
+                processPlayerMove(move);
+                return null;
+            }
+        }.execute();
     }
 
     public void onSquareButtonLeftUp(Position position) {
@@ -221,9 +238,19 @@ public abstract class AbstractGameController implements BaseController {
 
         boardPanel.dropPiece();
 
+        // Drag move
         if (!selectionManager.getSelectedPosition().equals(position)) {
             selectionManager.setPieceSelected(true);
-            processPlayerMove(new Move(selectionManager.getSelectedPosition(), position, '\0'));
+
+            // Process Player Move
+            new SwingWorker<Void, Void>() {
+                @Override
+                protected Void doInBackground() {
+                    Move move = new Move(selectionManager.getSelectedPosition(), position, '\0');
+                    processPlayerMove(move);
+                    return null;
+                }
+            }.execute();
             return;
         }
 
@@ -255,6 +282,10 @@ public abstract class AbstractGameController implements BaseController {
     }
 
     protected void processPlayerMove(Move move) {
+        if (SwingUtilities.isEventDispatchThread()) {
+            throw new IllegalStateException("This method must not be called on the Event Dispatch Thread (EDT)!");
+        }
+
         if (!game.inPlay()) {
             return;
         }
@@ -278,7 +309,24 @@ public abstract class AbstractGameController implements BaseController {
 
         // Check promotion possibility
         if (moveProcessor.causesPromotion(move)) {
-            move = new Move(move.initialPosition(), move.finalPosition(), 'Q'); // TODO: Ask player for promotion piece
+            CompletableFuture<Character> future = boardPanel.promptPromotion(move.finalPosition(), color);
+
+            // Disable Listeners
+            removeListeners();
+
+            // Get promotion piece
+            char selectedPiece;
+            try {
+                selectedPiece = future.get();
+            } catch (ExecutionException | InterruptedException e) {
+                selectedPiece = 'Q';
+            }
+
+            // Enable Listeners
+            setListeners();
+
+            // Apply promotion piece
+            move = new Move(move.initialPosition(), move.finalPosition(), selectedPiece);
         }
 
         if (!game.isMoveLegal(move)) {
