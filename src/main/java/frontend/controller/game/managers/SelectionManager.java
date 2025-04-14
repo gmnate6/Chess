@@ -37,7 +37,7 @@ public class SelectionManager {
 
         // If an opponent’s piece is clicked while a piece is already selected,
         // allow selection only if the move between them is illegal.
-        Move move = new Move(selectedPosition, position, '\0');
+        Move move = new Move(selectedPosition, position, 'Q');
         return !game.isMoveLegal(move);
     }
 
