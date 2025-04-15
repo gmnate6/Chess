@@ -3,16 +3,20 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.NathanHolmberg.chess</groupId>
-  <artifactId>Chess</artifactId>
-  <packaging>jar</packaging>
+  <groupId>com.nathanholmberg</groupId>
+  <artifactId>chess</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>Chess</name>
-  <url>http://maven.apache.org</url>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>engine</module>
+    <module>server</module>
+    <module>client</module>
+  </modules>
 
   <properties>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.source>24</maven.compiler.source>
+    <maven.compiler.target>24</maven.compiler.target>
   </properties>
 
   <dependencies>
@@ -24,31 +28,12 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- Batik for SVG files -->
+    <!-- Websockets -->
     <dependency>
-      <groupId>org.apache.xmlgraphics</groupId>
-      <artifactId>batik-transcoder</artifactId>
-      <version>1.18</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.xmlgraphics</groupId>
-      <artifactId>batik-codec</artifactId>
-      <version>1.18</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.xmlgraphics</groupId>
-      <artifactId>batik-anim</artifactId>
-      <version>1.18</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.xmlgraphics</groupId>
-      <artifactId>batik-parser</artifactId>
-      <version>1.18</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>2.17.0</version>
+      <groupId>javax.websocket</groupId>
+      <artifactId>javax.websocket-api</artifactId>
+      <version>1.1</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- GSON for working with json files -->
@@ -63,20 +48,8 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>3.4.1</version>
-        <configuration>
-          <archive>
-            <manifest>
-              <mainClass>frontend.ClientApplication</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.2.1</version>
+        <version>3.4.1</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -85,6 +58,17 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+        <configuration>
+          <source>24</source>
+          <target>24</target>
+          <compilerArgs>--enable-preview</compilerArgs>
+        </configuration>
       </plugin>
     </plugins>
   </build>
