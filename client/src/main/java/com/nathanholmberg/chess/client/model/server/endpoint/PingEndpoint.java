@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 @ClientEndpoint
 public class PingEndpoint {
     private static final CountDownLatch latch = new CountDownLatch(1);
-    private static boolean isLive = false;
+    private static boolean isLive;
 
     @OnOpen
     public void onOpen(Session session) {
@@ -28,6 +28,7 @@ public class PingEndpoint {
     }
 
     public static boolean ping() {
+        isLive = false;
         try {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             container.connectToServer(PingEndpoint.class, URI.create(SettingsManager.getServerURL() + "/ping"));

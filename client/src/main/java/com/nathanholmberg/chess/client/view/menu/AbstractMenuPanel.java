@@ -4,6 +4,7 @@ import com.nathanholmberg.chess.client.model.SettingsManager;
 import com.nathanholmberg.chess.client.model.assets.AssetManager;
 import com.nathanholmberg.chess.client.view.components.panels.TranslucentPanel;
 import com.nathanholmberg.chess.client.view.utils.ProfilePanel;
+import com.nathanholmberg.chess.client.view.utils.ServerStatusPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +13,9 @@ public abstract class AbstractMenuPanel extends JPanel {
     private TranslucentPanel translucentPanel;
     private JLabel titleLabel;
     private JSeparator separator;
+
+    public ProfilePanel profilePanel;
+    protected ServerStatusPanel serverStatusPanel;
 
     protected JPanel contentPanel;
     protected String title;
@@ -24,14 +28,6 @@ public abstract class AbstractMenuPanel extends JPanel {
 
         this.title = title;
         this.ratio = ratio;
-
-        // Profile Panel
-        ProfilePanel profilePanel = new ProfilePanel();
-        profilePanel.setAvatar(SettingsManager.getAvatar());
-        profilePanel.setUsername(SettingsManager.getUsername());
-        Dimension preferredSize = profilePanel.getPreferredSize();
-        profilePanel.setBounds(10, 10, preferredSize.width, preferredSize.height);
-        add(profilePanel);
 
         // Initialize Components
         initializeComponents();
@@ -47,6 +43,16 @@ public abstract class AbstractMenuPanel extends JPanel {
     }
 
     protected void initializeComponents() {
+        // Profile Panel
+        profilePanel = new ProfilePanel();
+        profilePanel.setAvatar(SettingsManager.getAvatar());
+        profilePanel.setUsername(SettingsManager.getUsername());
+        add(profilePanel);
+
+        // Server Status
+        serverStatusPanel = new ServerStatusPanel();
+        add(serverStatusPanel);
+
         // Transparent Panel
         translucentPanel = new TranslucentPanel();
         translucentPanel.setLayout(new BorderLayout());
@@ -89,6 +95,16 @@ public abstract class AbstractMenuPanel extends JPanel {
             return;
         }
 
+        // Set ProfilePanel Bounds
+        Dimension preferredSize = profilePanel.getPreferredSize();
+        profilePanel.setBounds(10, 10, preferredSize.width, preferredSize.height);
+
+        // Set ServerStatusPanel Bounds
+        preferredSize = serverStatusPanel.getPreferredSize();
+        int x = getWidth() - preferredSize.width - 10;
+        int y = 10;
+        serverStatusPanel.setBounds(x, y, preferredSize.width, preferredSize.height);
+
         // Calculate the size of TransparentPanel
         int height = (int) (getHeight() * heightRatio);
         int width = (int) (height * ratio);
@@ -96,8 +112,8 @@ public abstract class AbstractMenuPanel extends JPanel {
         width = Math.max(width, 50);
 
         // Calculate the position to center the TransparentPanel
-        int x = (getWidth() - width) / 2;
-        int y = (getHeight() - height) / 2;
+        x = (getWidth() - width) / 2;
+        y = (getHeight() - height) / 2;
 
         // Update TransparentPanel's bounds
         translucentPanel.setBounds(x, y, width, height);

@@ -32,9 +32,4 @@ public class SplashScreen extends JWindow {
         logoPanel.setImage(logo);
         getContentPane().add(logoPanel, BorderLayout.CENTER);
     }
-
-    public static void main(String[] args) {
-        SplashScreen splashScreen = new SplashScreen();
-        splashScreen.setVisible(true);
-    }
 }
