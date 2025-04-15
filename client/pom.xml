@@ -15,6 +15,14 @@
     <packaging>jar</packaging>
 
     <dependencies>
+        <!-- Engine -->
+        <dependency>
+            <groupId>com.nathanholmberg</groupId>
+            <artifactId>engine</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- Batik for SVG files -->
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
@@ -40,12 +48,6 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.17.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.nathanholmberg</groupId>
-            <artifactId>engine</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 
