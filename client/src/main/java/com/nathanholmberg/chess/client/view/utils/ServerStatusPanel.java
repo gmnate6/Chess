@@ -32,9 +32,6 @@ public class ServerStatusPanel extends TranslucentPanel {
 
         add(Box.createHorizontalStrut(5));
 
-        revalidate();
-        repaint();
-
         updateStatus();
         addMouseListener(new MouseAdapter() {
             @Override

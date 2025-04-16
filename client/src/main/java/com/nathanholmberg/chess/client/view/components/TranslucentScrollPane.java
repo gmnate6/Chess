@@ -8,7 +8,7 @@ import java.awt.*;
 
 public class TranslucentScrollPane extends JScrollPane {
     private final int rowHeight;
-    private int rowCount = 0;
+    private int rowCount = 1;
     private final JPanel contentPanel;
 
     public TranslucentScrollPane(int rowHeight) {
