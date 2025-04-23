@@ -39,6 +39,16 @@ public class HistoryPanel extends TranslucentPanel {
         repaint();
     }
 
+    public void jumpToBottom() {
+        JScrollBar bar = scrollPane.getVerticalScrollBar();
+        bar.setValue(bar.getMaximum());
+    }
+
+    public void jumpToTop() {
+        JScrollBar bar = scrollPane.getVerticalScrollBar();
+        bar.setValue(bar.getMinimum());
+    }
+
     public TranslucentLabel addMove(String move) {
         boolean completed = false;
 
@@ -90,10 +100,7 @@ public class HistoryPanel extends TranslucentPanel {
         // Update Scroll Pane
         scrollPane.revalidate();
         scrollPane.repaint();
-        SwingUtilities.invokeLater(() -> {
-            JScrollBar bar = scrollPane.getVerticalScrollBar();
-            bar.setValue(bar.getMaximum());
-        });
+        SwingUtilities.invokeLater(this::jumpToBottom);
 
         return moveLabel;
     }

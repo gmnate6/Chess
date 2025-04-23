@@ -15,8 +15,8 @@ public class TranslucentScrollPane extends JScrollPane {
         this.rowHeight = rowHeight;
 
         contentPanel = new JPanel();
-        contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
         contentPanel.setOpaque(false);
 
         setViewportView(contentPanel);
@@ -43,8 +43,11 @@ public class TranslucentScrollPane extends JScrollPane {
             rowContainer = new TranslucentPanel(new BorderLayout());
         }
 
-        rowContainer.add(panel, BorderLayout.CENTER);
+        rowContainer.setAlignmentX(Component.LEFT_ALIGNMENT);
+        rowContainer.setPreferredSize(new Dimension(0, rowHeight));
         rowContainer.setMaximumSize(new Dimension(Integer.MAX_VALUE, rowHeight));
+
+        rowContainer.add(panel, BorderLayout.CENTER);
         contentPanel.add(rowContainer);
     }
 

@@ -20,6 +20,13 @@ public class HistoryManager {
 
     public void selectMove(int moveIndex) {
         currentMoveIndex = moveIndex;
+
+        if (moveIndex < 0) {
+            historyPanel.jumpToTop();
+        } else if (moveIndex >= moveLabels.size() - 1) {
+            historyPanel.jumpToBottom();
+        }
+
         if (moveIndex < 0 || moveIndex >= moveLabels.size()) {
             historyPanel.selectMove(null);
             return;
