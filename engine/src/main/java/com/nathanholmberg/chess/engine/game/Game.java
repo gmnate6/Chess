@@ -68,7 +68,7 @@ public class Game {
                 throw new IllegalStateException("Invalid move in move history at index " + i + ": " + move);
             }
 
-            newBoard.executeMove(move);
+            newGame.move(move);
         }
 
         // Apply new game

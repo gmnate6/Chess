@@ -59,6 +59,7 @@ public class MoveProcessor {
     }
 
     public void playMoveSound(Move move) {
+        System.out.println(game.getTurn());
         if (MoveUtils.causesCheck(move, game)) {
             AssetManager.playSound("move-check");
             return;
