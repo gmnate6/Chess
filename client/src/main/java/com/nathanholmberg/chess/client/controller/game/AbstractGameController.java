@@ -16,6 +16,7 @@ import com.nathanholmberg.chess.client.view.utils.ConfirmDialog;
 import com.nathanholmberg.chess.engine.enums.Color;
 import com.nathanholmberg.chess.engine.game.ChessTimer;
 import com.nathanholmberg.chess.engine.game.Game;
+import com.nathanholmberg.chess.engine.pieces.Piece;
 import com.nathanholmberg.chess.engine.types.Move;
 import com.nathanholmberg.chess.engine.types.Position;
 import com.nathanholmberg.chess.engine.utils.MoveUtils;
@@ -324,10 +325,8 @@ public abstract class AbstractGameController implements BaseController {
         selectionManager.deselect();
 
         // Only allow moves with the controller’s own color piece.
-        if (
-                game.board.getPieceAt(move.initialPosition()) != null &&
-                game.board.getPieceAt(move.initialPosition()).getColor() != color
-        ) {
+        Piece pieceToMove = game.board.getPieceAt(move.initialPosition());
+        if (pieceToMove == null || pieceToMove.getColor() != color) {
             return;
         }
 
@@ -362,7 +361,7 @@ public abstract class AbstractGameController implements BaseController {
 
         if (!game.isMoveLegal(move)) {
             // Check for unsafe move (e.g., putting king in check)
-            if (!game.isMoveSafe(move)) {
+            if (!game.isMoveSafe(move) && pieceToMove.isMoveValid(move, game.board)) {
                 AssetManager.playSound("illegal");
                 boardPanel.setMarkedRed(game.board.getKingPosition(color), true);
             }

@@ -191,6 +191,7 @@ public class Game {
      * A move is considered legal if it satisfies the following conditions:
      * - The game is ongoing.
      * - The move corresponds to a non-null piece at the starting position.
+     * - The game is up to date.
      * - The piece belongs to the current player.
      * - The move is valid according to the piece's movement rules and the game state.
      * - The move does not leave the king in check.
