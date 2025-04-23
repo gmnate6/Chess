@@ -17,6 +17,12 @@ public class BoardMouseListener extends MouseAdapter {
 
     @Override
     public void mousePressed(MouseEvent e) {
+        // Make sure game is current
+        if (!controller.isAtLastMove()) {
+            controller.stepFullForward();
+            return;
+        }
+
         BoardPanel boardPanel = controller.gamePanel.boardPanel;
         Position position = boardPanel.pointToPosition(e.getPoint());
 
@@ -29,6 +35,12 @@ public class BoardMouseListener extends MouseAdapter {
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        // Make sure game is current
+        if (!controller.isAtLastMove()) {
+            controller.stepFullForward();
+            return;
+        }
+
         BoardPanel boardPanel = controller.gamePanel.boardPanel;
         Position position = boardPanel.pointToPosition(e.getPoint());
 

@@ -36,8 +36,9 @@ public class HistoryManager {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 selectMove(moveIndex);
+                gameController.loadGameStateAt(moveIndex);
                 if (!gameController.inPlay()) {
-                    gameController.loadGameStateAt(moveIndex);
+
                 }
             }
         });

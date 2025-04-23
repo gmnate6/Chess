@@ -14,20 +14,22 @@ public class GamePanel extends JPanel {
     public BoardPanel boardPanel;
     public BannerPanel topBannerPanel;
     public BannerPanel bottomBannerPanel;
-    private final JPanel rightContentPanel;
     public HistoryPanel historyPanel;
 
-    // Game Action Panel
-    public JPanel gameActionPanel;
+    // Action Panel
+    private final JPanel actionPanel;
+    public TranslucentButton firstMoveButton;
+    public TranslucentButton previousMoveButton;
+    public TranslucentButton nextMoveButton;
+    public TranslucentButton lastMoveButton;
+
+    // In Game Action Panel
+    public JPanel inGameActionPanel;
     public TranslucentButton drawButton;
     public TranslucentButton resignButton;
 
     // Post Game Action Panel
     public JPanel postGameActionPanel;
-    public TranslucentButton firstMoveButton;
-    public TranslucentButton previousMoveButton;
-    public TranslucentButton nextMoveButton;
-    public TranslucentButton lastMoveButton;
     public ColorButton rematchButton;
     public TranslucentButton backButton;
 
@@ -75,7 +77,7 @@ public class GamePanel extends JPanel {
         add(rightPanel, BorderLayout.EAST);
 
         // Right Content Panel
-        rightContentPanel = new TranslucentPanel(new BorderLayout());
+        JPanel rightContentPanel = new TranslucentPanel(new BorderLayout());
         rightContentPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         rightPanel.add(rightContentPanel, BorderLayout.CENTER);
 
@@ -97,69 +99,67 @@ public class GamePanel extends JPanel {
         historyPanel = new HistoryPanel();
         historyBufferPanel.add(historyPanel, BorderLayout.CENTER);
 
-        // Game Action Panel
-        createGameActionPanel();
-        rightContentPanel.add(gameActionPanel, BorderLayout.SOUTH);
+        // Action Panel
+        actionPanel = new JPanel(new GridLayout(2, 1, 0, 10));
+        actionPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        actionPanel.setOpaque(false);
+        rightContentPanel.add(actionPanel, BorderLayout.SOUTH);
+
+        // Action Top Panel
+        JPanel actionTopPanel = new JPanel(new GridLayout(1, 4, 10, 0));
+        actionTopPanel.setOpaque(false);
+        actionPanel.add(actionTopPanel);
+
+        firstMoveButton = new TranslucentButton(new String(Character.toChars(0x23)));
+        firstMoveButton.setFont(AssetManager.getFont("chess_glyph", 32));
+        actionTopPanel.add(firstMoveButton);
+
+        previousMoveButton = new TranslucentButton(new String(Character.toChars(0x2c)));
+        previousMoveButton.setFont(AssetManager.getFont("chess_glyph", 32));
+        actionTopPanel.add(previousMoveButton);
+
+        nextMoveButton = new TranslucentButton(new String(Character.toChars(0x2026)));
+        nextMoveButton.setFont(AssetManager.getFont("chess_glyph", 32));
+        actionTopPanel.add(nextMoveButton);
+
+        lastMoveButton = new TranslucentButton(new String(Character.toChars(0x40)));
+        lastMoveButton.setFont(AssetManager.getFont("chess_glyph", 32));
+        actionTopPanel.add(lastMoveButton);
+
+        // In Game Action Panel
+        createInGameActionPanel();
+        actionPanel.add(inGameActionPanel);
 
         // Post Game Action Panel
         createPostGameActionPanel();
     }
 
-    private void createGameActionPanel() {
-        gameActionPanel = new JPanel(new GridLayout(1, 2, 10, 0));
-        gameActionPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        gameActionPanel.setOpaque(false);
-        rightContentPanel.add(gameActionPanel, BorderLayout.SOUTH);
+    private void createInGameActionPanel() {
+        inGameActionPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        inGameActionPanel.setOpaque(false);
 
         drawButton = new TranslucentButton(new String(Character.toChars(0x2b)));
         drawButton.setFont(AssetManager.getFont("chess_glyph", 32));
-        drawButton.setPreferredSize(new Dimension(120, 40));
+        // drawButton.setPreferredSize(new Dimension(120, 40));
         drawButton.setMargin(new Insets(10, 10, 10, 10));
-        gameActionPanel.add(drawButton);
+        inGameActionPanel.add(drawButton);
 
         resignButton = new TranslucentButton(new String(Character.toChars(0x59)));
         resignButton.setFont(AssetManager.getFont("chess_glyph", 32));
         resignButton.setMargin(new Insets(10, 10, 10, 10));
-        resignButton.setPreferredSize(new Dimension(120, 40));
-        gameActionPanel.add(resignButton);
+        // resignButton.setPreferredSize(new Dimension(120, 40));
+        inGameActionPanel.add(resignButton);
     }
 
     private void createPostGameActionPanel() {
-        postGameActionPanel = new JPanel(new GridLayout(2, 1, 0, 10));
-        postGameActionPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        postGameActionPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         postGameActionPanel.setOpaque(false);
 
-        // Navigation Top Panel
-        JPanel navigationTopPanel = new JPanel(new GridLayout(1, 4, 10, 0));
-        navigationTopPanel.setOpaque(false);
-        postGameActionPanel.add(navigationTopPanel);
-
-        firstMoveButton = new TranslucentButton(new String(Character.toChars(0x23)));
-        firstMoveButton.setFont(AssetManager.getFont("chess_glyph", 32));
-        navigationTopPanel.add(firstMoveButton);
-
-        previousMoveButton = new TranslucentButton(new String(Character.toChars(0x2c)));
-        previousMoveButton.setFont(AssetManager.getFont("chess_glyph", 32));
-        navigationTopPanel.add(previousMoveButton);
-
-        nextMoveButton = new TranslucentButton(new String(Character.toChars(0x2026)));
-        nextMoveButton.setFont(AssetManager.getFont("chess_glyph", 32));
-        navigationTopPanel.add(nextMoveButton);
-
-        lastMoveButton = new TranslucentButton(new String(Character.toChars(0x40)));
-        lastMoveButton.setFont(AssetManager.getFont("chess_glyph", 32));
-        navigationTopPanel.add(lastMoveButton);
-
-        // Navigation Bottom Panel
-        JPanel navigationBottomPanel = new JPanel(new GridLayout(1, 2, 10, 0));
-        navigationBottomPanel.setOpaque(false);
-        postGameActionPanel.add(navigationBottomPanel);
-
         rematchButton = new ColorButton("Rematch");
-        navigationBottomPanel.add(rematchButton);
+        postGameActionPanel.add(rematchButton);
 
         backButton = new TranslucentButton("Back");
-        navigationBottomPanel.add(backButton);
+        postGameActionPanel.add(backButton);
     }
 
     public void setTopTimer(String time) {
@@ -183,11 +183,11 @@ public class GamePanel extends JPanel {
     }
 
     public void showPostGameActionPanel() {
-        // Remove Game Action Panel
-        rightContentPanel.remove(gameActionPanel);
+        // Remove In Game Action Panel
+        actionPanel.remove(inGameActionPanel);
 
         // Add Post Game Action Panel
-        rightContentPanel.add(postGameActionPanel, BorderLayout.SOUTH);
+        actionPanel.add(postGameActionPanel, BorderLayout.SOUTH);
 
         // Update
         revalidate();

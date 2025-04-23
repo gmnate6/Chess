@@ -22,7 +22,6 @@ import com.nathanholmberg.chess.engine.utils.MoveUtils;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseListener;
-import java.sql.SQLOutput;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -70,6 +69,9 @@ public abstract class AbstractGameController implements BaseController {
 
         // Setup Listeners
         setListeners();
+
+        // Update Navigation Buttons
+        updateEnableNavigationButtons();
     }
 
     @Override
@@ -90,65 +92,72 @@ public abstract class AbstractGameController implements BaseController {
         return gamePanel;
     }
 
-    protected void rematch() {
-        if (game.inPlay()) {
-            throw new IllegalStateException("Cannot rematch while game is in play.");
-        }
-    }
-
     private void setListeners() {
         // Use dedicated BoardMouseListener for board events
         boardMouseListener = new BoardMouseListener(this);
         boardPanel.addMouseListener(boardMouseListener);
 
-        gamePanel.resignButton.addActionListener(e -> {
+        gamePanel.resignButton.addActionListener(_ -> {
             if (confirm("Are you sure you want to resign?")) {
                 resign();
             }
         });
 
-        gamePanel.drawButton.addActionListener(e -> {
+        gamePanel.drawButton.addActionListener(_ -> {
             if (confirm("Are you sure you want to offer draw?")) {
                 System.out.println("Offering draw...");
             }
         });
 
-        gamePanel.firstMoveButton.addActionListener(e -> {
-            game.stepFullBack();
-            afterStep();
-        });
+        gamePanel.firstMoveButton.addActionListener(
+                _ -> stepFullBack()
+        );
 
-        gamePanel.previousMoveButton.addActionListener(e -> {
-            game.stepBack();
-            afterStep();
-        });
+        gamePanel.previousMoveButton.addActionListener(
+                _ -> stepBack()
+        );
 
-        gamePanel.nextMoveButton.addActionListener(e -> {
-            game.stepForward();
-            afterStep();
-        });
+        gamePanel.nextMoveButton.addActionListener(
+                _ -> stepForward()
+        );
 
-        gamePanel.lastMoveButton.addActionListener(e -> {
-            game.stepFullForward();
-            afterStep();
-        });
+        gamePanel.lastMoveButton.addActionListener(
+                _ -> stepFullForward()
+        );
 
         gamePanel.rematchButton.addActionListener(
-                e -> rematch()
+                _ -> rematch()
         );
 
         gamePanel.backButton.addActionListener(
-                e -> MainController.switchTo(new TitleController())
+                _ -> MainController.switchTo(new TitleController())
         );
     }
 
-    protected boolean confirm(String message) {
-        AssetManager.playSound("notify");
-        int response = JOptionPane.showConfirmDialog(
-                gamePanel, message, "Confirm",
-                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE
-        );
-        return response == JOptionPane.YES_OPTION;
+    public void stepFullBack() {
+        game.stepFullBack();
+        afterStep();
+    }
+
+    public void stepBack() {
+        game.stepBack();
+        afterStep();
+    }
+
+    public void stepForward() {
+        if (isAtLastMove()) { return; }
+        game.stepForward();
+        afterStep();
+    }
+
+    public void stepFullForward() {
+        if (isAtLastMove()) { return; }
+        game.stepFullForward();
+        afterStep();
+    }
+
+    public boolean isAtLastMove() {
+        return game.getMoveHistory().isAtLastMove();
     }
 
     private void updateEnableNavigationButtons() {
@@ -173,10 +182,6 @@ public abstract class AbstractGameController implements BaseController {
         }
     }
 
-    public boolean inPlay() {
-        return game.inPlay();
-    }
-
     public void loadGameStateAt(int moveIndex) {
         game.loadGameStateAt(moveIndex);
         afterStep();
@@ -199,6 +204,26 @@ public abstract class AbstractGameController implements BaseController {
         }
     }
 
+    protected void rematch() {
+        if (game.inPlay()) {
+            throw new IllegalStateException("Cannot rematch while game is in play.");
+        }
+    }
+
+    // TODO: Customize and put in utils
+    protected boolean confirm(String message) {
+        AssetManager.playSound("notify");
+        int response = JOptionPane.showConfirmDialog(
+                gamePanel, message, "Confirm",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE
+        );
+        return response == JOptionPane.YES_OPTION;
+    }
+
+    public boolean inPlay() {
+        return game.inPlay();
+    }
+
     protected void setColor(Color color) {
         this.color = color;
         selectionManager.setColor(color);
@@ -212,7 +237,6 @@ public abstract class AbstractGameController implements BaseController {
         boardPanel.setPerspective(color);
         boardPanel.loadPieces(game);
     }
-
 
     public void onSquareButtonLeftDown(Position position) {
         if (position == null) {
@@ -368,6 +392,9 @@ public abstract class AbstractGameController implements BaseController {
         // Execute Move
         moveProcessor.executeMove(move);
 
+        // Update Navigation Buttons
+        updateEnableNavigationButtons();
+
         // End Game
         if (!game.inPlay()) {
             endGame();
@@ -388,6 +415,5 @@ public abstract class AbstractGameController implements BaseController {
         moveProcessor.playEndSound();
         timerManager.stop();
         gamePanel.showPostGameActionPanel();
-        updateEnableNavigationButtons();
     }
 }

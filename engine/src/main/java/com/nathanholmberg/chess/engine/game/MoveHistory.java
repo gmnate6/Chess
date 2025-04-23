@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MoveHistory {
-    private List<Move> moves;
+    public List<Move> moves;
     private int currentMoveIndex;
 
     public MoveHistory() {
@@ -31,7 +31,7 @@ public class MoveHistory {
     }
 
     public boolean isAtLastMove() {
-        return (currentMoveIndex == getSize());
+        return (currentMoveIndex == getSize() - 1);
     }
 
     public void addMove(Move move) {
@@ -41,22 +41,5 @@ public class MoveHistory {
         }
         moves.add(move);
         currentMoveIndex++;
-    }
-
-    public Move undoMove() {
-        if (currentMoveIndex >= 0) {
-            Move lastMove = moves.get(currentMoveIndex);
-            currentMoveIndex--;
-            return lastMove;
-        }
-        return null;  // No moves to undo
-    }
-
-    public Move redoMove() {
-        if (currentMoveIndex < moves.size() - 1) {
-            currentMoveIndex++;
-            return moves.get(currentMoveIndex);
-        }
-        return null;  // No moves to redo
     }
 }

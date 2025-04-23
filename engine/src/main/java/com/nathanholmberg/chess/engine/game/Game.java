@@ -55,9 +55,9 @@ public class Game {
             throw new IllegalArgumentException("Invalid move index: " + moveIndex);
         }
 
-        // Fresh Board
-        Board newBoard = new Board();
-        Color newTurn = Color.WHITE;
+        // Fresh Game
+        Game newGame = new Game(null);
+        Board newBoard = newGame.board;
 
         // Replay Moves
         for (int i = 0; i <= moveIndex; i++) {
@@ -69,12 +69,13 @@ public class Game {
             }
 
             newBoard.executeMove(move);
-            newTurn = newTurn.inverse();
         }
 
-        // Apply new board
-        this.board = newBoard;
-        this.turn = newTurn;
+        // Apply new game
+        board = newGame.board;
+        turn = newGame.turn;
+        halfMoveClock = newGame.halfMoveClock;
+        fullMoveNumber = newGame.fullMoveNumber;
         moveHistory.setCurrentMoveIndex(moveIndex);
     }
 
@@ -210,6 +211,11 @@ public class Game {
             return false;
         }
 
+        // Game must be current
+        if (!moveHistory.isAtLastMove()) {
+            return false;
+        }
+
         // Cannot move wrong color
         if (pieceToMove.getColor() != turn) {
             return false;
@@ -288,7 +294,6 @@ public class Game {
             if (this.chessTimer.isOutOfTime(Color.BLACK)) {
                 result = GameResult.WHITE_WON_ON_TIME;
                 stopTimer();
-                return;
             }
         }
     }
@@ -315,8 +320,8 @@ public class Game {
             throw new IllegalMoveException("Illegal Move: Cannot make move after game is finished.");
         }
 
-        // If board is not present
-        if (moveHistory.isAtLastMove()) {
+        // Game must be current
+        if (!moveHistory.isAtLastMove()) {
             throw new IllegalStateException("Cannot move while board is not up to date. Call Game.stepToLastMove() first");
         }
 
