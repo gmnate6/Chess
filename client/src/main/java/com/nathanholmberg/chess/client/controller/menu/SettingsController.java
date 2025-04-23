@@ -91,6 +91,17 @@ public class SettingsController implements BaseController {
             return;
         }
 
+        // If not changes
+        if (
+                SettingsManager.getUsername().equals(username) &&
+                SettingsManager.getAvatar().equals(avatar) &&
+                SettingsManager.getTheme().equals(theme) &&
+                SettingsManager.getServerURL().equals(serverURL)
+        ) {
+            goBack();
+            return;
+        }
+
         // Set
         SettingsManager.setUsername(username);
         SettingsManager.setAvatar(avatar);
