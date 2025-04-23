@@ -90,16 +90,16 @@ Chess/
 
 ## Usage
 
-### Running the Server
-
-```bash
-./mvnw -pl server exec:java
-```
-
 ### Running the Client
 
 ```bash
 ./mvnw -pl client exec:java
+```
+
+### Running the Server
+
+```bash
+./mvnw -pl server exec:java
 ```
 
 ## Configuration
