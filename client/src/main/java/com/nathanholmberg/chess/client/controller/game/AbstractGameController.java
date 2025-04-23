@@ -12,6 +12,7 @@ import com.nathanholmberg.chess.client.model.SettingsManager;
 import com.nathanholmberg.chess.client.model.assets.AssetManager;
 import com.nathanholmberg.chess.client.view.game.BoardPanel;
 import com.nathanholmberg.chess.client.view.game.GamePanel;
+import com.nathanholmberg.chess.client.view.utils.ConfirmDialog;
 import com.nathanholmberg.chess.engine.enums.Color;
 import com.nathanholmberg.chess.engine.game.ChessTimer;
 import com.nathanholmberg.chess.engine.game.Game;
@@ -98,13 +99,13 @@ public abstract class AbstractGameController implements BaseController {
         boardPanel.addMouseListener(boardMouseListener);
 
         gamePanel.resignButton.addActionListener(_ -> {
-            if (confirm("Are you sure you want to resign?")) {
+            if (ConfirmDialog.showDialog(gamePanel, "Are you sure you want to resign?")) {
                 resign();
             }
         });
 
         gamePanel.drawButton.addActionListener(_ -> {
-            if (confirm("Are you sure you want to offer draw?")) {
+            if (ConfirmDialog.showDialog(gamePanel, "Are you sure you want to offer draw?")) {
                 System.out.println("Offering draw...");
             }
         });
@@ -208,16 +209,6 @@ public abstract class AbstractGameController implements BaseController {
         if (game.inPlay()) {
             throw new IllegalStateException("Cannot rematch while game is in play.");
         }
-    }
-
-    // TODO: Customize and put in utils
-    protected boolean confirm(String message) {
-        AssetManager.playSound("notify");
-        int response = JOptionPane.showConfirmDialog(
-                gamePanel, message, "Confirm",
-                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE
-        );
-        return response == JOptionPane.YES_OPTION;
     }
 
     public boolean inPlay() {

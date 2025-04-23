@@ -13,7 +13,7 @@ public class MainFrame extends JFrame {
     public MainFrame() {
         super("Chess");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(new Dimension(900, 600));
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setMinimumSize(new Dimension(900, 600));
         setLayout(new BorderLayout());
         setIconImage(AssetManager.getIcon());

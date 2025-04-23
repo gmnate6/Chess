@@ -17,11 +17,11 @@ public class TranslucentButton extends CustomButton {
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
         if (getModel().isPressed()) {
             TranslucentBackgroundPainter.paintDarker(g, getWidth(), getHeight());
             return;
         }
         TranslucentBackgroundPainter.paintNormal(g, getWidth(), getHeight());
+        super.paintComponent(g);
     }
 }

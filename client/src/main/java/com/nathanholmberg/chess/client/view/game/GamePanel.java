@@ -140,14 +140,12 @@ public class GamePanel extends JPanel {
 
         drawButton = new TranslucentButton(new String(Character.toChars(0x2b)));
         drawButton.setFont(AssetManager.getFont("chess_glyph", 32));
-        // drawButton.setPreferredSize(new Dimension(120, 40));
         drawButton.setMargin(new Insets(10, 10, 10, 10));
         inGameActionPanel.add(drawButton);
 
         resignButton = new TranslucentButton(new String(Character.toChars(0x59)));
         resignButton.setFont(AssetManager.getFont("chess_glyph", 32));
         resignButton.setMargin(new Insets(10, 10, 10, 10));
-        // resignButton.setPreferredSize(new Dimension(120, 40));
         inGameActionPanel.add(resignButton);
     }
 

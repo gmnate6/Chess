@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class HistoryManager {
     private final AbstractGameController gameController;
     private final HistoryPanel historyPanel;
+    private int currentMoveIndex = -1;
 
     private final ArrayList<TranslucentLabel> moveLabels = new ArrayList<>();
 
@@ -18,6 +19,7 @@ public class HistoryManager {
     }
 
     public void selectMove(int moveIndex) {
+        currentMoveIndex = moveIndex;
         if (moveIndex < 0 || moveIndex >= moveLabels.size()) {
             historyPanel.selectMove(null);
             return;
@@ -34,12 +36,12 @@ public class HistoryManager {
         selectMove(moveIndex);
         moveLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                if (moveIndex == currentMoveIndex) {
+                    return;
+                }
                 selectMove(moveIndex);
                 gameController.loadGameStateAt(moveIndex);
-                if (!gameController.inPlay()) {
-
-                }
             }
         });
     }
