@@ -2,7 +2,6 @@ package com.nathanholmberg.chess.client.controller.game.managers;
 
 import com.nathanholmberg.chess.client.model.assets.AssetManager;
 import com.nathanholmberg.chess.client.view.game.BoardPanel;
-import com.nathanholmberg.chess.client.view.game.GamePanel;
 import com.nathanholmberg.chess.engine.enums.Color;
 import com.nathanholmberg.chess.engine.game.Game;
 import com.nathanholmberg.chess.engine.types.Move;
@@ -11,15 +10,13 @@ import com.nathanholmberg.chess.engine.utils.MoveUtils;
 public class MoveProcessor {
     private final Game game;
     private final BoardPanel boardPanel;
-    private final GamePanel gamePanel;
     private final Color color;
 
     private Move preMove = null;
 
-    public MoveProcessor(Game game, BoardPanel boardPanel, GamePanel gamePanel, Color color) {
+    public MoveProcessor(Game game, BoardPanel boardPanel, Color color) {
         this.game = game;
         this.boardPanel = boardPanel;
-        this.gamePanel = gamePanel;
         this.color = color;
     }
 
@@ -57,7 +54,6 @@ public class MoveProcessor {
             playMoveSound(move);
         }
 
-        gamePanel.historyPanel.addMove(MoveUtils.toAlgebraic(move, game));
         game.move(move);
         boardPanel.loadPieces(game);
     }

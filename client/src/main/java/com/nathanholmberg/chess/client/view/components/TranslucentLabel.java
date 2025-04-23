@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class TranslucentLabel extends JLabel {
+    private boolean isTranslucent = true;
+
     public TranslucentLabel() {
         super();
         setOpaque(false);
@@ -25,9 +27,15 @@ public class TranslucentLabel extends JLabel {
         setFont(AssetManager.getFont("chess_font", size));
     }
 
+    public void setTranslucent(boolean isTranslucent) {
+        this.isTranslucent = isTranslucent;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
+        if (isTranslucent) {
+            TranslucentBackgroundPainter.paintNormal(g, getWidth(), getHeight());
+        }
         super.paintComponent(g);
-        TranslucentBackgroundPainter.paintNormal(g, getWidth(), getHeight());
     }
 }

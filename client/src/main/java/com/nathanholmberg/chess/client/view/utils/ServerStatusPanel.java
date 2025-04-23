@@ -1,5 +1,6 @@
 package com.nathanholmberg.chess.client.view.utils;
 
+import com.nathanholmberg.chess.client.controller.MainController;
 import com.nathanholmberg.chess.client.model.assets.AssetManager;
 import com.nathanholmberg.chess.client.model.server.endpoint.PingEndpoint;
 import com.nathanholmberg.chess.client.view.components.panels.TranslucentPanel;
@@ -32,7 +33,7 @@ public class ServerStatusPanel extends TranslucentPanel {
 
         add(Box.createHorizontalStrut(5));
 
-        updateStatus();
+        // updateStatus();
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

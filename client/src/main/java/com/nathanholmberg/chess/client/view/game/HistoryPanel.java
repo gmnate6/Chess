@@ -1,6 +1,7 @@
 package com.nathanholmberg.chess.client.view.game;
 
 import com.nathanholmberg.chess.client.model.assets.AssetManager;
+import com.nathanholmberg.chess.client.view.components.TranslucentLabel;
 import com.nathanholmberg.chess.client.view.components.TranslucentScrollPane;
 import com.nathanholmberg.chess.client.view.components.panels.TranslucentPanel;
 
@@ -11,6 +12,7 @@ public class HistoryPanel extends TranslucentPanel {
     int rowHeight = 32;
     private JPanel currentRow;
     private JPanel movesPanel;
+    private TranslucentLabel selectedMoveLabel;
 
     private final TranslucentScrollPane scrollPane;
 
@@ -22,7 +24,22 @@ public class HistoryPanel extends TranslucentPanel {
         add(scrollPane, BorderLayout.CENTER);
     }
 
-    public void addMove(String move) {
+    public void selectMove(TranslucentLabel label) {
+        if (selectedMoveLabel != null) {
+            selectedMoveLabel.setTranslucent(false);
+        }
+
+        selectedMoveLabel = label;
+
+        if (label != null) {
+            selectedMoveLabel.setTranslucent(true);
+        }
+
+        revalidate();
+        repaint();
+    }
+
+    public TranslucentLabel addMove(String move) {
         boolean completed = false;
 
         if (currentRow == null) {
@@ -51,16 +68,19 @@ public class HistoryPanel extends TranslucentPanel {
             completed = true;
         }
 
+        // Move Label Buffer Panel
+        JPanel moveLabelBufferPanel = new JPanel(new BorderLayout());
+        moveLabelBufferPanel.setOpaque(false);
+        moveLabelBufferPanel.setBorder(BorderFactory.createEmptyBorder(2, 10, 2, 10));
+        movesPanel.add(moveLabelBufferPanel);
+
         // Move Label
-        JLabel moveLabel = new JLabel(move);
+        TranslucentLabel moveLabel = new TranslucentLabel(move);
         moveLabel.setVerticalAlignment(SwingConstants.CENTER);
-        moveLabel.setOpaque(false);
-        moveLabel.setFont(AssetManager.getFont("chess_font", 16));
-        moveLabel.setForeground(AssetManager.getThemeColor("text"));
-        moveLabel.setHorizontalAlignment(completed
-                ? SwingConstants.CENTER  // Second Move
-                : SwingConstants.LEFT);  // First Move
-        movesPanel.add(moveLabel);
+        moveLabel.setFontSize(16);
+        moveLabel.setMinimumSize(new Dimension(50, rowHeight));
+        moveLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        moveLabelBufferPanel.add(moveLabel, BorderLayout.WEST);
 
         if (completed) {
             currentRow = null;
@@ -74,5 +94,7 @@ public class HistoryPanel extends TranslucentPanel {
             JScrollBar bar = scrollPane.getVerticalScrollBar();
             bar.setValue(bar.getMaximum());
         });
+
+        return moveLabel;
     }
 }

@@ -3,6 +3,7 @@ package com.nathanholmberg.chess.client.controller.game;
 import com.nathanholmberg.chess.client.controller.BaseController;
 import com.nathanholmberg.chess.client.controller.MainController;
 import com.nathanholmberg.chess.client.controller.game.listeners.BoardMouseListener;
+import com.nathanholmberg.chess.client.controller.game.managers.HistoryManager;
 import com.nathanholmberg.chess.client.controller.game.managers.MoveProcessor;
 import com.nathanholmberg.chess.client.controller.game.managers.SelectionManager;
 import com.nathanholmberg.chess.client.controller.game.managers.TimerManager;
@@ -21,6 +22,7 @@ import com.nathanholmberg.chess.engine.utils.MoveUtils;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseListener;
+import java.sql.SQLOutput;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -38,6 +40,7 @@ public abstract class AbstractGameController implements BaseController {
     protected MoveProcessor moveProcessor;
     protected SelectionManager selectionManager;
     protected BoardMouseListener boardMouseListener;
+    protected HistoryManager historyManager;
 
     public AbstractGameController(Color color, ChessTimer chessTimer) {
         this.game = new Game(chessTimer);
@@ -61,8 +64,9 @@ public abstract class AbstractGameController implements BaseController {
         timerManager.start();
 
         // Initialize helper classes for move processing and selection management
-        moveProcessor = new MoveProcessor(game, boardPanel, gamePanel, color);
+        moveProcessor = new MoveProcessor(game, boardPanel, color);
         selectionManager = new SelectionManager(boardPanel, game, color);
+        historyManager = new HistoryManager(this, gamePanel.historyPanel);
 
         // Setup Listeners
         setListeners();
@@ -169,10 +173,21 @@ public abstract class AbstractGameController implements BaseController {
         }
     }
 
+    public boolean inPlay() {
+        return game.inPlay();
+    }
+
+    public void loadGameStateAt(int moveIndex) {
+        game.loadGameStateAt(moveIndex);
+        afterStep();
+    }
+
     private void afterStep() {
         boardPanel.loadPieces(game);
 
         updateEnableNavigationButtons();
+
+        historyManager.selectMove(game.getMoveHistory().getCurrentMoveIndex());
 
         // Play move sound for last move in history if available
         int step = game.getMoveHistory().getCurrentMoveIndex();
@@ -197,6 +212,7 @@ public abstract class AbstractGameController implements BaseController {
         boardPanel.setPerspective(color);
         boardPanel.loadPieces(game);
     }
+
 
     public void onSquareButtonLeftDown(Position position) {
         if (position == null) {
@@ -345,6 +361,11 @@ public abstract class AbstractGameController implements BaseController {
         if (!game.inPlay()) {
             return;
         }
+
+        // Update History
+        historyManager.addMove(MoveUtils.toAlgebraic(move, game));
+
+        // Execute Move
         moveProcessor.executeMove(move);
 
         // End Game

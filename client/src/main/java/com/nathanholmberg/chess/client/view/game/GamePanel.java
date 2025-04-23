@@ -32,11 +32,10 @@ public class GamePanel extends JPanel {
     public TranslucentButton backButton;
 
     public GamePanel() {
-        /// Setup
         setOpaque(false);
         setLayout(new BorderLayout());
 
-        /// Left Panel
+        // Left Panel
         JPanel leftPanel = new JPanel(new BorderLayout());
         leftPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         leftPanel.setOpaque(false);
@@ -68,7 +67,7 @@ public class GamePanel extends JPanel {
         leftPanel.add(boardBufferPanel, BorderLayout.CENTER);
         leftPanel.add(bottomBufferPanel, BorderLayout.SOUTH);
 
-        /// Right Panel
+        // Right Panel
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.setOpaque(false);
         rightPanel.setPreferredSize(new Dimension(350, 600));
