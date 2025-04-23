@@ -10,6 +10,13 @@ This repository contains a full-featured Java-based chess application, structure
 
 All core code (excluding third-party dependencies) is original. Assets (images, sounds, fonts) are sourced from Chess.com.
 
+![menu](https://github.com/user-attachments/assets/e9fd6c83-a2ed-4102-beaf-36b58ff42f3b)
+![wood](https://github.com/user-attachments/assets/901314c3-52d1-471f-bc16-afe17d56f145)
+![settings](https://github.com/user-attachments/assets/45268e60-93a5-4b84-b28e-f8d5d51ff598)
+![icy](https://github.com/user-attachments/assets/0a293072-e3c8-4b8d-a453-26d66ea47a50)
+![metal](https://github.com/user-attachments/assets/b753e8a2-4253-46c0-83bd-1a3e9bdd3f06)
+
+
 ## Table of Contents
 
 - [Features](#features)
