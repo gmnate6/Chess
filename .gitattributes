@@ -1,0 +1,4 @@
+# enforce LF on *nix for most text files
+* text=auto eol=lf
+*.sh text eol=lf
+*.bat text eol=crlf
