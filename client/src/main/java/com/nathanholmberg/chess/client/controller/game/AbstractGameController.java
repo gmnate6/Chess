@@ -99,40 +99,40 @@ public abstract class AbstractGameController implements BaseController {
         boardMouseListener = new BoardMouseListener(this);
         boardPanel.addMouseListener(boardMouseListener);
 
-        gamePanel.resignButton.addActionListener(_ -> {
+        gamePanel.resignButton.addActionListener(e -> {
             if (ConfirmDialog.showDialog(gamePanel, "Are you sure you want to resign?")) {
                 resign();
             }
         });
 
-        gamePanel.drawButton.addActionListener(_ -> {
+        gamePanel.drawButton.addActionListener(e -> {
             if (ConfirmDialog.showDialog(gamePanel, "Are you sure you want to offer draw?")) {
                 System.out.println("Offering draw...");
             }
         });
 
         gamePanel.firstMoveButton.addActionListener(
-                _ -> stepFullBack()
+                e -> stepFullBack()
         );
 
         gamePanel.previousMoveButton.addActionListener(
-                _ -> stepBack()
+                e -> stepBack()
         );
 
         gamePanel.nextMoveButton.addActionListener(
-                _ -> stepForward()
+                e -> stepForward()
         );
 
         gamePanel.lastMoveButton.addActionListener(
-                _ -> stepFullForward()
+                e -> stepFullForward()
         );
 
         gamePanel.rematchButton.addActionListener(
-                _ -> rematch()
+                e -> rematch()
         );
 
         gamePanel.backButton.addActionListener(
-                _ -> MainController.switchTo(new TitleController())
+                e -> MainController.switchTo(new TitleController())
         );
     }
 

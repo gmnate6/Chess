@@ -17,7 +17,7 @@ public class PingEndpoint {
         isLive = true;
         try {
             session.close();
-        } catch (Exception _) {}
+        } catch (Exception ignored) {}
         latch.countDown();
     }
 
@@ -33,7 +33,7 @@ public class PingEndpoint {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             container.connectToServer(PingEndpoint.class, URI.create(SettingsManager.getServerURL() + "/ping"));
             latch.await(5, TimeUnit.SECONDS);
-        } catch (Exception _) {}
+        } catch (Exception ignored) {}
         return isLive;
     }
 

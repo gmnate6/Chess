@@ -45,7 +45,7 @@ public class ConfirmDialog extends JDialog {
         JButton yesButton = new TranslucentButton("Yes");
         yesButton.setPreferredSize(new Dimension(100, 40));
         buttonPanel.add(yesButton);
-        yesButton.addActionListener(_ -> {
+        yesButton.addActionListener(e -> {
             confirmed = true;
             dispose();
         });
@@ -54,7 +54,7 @@ public class ConfirmDialog extends JDialog {
         JButton noButton = new TranslucentButton("No");
         noButton.setPreferredSize(new Dimension(100, 40));
         buttonPanel.add(noButton);
-        noButton.addActionListener(_ -> {
+        noButton.addActionListener(e -> {
             confirmed = false;
             dispose();
         });
