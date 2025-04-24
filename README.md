@@ -16,7 +16,6 @@ All core code (excluding third-party dependencies) is original. Assets (images, 
 ![icy](https://github.com/user-attachments/assets/0a293072-e3c8-4b8d-a453-26d66ea47a50)
 ![metal](https://github.com/user-attachments/assets/b753e8a2-4253-46c0-83bd-1a3e9bdd3f06)
 
-
 ## Table of Contents
 
 - [Features](#features)
