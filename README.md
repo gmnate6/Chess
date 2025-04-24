@@ -79,12 +79,12 @@ Chess/
 
 2. Linux & Mac Only: Make wrapper executable
    ```bash
-    chmod +x ./mvnw
+   chmod +x ./mvnw
    ```
 
 3. Install via Maven Wrapper:
    ```bash
-    ./mvnw clean install
+   ./mvnw clean install
    ```
 
 ## Usage
