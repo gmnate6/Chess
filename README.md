@@ -68,7 +68,7 @@ Chess/
 
 ### Prerequisites
 
-- Java 11 or later (JDK)
+- Java 17 or later (JDK)
 
 ### Steps
 
