@@ -27,6 +27,7 @@ All core code (excluding third-party dependencies) is original. Assets (images, 
 - [Future Work](#future-work)
 - [Contributing](#contributing)
 - [Assets](#assets)
+- [External Software](#external-software)
 - [License](#license)
 - [Acknowledgments](#acknowledgments)
 
@@ -146,6 +147,11 @@ Contributions are welcome! Feel free to submit issues or pull requests. Please e
 ## Assets
 
 All images, sounds, and fonts are used under Chess.com’s asset guidelines and sourced directly from Chess.com.
+
+## External Software
+
+- This project integrates [Stockfish](https://stockfishchess.org/), a strong open-source chess engine licensed under the GPL.
+- Stockfish is developed by the open-source community and is one of the strongest chess engines in the world.
 
 ## License
 
