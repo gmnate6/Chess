@@ -77,9 +77,10 @@ Chess/
    cd Chess
    ```
 
-2. Linux & Mac Only: Make wrapper executable
+2. Linux & Mac Only: Make wrapper and stockfish executable
    ```bash
    chmod +x ./mvnw
+   chmod +x stockfish/*/* 
    ```
 
 3. Install via Maven Wrapper:
