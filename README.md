@@ -69,6 +69,7 @@ Chess/
 ### Prerequisites
 
 - Java 17 or later (JDK)
+- Git
 
 ### Steps
 
@@ -78,30 +79,49 @@ Chess/
    cd Chess
    ```
 
-2. Linux & Mac Only: Make wrapper and stockfish executable
+2. Make Stockfish and Maven Wrapper executable (Linux/macOS only):
    ```bash
    chmod +x ./mvnw
    find stockfish/ -type f -exec chmod +x {} \;
    ```
 
-3. Install via Maven Wrapper:
-   ```bash
-   ./mvnw clean install
-   ```
+3. Build the project:
+   
+   - Linux/macOS/Windows PowerShell:
+     ```bash
+     ./mvnw clean install
+     ```
+
+   - Windows CMD (Command Prompt):
+     ```bash
+     mvnw.cmd clean install
+     ```
 
 ## Usage
 
 ### Running the Client
 
-```bash
-./mvnw -pl client exec:java
-```
+   - Linux/macOS/Windows PowerShell:
+     ```bash
+     ./mvnw -pl client exec:java
+     ```
+
+   - Windows CMD (Command Prompt):
+     ```bash
+     mvnw.cmd -pl client exec:java
+     ```
 
 ### Running the Server
 
-```bash
-./mvnw -pl server exec:java
-```
+   - Linux/macOS/Windows PowerShell:
+     ```bash
+     ./mvnw -pl server exec:java
+     ```
+
+   - Windows CMD (Command Prompt):
+     ```bash
+     mvnw.cmd -pl server exec:java
+     ```
 
 ## Configuration
 
@@ -127,9 +147,15 @@ Example:
 
 Unit tests are provided for the engine module:
 
-```bash
-./mvnw test
-```
+   - Linux/macOS/Windows PowerShell:
+     ```bash
+     ./mvnw test
+     ```
+
+   - Windows CMD (Command Prompt):
+     ```bash
+     mvnw.cmd test
+     ```
 
 Tests for the client and server modules are planned for future releases.
 
