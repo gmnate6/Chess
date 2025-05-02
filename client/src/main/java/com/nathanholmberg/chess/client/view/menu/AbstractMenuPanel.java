@@ -4,7 +4,6 @@ import com.nathanholmberg.chess.client.model.SettingsManager;
 import com.nathanholmberg.chess.client.model.assets.AssetManager;
 import com.nathanholmberg.chess.client.view.components.panels.TranslucentPanel;
 import com.nathanholmberg.chess.client.view.utils.ProfilePanel;
-import com.nathanholmberg.chess.client.view.utils.ServerStatusPanel;
 
 import javax.swing.*;
 import java.awt.*;

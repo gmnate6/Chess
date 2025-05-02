@@ -1,6 +1,5 @@
-package com.nathanholmberg.chess.client.view.utils;
+package com.nathanholmberg.chess.client.view.menu;
 
-import com.nathanholmberg.chess.client.controller.MainController;
 import com.nathanholmberg.chess.client.model.assets.AssetManager;
 import com.nathanholmberg.chess.client.model.server.endpoint.PingEndpoint;
 import com.nathanholmberg.chess.client.view.components.panels.TranslucentPanel;

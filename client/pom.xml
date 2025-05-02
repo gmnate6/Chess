@@ -23,6 +23,14 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- Protocol -->
+        <dependency>
+            <groupId>com.nathanholmberg</groupId>
+            <artifactId>protocol</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- Batik for SVG files -->
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>

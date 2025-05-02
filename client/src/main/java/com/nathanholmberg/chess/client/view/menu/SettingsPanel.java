@@ -81,7 +81,6 @@ public class SettingsPanel extends AbstractMenuPanel {
         // ServerURL Field
         serverURLField = new TranslucentTextField();
         serverURLField.setAlignmentX(CENTER_ALIGNMENT);
-        serverURLField.setEditable(false); // TODO: Remove this
         contentPanel.add(serverURLField);
 
         // Save Button

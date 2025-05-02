@@ -3,19 +3,19 @@ package com.nathanholmberg.chess.client.controller.game.managers;
 import com.nathanholmberg.chess.client.model.assets.AssetManager;
 import com.nathanholmberg.chess.client.view.game.BoardPanel;
 import com.nathanholmberg.chess.engine.enums.Color;
-import com.nathanholmberg.chess.engine.game.Game;
+import com.nathanholmberg.chess.engine.game.ChessGame;
 import com.nathanholmberg.chess.engine.types.Move;
 import com.nathanholmberg.chess.engine.utils.MoveUtils;
 
 public class MoveProcessor {
-    private final Game game;
+    private final ChessGame chessGame;
     private final BoardPanel boardPanel;
     private final Color color;
 
     private Move preMove = null;
 
-    public MoveProcessor(Game game, BoardPanel boardPanel, Color color) {
-        this.game = game;
+    public MoveProcessor(ChessGame chessGame, BoardPanel boardPanel, Color color) {
+        this.chessGame = chessGame;
         this.boardPanel = boardPanel;
         this.color = color;
     }
@@ -50,40 +50,40 @@ public class MoveProcessor {
     }
 
     public void executeMove(Move move) {
-        if (!MoveUtils.causesCheckmate(move, game)) {
+        if (!MoveUtils.causesCheckmate(move, chessGame)) {
             playMoveSound(move);
         }
 
-        game.move(move);
-        boardPanel.loadPieces(game);
+        chessGame.move(move);
+        boardPanel.loadPieces(chessGame);
     }
 
     public void playMoveSound(Move move) {
-        if (MoveUtils.causesCheck(move, game)) {
+        if (MoveUtils.causesCheck(move, chessGame)) {
             AssetManager.playSound("move-check");
             return;
         }
-        if (MoveUtils.isCapture(move, game)) {
+        if (MoveUtils.isCapture(move, chessGame)) {
             AssetManager.playSound("capture");
             return;
         }
-        if (MoveUtils.isCastlingMove(move, game)) {
+        if (MoveUtils.isCastlingMove(move, chessGame)) {
             AssetManager.playSound("castle");
             return;
         }
-        if (game.getTurn() != color) {
+        if (chessGame.getTurn() != color) {
             AssetManager.playSound("move-opponent");
             return;
         }
-        if (game.getTurn() == color) {
+        if (chessGame.getTurn() == color) {
             AssetManager.playSound("move-self");
         }
     }
 
     public void playEndSound() {
-        if (game.inPlay())
+        if (chessGame.inPlay())
             return;
-        Color winner = game.getResult().getWinner();
+        Color winner = chessGame.getResult().getWinner();
         if (winner == null) {
             AssetManager.playSound("game-draw");
             return;

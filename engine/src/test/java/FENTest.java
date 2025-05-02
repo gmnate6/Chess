@@ -1,6 +1,6 @@
 import com.nathanholmberg.chess.engine.ai.RandomAI;
 import com.nathanholmberg.chess.engine.exceptions.IllegalNotationException;
-import com.nathanholmberg.chess.engine.game.Game;
+import com.nathanholmberg.chess.engine.game.ChessGame;
 
 import com.nathanholmberg.chess.engine.types.Move;
 import com.nathanholmberg.chess.engine.utils.FEN;
@@ -30,28 +30,28 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class FENTest {
     @RepeatedTest(5)
     public void randomGameTest() {
-        Game game = new Game(null);
+        ChessGame chessGame = new ChessGame(null);
 
         // Play random game
-        while (game.inPlay()) {
+        while (chessGame.inPlay()) {
             RandomAI randomAI = new RandomAI();
-            Move move = randomAI.getMove(game);
+            Move move = randomAI.getMove(chessGame);
 
             // To and From
-            String expectedFEN = FEN.getFEN(game);
+            String expectedFEN = FEN.getFEN(chessGame);
             String actualFEN = FEN.getFEN(FEN.getGame(expectedFEN, null));
 
             assertEquals(expectedFEN, actualFEN);
 
             // Do move
-            game.move(move);
+            chessGame.move(move);
         }
     }
 
     @Test
     public void getFENTest() {
-        Game game = new Game(null);
-        assertEquals("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", FEN.getFEN(game));
+        ChessGame chessGame = new ChessGame(null);
+        assertEquals("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", FEN.getFEN(chessGame));
     }
 
     @Test

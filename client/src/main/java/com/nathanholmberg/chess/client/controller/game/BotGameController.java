@@ -42,7 +42,7 @@ public class BotGameController extends AbstractGameController {
         new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() {
-                Move botMove = ai.getMove(game);
+                Move botMove = ai.getMove(chessGame);
 
                 // Execute move on the EDT.
                 SwingUtilities.invokeLater(() -> processBotMove(botMove));
@@ -71,7 +71,7 @@ public class BotGameController extends AbstractGameController {
         super.executeMove(move);
 
         // Play Bot Move
-        if (game.inPlay() && game.getTurn() != color) {
+        if (chessGame.inPlay() && chessGame.getTurn() != color) {
             playBotMove();
         }
     }

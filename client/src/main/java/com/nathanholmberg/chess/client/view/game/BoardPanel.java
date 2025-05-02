@@ -4,7 +4,7 @@ import com.nathanholmberg.chess.client.model.assets.AssetManager;
 import com.nathanholmberg.chess.client.view.components.panels.DynamicImagedPanel;
 import com.nathanholmberg.chess.engine.enums.Color;
 import com.nathanholmberg.chess.engine.exceptions.IllegalPositionException;
-import com.nathanholmberg.chess.engine.game.Game;
+import com.nathanholmberg.chess.engine.game.ChessGame;
 import com.nathanholmberg.chess.engine.pieces.Piece;
 import com.nathanholmberg.chess.engine.types.Move;
 import com.nathanholmberg.chess.engine.types.Position;
@@ -271,11 +271,11 @@ public class BoardPanel extends DynamicImagedPanel {
         return squares[position.file()][position.rank()];
     }
 
-    public void loadPieces(Game game) {
+    public void loadPieces(ChessGame chessGame) {
         for (int file = 0; file < SIZE; file++) {
             for (int rank = 0; rank < SIZE; rank++) {
                 Position position = new Position(file, rank);
-                Piece currentPiece = game.board.getPieceAt(position);
+                Piece currentPiece = chessGame.board.getPieceAt(position);
 
                 // Set Current Piece Char
                 Character currentPieceChar = null;
@@ -295,7 +295,7 @@ public class BoardPanel extends DynamicImagedPanel {
         }
 
         // Set Last Move
-        setLastMove(game.getMoveHistory().getLastMove());
+        setLastMove(chessGame.getMoveHistory().getLastMove());
         repaint();
 
         // Update Cursor

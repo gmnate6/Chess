@@ -1,4 +1,4 @@
-package com.nathanholmberg.chess.client.view.utils;
+package com.nathanholmberg.chess.client.view.components;
 
 import com.nathanholmberg.chess.client.model.assets.AssetManager;
 import com.nathanholmberg.chess.client.view.components.button.TranslucentButton;

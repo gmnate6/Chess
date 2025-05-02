@@ -4,7 +4,7 @@ import com.nathanholmberg.chess.engine.enums.Color;
 import com.nathanholmberg.chess.engine.exceptions.IllegalMoveException;
 import com.nathanholmberg.chess.engine.exceptions.IllegalNotationException;
 import com.nathanholmberg.chess.engine.game.Board;
-import com.nathanholmberg.chess.engine.game.Game;
+import com.nathanholmberg.chess.engine.game.ChessGame;
 import com.nathanholmberg.chess.engine.pieces.King;
 import com.nathanholmberg.chess.engine.pieces.Pawn;
 import com.nathanholmberg.chess.engine.pieces.Piece;
@@ -12,9 +12,9 @@ import com.nathanholmberg.chess.engine.types.Move;
 import com.nathanholmberg.chess.engine.types.Position;
 
 public class MoveUtils {
-    public static boolean isCapture(Move move, Game game) {
-        Piece pieceToMove = game.board.getPieceAt(move.initialPosition());
-        Piece pieceToCapture = game.board.getPieceAt(move.finalPosition());
+    public static boolean isCapture(Move move, ChessGame chessGame) {
+        Piece pieceToMove = chessGame.board.getPieceAt(move.initialPosition());
+        Piece pieceToCapture = chessGame.board.getPieceAt(move.finalPosition());
 
         // Direct Capture
         if (pieceToCapture != null) {
@@ -23,23 +23,23 @@ public class MoveUtils {
 
         // En Passant Capture
         if (pieceToMove instanceof Pawn pawn) {
-            return pawn.isLegalEnPassant(move, game.board);
+            return pawn.isLegalEnPassant(move, chessGame.board);
         }
         return false;
     }
 
-    public static boolean causesPromotion(Move move, Game game) {
-        Piece pieceToMove = game.board.getPieceAt(move.initialPosition());
+    public static boolean causesPromotion(Move move, ChessGame chessGame) {
+        Piece pieceToMove = chessGame.board.getPieceAt(move.initialPosition());
 
         // Must be pawn
         if (!(pieceToMove instanceof Pawn pawn)) {
             return false;
         }
-        return pawn.isLegalPromotion(move, game.board);
+        return pawn.isLegalPromotion(move, chessGame.board);
     }
 
-    public static boolean isCastlingMove(Move move, Game game) {
-        Piece pieceToMove = game.board.getPieceAt(move.initialPosition());
+    public static boolean isCastlingMove(Move move, ChessGame chessGame) {
+        Piece pieceToMove = chessGame.board.getPieceAt(move.initialPosition());
 
         // Must be king
         if (!(pieceToMove instanceof King king)) {
@@ -50,38 +50,38 @@ public class MoveUtils {
         return king.isCastleAttempt(move);
     }
 
-    public static boolean causesCheck(Move move, Game game) {
+    public static boolean causesCheck(Move move, ChessGame chessGame) {
         // Create a copy of the board
-        Board boardCopy = game.board.getDeepCopy();
+        Board boardCopy = chessGame.board.getDeepCopy();
 
         // Apply Move
         boardCopy.executeMove(move);
 
         // Check if the king is in check after the move
-        Color color = game.getTurn().inverse();
+        Color color = chessGame.getTurn().inverse();
         King king = boardCopy.getKing(color);
         Position kingPosition = boardCopy.getKingPosition(color);
         return king.isChecked(kingPosition, boardCopy);
     }
 
-    public static boolean causesCheckmate(Move move, Game game) {
-        Game gameCopy = game.getDeepCopy();
+    public static boolean causesCheckmate(Move move, ChessGame chessGame) {
+        ChessGame chessGameCopy = chessGame.getDeepCopy();
 
         // Early Return
-        if (!gameCopy.isMoveLegal(move)) {
+        if (!chessGameCopy.isMoveLegal(move)) {
             return false;
         }
 
         // Move
-        gameCopy.move(move);
-        return gameCopy.isCheckmate();
+        chessGameCopy.move(move);
+        return chessGameCopy.isCheckmate();
     }
 
-    private static String getAmbiguity(Move move, Game game) {
+    private static String getAmbiguity(Move move, ChessGame chessGame) {
         Position initialPosition = move.initialPosition();
         Position finalPosition = move.finalPosition();
-        Piece pieceToMove = game.board.getPieceAt(initialPosition);
-        boolean isCapture = isCapture(move, game);
+        Piece pieceToMove = chessGame.board.getPieceAt(initialPosition);
+        boolean isCapture = isCapture(move, chessGame);
 
         // Pawn
         if (pieceToMove instanceof Pawn) {
@@ -95,15 +95,15 @@ public class MoveUtils {
         // the file (letter) or rank (number) of the starting square is included to clarify.
         boolean addFile = false;
         boolean addRank = false;
-        for (Position currentPos : game.board.getPiecePositionsByColor(pieceToMove.getColor())) {
-            Piece currentPiece = game.board.getPieceAt(currentPos);
+        for (Position currentPos : chessGame.board.getPiecePositionsByColor(pieceToMove.getColor())) {
+            Piece currentPiece = chessGame.board.getPieceAt(currentPos);
 
             // Skip Same Piece
             if (pieceToMove.equals(currentPiece)) { continue; }
             // Skip Wrong Instance
             if (!(pieceToMove.getClass().equals(currentPiece.getClass()))) { continue; }
             // Skip Illegal Moves
-            if (!game.isMoveLegal(new Move(currentPos, finalPosition, '\0'))) { continue; }
+            if (!chessGame.isMoveLegal(new Move(currentPos, finalPosition, '\0'))) { continue; }
 
             // Do the thing
             if (currentPos.file() == initialPosition.file()) {
@@ -124,19 +124,19 @@ public class MoveUtils {
         return "";
     }
 
-    private static Position resolveAmbiguity(String ambiguity, char pieceChar, Position finalPosition, Game game) {
+    private static Position resolveAmbiguity(String ambiguity, char pieceChar, Position finalPosition, ChessGame chessGame) {
         if (ambiguity.length() > 2) {
             throw new IllegalNotationException("Invalid Algebraic Notation: Ambiguity is too long: '" + ambiguity + "'.");
         }
 
         // Find Initial Position
-        for (Position currentPos : game.board.getPiecePositionsByColor(game.getTurn())) {
-            Piece currentPiece = game.board.getPieceAt(currentPos);
+        for (Position currentPos : chessGame.board.getPiecePositionsByColor(chessGame.getTurn())) {
+            Piece currentPiece = chessGame.board.getPieceAt(currentPos);
 
             // Skip Wrong Instance
             if (Character.toUpperCase(currentPiece.toChar()) != Character.toUpperCase(pieceChar)) { continue; }
             // Skip Illegal Moves
-            if (!game.isMoveLegal(new Move(currentPos, finalPosition, 'Q'))) { continue; }
+            if (!chessGame.isMoveLegal(new Move(currentPos, finalPosition, 'Q'))) { continue; }
 
             // No Ambiguity
             if (ambiguity.isEmpty()) {
@@ -167,13 +167,13 @@ public class MoveUtils {
         throw new IllegalNotationException("Ambiguous algebraic notation: cannot resolve initial position from ambiguity: '" + ambiguity + "'.");
     }
 
-    private static Move createCastlingMove(Game game, boolean isKingSide) {
-        Position initialPosition = game.board.getKingPosition(game.getTurn());
+    private static Move createCastlingMove(ChessGame chessGame, boolean isKingSide) {
+        Position initialPosition = chessGame.board.getKingPosition(chessGame.getTurn());
         Position finalPosition = initialPosition.move(isKingSide ? 2 : -2, 0);
         return new Move(initialPosition, finalPosition, '\0');
     }
 
-    public static Move fromAlgebraic(String notation, Game game) {
+    public static Move fromAlgebraic(String notation, ChessGame chessGame) {
         Position initialPosition;
         Position finalPosition;
         char promotionPiece = '\0';
@@ -195,9 +195,9 @@ public class MoveUtils {
 
         // Handle castling
         if (notation.equals("O-O")) {
-            return createCastlingMove(game, true);
+            return createCastlingMove(chessGame, true);
         } else if (notation.equals("O-O-O")) {
-            return createCastlingMove(game, false);
+            return createCastlingMove(chessGame, false);
         }
 
         // Handle Promotion
@@ -230,25 +230,25 @@ public class MoveUtils {
 
         // Resolve Ambiguity
         try {
-            initialPosition = resolveAmbiguity(notation, pieceToMoveChar, finalPosition, game);
+            initialPosition = resolveAmbiguity(notation, pieceToMoveChar, finalPosition, chessGame);
         } catch (IllegalNotationException e) {
             throw new IllegalNotationException("Illegal Algebraic Notation: '" + originalNotation + "'. ");
         }
 
         // Validate the move
         Move move = new Move(initialPosition, finalPosition, promotionPiece);
-        if (!game.isMoveLegal(move)) {
+        if (!chessGame.isMoveLegal(move)) {
             throw new IllegalNotationException("Illegal Algebraic Notation: '" + originalNotation + "'. Move is not legal.");
         }
 
         // Check for extras
-        if (isCapture ^ isCapture(move, game)) {
+        if (isCapture ^ isCapture(move, chessGame)) {
             throw new IllegalNotationException("Illegal Algebraic Notation: '" + originalNotation + "'. Capture symbol does not match move.");
         }
-        if ((causesCheck ^ causesCheck(move, game)) && !causesCheckmate) {
+        if ((causesCheck ^ causesCheck(move, chessGame)) && !causesCheckmate) {
             throw new IllegalNotationException("Illegal Algebraic Notation: '" + originalNotation + "'. Check symbol does not match move.");
         }
-        if (causesCheckmate ^ causesCheckmate(move, game)) {
+        if (causesCheckmate ^ causesCheckmate(move, chessGame)) {
             throw new IllegalNotationException("Illegal Algebraic Notation: '" + originalNotation + "'. Checkmate symbol does not match move.");
         }
 
@@ -256,16 +256,16 @@ public class MoveUtils {
         return move;
     }
 
-    public static String toAlgebraic(Move move, Game game) {
+    public static String toAlgebraic(Move move, ChessGame chessGame) {
         StringBuilder sb = new StringBuilder();
         Position initialPosition = move.initialPosition();
         Position finalPosition = move.finalPosition();
         char promotionPiece = move.promotionPiece();
-        Piece pieceToMove = game.board.getPieceAt(initialPosition);
-        boolean isCapture = isCapture(move, game);
+        Piece pieceToMove = chessGame.board.getPieceAt(initialPosition);
+        boolean isCapture = isCapture(move, chessGame);
 
         // Early Check
-        if (!game.isMoveLegal(move)) {
+        if (!chessGame.isMoveLegal(move)) {
             throw new IllegalMoveException("Illegal Move: Make sure to call toAlgebraic() before making move.");
         }
         assert (pieceToMove != null);
@@ -288,7 +288,7 @@ public class MoveUtils {
         }
 
         // Add Initial Position
-        sb.append(getAmbiguity(move, game));
+        sb.append(getAmbiguity(move, chessGame));
 
         // Add Capture
         if (isCapture) {
@@ -304,9 +304,9 @@ public class MoveUtils {
         }
 
         // Add Check and Checkmate
-        if (causesCheckmate(move, game)) {
+        if (causesCheckmate(move, chessGame)) {
             sb.append("#");
-        } else if (causesCheck(move, game)) {
+        } else if (causesCheck(move, chessGame)) {
             sb.append("+");
         }
 
@@ -314,7 +314,7 @@ public class MoveUtils {
         return sb.toString();
     }
 
-    public static Move fromLongAlgebraic(String notation, Game game) {
+    public static Move fromLongAlgebraic(String notation, ChessGame chessGame) {
         if (notation.length() < 4 || notation.length() > 5) {
             throw new IllegalNotationException("Invalid Long Algebraic Notation: " + notation);
         }
@@ -333,11 +333,11 @@ public class MoveUtils {
             Move move = new Move(initialPosition, finalPosition, promotion);
 
             // Check for promotion
-            if (promotion == '\0' && causesPromotion(move, game)) {
+            if (promotion == '\0' && causesPromotion(move, chessGame)) {
                 throw new IllegalNotationException("Invalid Long Algebraic Notation: '" + notation + "'. Move causes promotion and no promotion piece not specified.\n" +
                         "To specify a promotion piece, just add the piece char after the destination square. (e.g., a7a8Q)");
             }
-            if (promotion != '\0' && !causesPromotion(move, game)) {
+            if (promotion != '\0' && !causesPromotion(move, chessGame)) {
                 throw new IllegalNotationException("Invalid Long Algebraic Notation: '" + notation + "'. Move does not cause promotion but a promotion piece was specified.\n" +
                         "To remove a promotion piece, just omit the piece char after the destination square. (e.g., a7a8)");
             }

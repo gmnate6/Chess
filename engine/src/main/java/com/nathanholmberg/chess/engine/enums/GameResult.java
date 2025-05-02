@@ -43,4 +43,21 @@ public enum GameResult {
         if (blackWon()) { return Color.BLACK; }
         return null;
     }
+
+    public static GameResult fromString(String string) {
+        return switch (string) {
+            case "WHITE_CHECKMATE"      -> WHITE_CHECKMATE;
+            case "BLACK_CHECKMATE"      -> BLACK_CHECKMATE;
+            case "STALEMATE"            -> STALEMATE;
+            case "FIFTY_MOVE_RULE"      -> FIFTY_MOVE_RULE;
+            case "THREEFOLD_REPETITION" -> THREEFOLD_REPETITION;
+            case "WHITE_WON_ON_TIME"    -> WHITE_WON_ON_TIME;
+            case "BLACK_WON_ON_TIME"    -> BLACK_WON_ON_TIME;
+            case "DRAW_AGREEMENT"       -> DRAW_AGREEMENT;
+            case "WHITE_RESIGN"         -> WHITE_RESIGN;
+            case "BLACK_RESIGN"         -> BLACK_RESIGN;
+            case "ON_GOING"             -> ON_GOING;
+            default -> null;
+        };
+    }
 }

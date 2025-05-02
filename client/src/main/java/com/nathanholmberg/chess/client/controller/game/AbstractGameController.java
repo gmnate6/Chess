@@ -12,10 +12,10 @@ import com.nathanholmberg.chess.client.model.SettingsManager;
 import com.nathanholmberg.chess.client.model.assets.AssetManager;
 import com.nathanholmberg.chess.client.view.game.BoardPanel;
 import com.nathanholmberg.chess.client.view.game.GamePanel;
-import com.nathanholmberg.chess.client.view.utils.ConfirmDialog;
+import com.nathanholmberg.chess.client.view.components.ConfirmDialog;
 import com.nathanholmberg.chess.engine.enums.Color;
+import com.nathanholmberg.chess.engine.game.ChessGame;
 import com.nathanholmberg.chess.engine.game.ChessTimer;
-import com.nathanholmberg.chess.engine.game.Game;
 import com.nathanholmberg.chess.engine.pieces.Piece;
 import com.nathanholmberg.chess.engine.types.Move;
 import com.nathanholmberg.chess.engine.types.Position;
@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutionException;
 
 public abstract class AbstractGameController implements BaseController {
     // Core objects
-    protected Game game;
+    protected ChessGame chessGame;
     protected Color color;
 
     // View elements
@@ -44,14 +44,14 @@ public abstract class AbstractGameController implements BaseController {
     protected HistoryManager historyManager;
 
     public AbstractGameController(Color color, ChessTimer chessTimer) {
-        this.game = new Game(chessTimer);
+        this.chessGame = new ChessGame(chessTimer);
         this.color = color;
 
         // Setup View
         this.gamePanel = new GamePanel();
         this.boardPanel = gamePanel.boardPanel;
         boardPanel.setPerspective(color);
-        boardPanel.loadPieces(game);
+        boardPanel.loadPieces(chessGame);
 
         AssetManager.playSound("game-start");
 
@@ -60,13 +60,13 @@ public abstract class AbstractGameController implements BaseController {
         gamePanel.setBottomUsername(SettingsManager.getUsername());
 
         // Timer Manager (encapsulates Swing timer logic)
-        gamePanel.setTimerEnabled(game.getTimer() != null);
-        timerManager = new TimerManager(game, gamePanel, color);
+        gamePanel.setTimerEnabled(chessGame.getTimer() != null);
+        timerManager = new TimerManager(chessGame, gamePanel, color);
         timerManager.start();
 
         // Initialize helper classes for move processing and selection management
-        moveProcessor = new MoveProcessor(game, boardPanel, color);
-        selectionManager = new SelectionManager(boardPanel, game, color);
+        moveProcessor = new MoveProcessor(chessGame, boardPanel, color);
+        selectionManager = new SelectionManager(boardPanel, chessGame, color);
         historyManager = new HistoryManager(this, gamePanel.historyPanel);
 
         // Setup Listeners
@@ -137,29 +137,29 @@ public abstract class AbstractGameController implements BaseController {
     }
 
     public void stepFullBack() {
-        game.stepFullBack();
+        chessGame.stepFullBack();
         afterStep();
     }
 
     public void stepBack() {
-        game.stepBack();
+        chessGame.stepBack();
         afterStep();
     }
 
     public void stepForward() {
         if (isAtLastMove()) { return; }
-        game.stepForward();
+        chessGame.stepForward();
         afterStep();
     }
 
     public void stepFullForward() {
         if (isAtLastMove()) { return; }
-        game.stepFullForward();
+        chessGame.stepFullForward();
         afterStep();
     }
 
     public boolean isAtLastMove() {
-        return game.getMoveHistory().isAtLastMove();
+        return chessGame.getMoveHistory().isAtLastMove();
     }
 
     private void updateEnableNavigationButtons() {
@@ -170,9 +170,9 @@ public abstract class AbstractGameController implements BaseController {
         gamePanel.lastMoveButton.setEnabled(true);
 
         // Disable navigation as needed based on move history
-        int step = game.getMoveHistory().getCurrentMoveIndex();
+        int step = chessGame.getMoveHistory().getCurrentMoveIndex();
         int min = -1;
-        int max = game.getMoveHistory().getSize() - 1;
+        int max = chessGame.getMoveHistory().getSize() - 1;
 
         if (step <= min) {
             gamePanel.firstMoveButton.setEnabled(false);
@@ -185,35 +185,35 @@ public abstract class AbstractGameController implements BaseController {
     }
 
     public void loadGameStateAt(int moveIndex) {
-        game.loadGameStateAt(moveIndex);
+        chessGame.loadGameStateAt(moveIndex);
         afterStep();
     }
 
     private void afterStep() {
-        boardPanel.loadPieces(game);
+        boardPanel.loadPieces(chessGame);
 
         updateEnableNavigationButtons();
 
-        historyManager.selectMove(game.getMoveHistory().getCurrentMoveIndex());
+        historyManager.selectMove(chessGame.getMoveHistory().getCurrentMoveIndex());
 
         // Play move sound for last move in history if available
-        int step = game.getMoveHistory().getCurrentMoveIndex();
+        int step = chessGame.getMoveHistory().getCurrentMoveIndex();
         if (step >= 0) {
-            Move move = game.getMoveHistory().getLastMove();
-            game.stepBack();
+            Move move = chessGame.getMoveHistory().getLastMove();
+            chessGame.stepBack();
             moveProcessor.playMoveSound(move);
-            game.stepForward();
+            chessGame.stepForward();
         }
     }
 
     protected void rematch() {
-        if (game.inPlay()) {
+        if (chessGame.inPlay()) {
             throw new IllegalStateException("Cannot rematch while game is in play.");
         }
     }
 
     public boolean inPlay() {
-        return game.inPlay();
+        return chessGame.inPlay();
     }
 
     protected void setColor(Color color) {
@@ -222,12 +222,12 @@ public abstract class AbstractGameController implements BaseController {
     }
 
     protected void setPerspective(Color color) {
-        if (game.getTimer() != null && game.getTimer().isActive()) {
+        if (chessGame.getTimer() != null && chessGame.getTimer().isActive()) {
             System.err.println("Cannot change perspective while timer is active.");
             return;
         }
         boardPanel.setPerspective(color);
-        boardPanel.loadPieces(game);
+        boardPanel.loadPieces(chessGame);
     }
 
     public void onSquareButtonLeftDown(Position position) {
@@ -318,27 +318,27 @@ public abstract class AbstractGameController implements BaseController {
             throw new IllegalStateException("This method must not be called on the Event Dispatch Thread (EDT)!");
         }
 
-        if (!game.inPlay()) {
+        if (!chessGame.inPlay()) {
             return;
         }
 
         selectionManager.deselect();
 
         // Only allow moves with the controller’s own color piece.
-        Piece pieceToMove = game.board.getPieceAt(move.initialPosition());
+        Piece pieceToMove = chessGame.board.getPieceAt(move.initialPosition());
         if (pieceToMove == null || pieceToMove.getColor() != color) {
             return;
         }
 
         moveProcessor.clearPreMove();
 
-        if (game.getTurn() != color) {
+        if (chessGame.getTurn() != color) {
             moveProcessor.setPreMove(move);
             return;
         }
 
         // Check promotion possibility
-        if (MoveUtils.causesPromotion(move, game)) {
+        if (MoveUtils.causesPromotion(move, chessGame)) {
             CompletableFuture<Character> future = boardPanel.promptPromotion(move.finalPosition(), color);
 
             // Remove Board Mouse Listener
@@ -359,11 +359,11 @@ public abstract class AbstractGameController implements BaseController {
             move = new Move(move.initialPosition(), move.finalPosition(), selectedPiece);
         }
 
-        if (!game.isMoveLegal(move)) {
+        if (!chessGame.isMoveLegal(move)) {
             // Check for unsafe move (e.g., putting king in check)
-            if (!game.isMoveSafe(move) && pieceToMove.isMoveValid(move, game.board)) {
+            if (!chessGame.isMoveSafe(move) && pieceToMove.isMoveValid(move, chessGame.board)) {
                 AssetManager.playSound("illegal");
-                boardPanel.setMarkedRed(game.board.getKingPosition(color), true);
+                boardPanel.setMarkedRed(chessGame.board.getKingPosition(color), true);
             }
             return;
         }
@@ -372,12 +372,12 @@ public abstract class AbstractGameController implements BaseController {
     }
 
     protected void executeMove(Move move) {
-        if (!game.inPlay()) {
+        if (!chessGame.inPlay()) {
             return;
         }
 
         // Update History
-        historyManager.addMove(MoveUtils.toAlgebraic(move, game));
+        historyManager.addMove(MoveUtils.toAlgebraic(move, chessGame));
 
         // Execute Move
         moveProcessor.executeMove(move);
@@ -386,18 +386,18 @@ public abstract class AbstractGameController implements BaseController {
         updateEnableNavigationButtons();
 
         // End Game
-        if (!game.inPlay()) {
+        if (!chessGame.inPlay()) {
             endGame();
         }
     }
 
     protected void resign() {
-        game.resign(color);
+        chessGame.resign(color);
         endGame();
     }
 
     protected void endGame() {
-        if (game.inPlay()) {
+        if (chessGame.inPlay()) {
             System.err.println("Called endGame while game is still in play.");
             return;
         }

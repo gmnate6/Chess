@@ -1,6 +1,6 @@
 package com.nathanholmberg.chess.engine.ai;
 
-import com.nathanholmberg.chess.engine.game.Game;
+import com.nathanholmberg.chess.engine.game.ChessGame;
 import com.nathanholmberg.chess.engine.types.Move;
 import com.nathanholmberg.chess.engine.utils.FEN;
 import com.nathanholmberg.chess.engine.utils.MoveUtils;
@@ -40,8 +40,8 @@ public class StockfishAI implements ChessAI{
         return stockfishFile.exists();
     }
 
-    public Move getMove(Game game) {
-        String fen = FEN.getFEN(game);
+    public Move getMove(ChessGame chessGame) {
+        String fen = FEN.getFEN(chessGame);
         String stringMove;
         String stockfishPath = getStockfishPath();
 
@@ -49,7 +49,7 @@ public class StockfishAI implements ChessAI{
         if (!doesStockfishExist()) {
             System.out.println("Stockfish Missing. Did Random Move.");
             RandomAI randomAI = new RandomAI();
-            return randomAI.getMove(game);
+            return randomAI.getMove(chessGame);
         }
 
         // Get Stock Fish Move
@@ -74,7 +74,7 @@ public class StockfishAI implements ChessAI{
                 if (line.startsWith("bestmove")) {
                     stringMove = parseBestMove(line);
                     assert stringMove != null;
-                    return MoveUtils.fromLongAlgebraic(stringMove, game);
+                    return MoveUtils.fromLongAlgebraic(stringMove, chessGame);
                 }
             }
 
@@ -89,7 +89,7 @@ public class StockfishAI implements ChessAI{
         // Stockfish failed
         System.out.println("Did random move.");
         RandomAI randomAI = new RandomAI();
-        return randomAI.getMove(game);
+        return randomAI.getMove(chessGame);
     }
 
     public String toString() {

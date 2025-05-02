@@ -3,13 +3,13 @@ package com.nathanholmberg.chess.protocol.messages.server;
 import com.nathanholmberg.chess.protocol.messages.Message;
 
 public class IllegalMoveMessage extends Message {
-    private final String move;
+    private final String reason;
 
-    public IllegalMoveMessage(String move) {
-        this.move = move;
+    public IllegalMoveMessage(String reason) {
+        this.reason = reason;
     }
 
-    public String getMove() {
-        return move;
+    public String getReason() {
+        return reason;
     }
 }

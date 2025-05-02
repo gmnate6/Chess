@@ -5,7 +5,7 @@
 This repository contains a full-featured Java-based chess application, structured as a Maven project with three modules:
 
 - **client**: A Swing-based GUI client built with an MVC architecture.
-- **engine**: A custom game package handling all game state and logic, with Stockfish integration and support for exporting to FEN and PGN.
+- **engine**: A custom chessGame package handling all chessGame state and logic, with Stockfish integration and support for exporting to FEN and PGN.
 - **server**: A WebSocket server (GlassFish) currently exposing a ping endpoint; future support for a lobby and matchmaking is planned.
 
 All core code (excluding third-party dependencies) is original. Assets (images, sounds, fonts) are sourced from Chess.com.
@@ -40,14 +40,14 @@ All core code (excluding third-party dependencies) is original. Assets (images, 
     - Settings system (via `settings.json`) for themes, usernames, and other preferences.
     - Custom `AssetManager` centralizes loading of images, sounds, fonts, and colors.
 - **Engine**
-    - Full game state management and rule enforcement.
+    - Full chessGame state management and rule enforcement.
     - Integration with Stockfish for AI opponent functionality.
-    - Export to FEN and PGN formats for game analysis and sharing.
+    - Export to FEN and PGN formats for chessGame analysis and sharing.
     - Comprehensive unit tests using JUnit Jupiter.
 - **Server**
     - GlassFish-based WebSocket endpoint (`/ping`) for connectivity checks.
     - JSON serialization/deserialization via Gson for client–server communication.
-    - Future support for lobbies, matchmaking, and multi-player game sessions.
+    - Future support for lobbies, matchmaking, and multi-player chessGame sessions.
 
 ## Architecture
 
@@ -61,7 +61,7 @@ Chess/
 ```
 
 - **client**: Implements the GUI front end. Uses Swing and follows MVC patterns.
-- **engine**: Implements chess rules, game flow, and Stockfish integration.
+- **engine**: Implements chess rules, chessGame flow, and Stockfish integration.
 - **server**: Hosts WebSocket endpoints and manages online play logic.
 
 ## Installation
@@ -161,7 +161,7 @@ Tests for the client and server modules are planned for future releases.
 
 ## Future Work
 
-- Implement online lobby, matchmaking, and game session management in the server.
+- Implement online lobby, matchmaking, and chessGame session management in the server.
 - Add unit and integration tests for client and server modules.
 - Expand theme support and UI customization options.
 - Improve engine heuristics and performance tuning.

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 
-public class Game {
+public class ChessGame {
     public Board board = new Board();
     private Color turn = Color.WHITE;
     private int halfMoveClock = 0;
@@ -25,7 +25,7 @@ public class Game {
     private final HashMap<String, Integer> boardHistory = new HashMap<>();
     private final MoveHistory moveHistory = new MoveHistory();
 
-    public Game(ChessTimer chessTimer) {
+    public ChessGame(ChessTimer chessTimer) {
         // Disabled Timer
         if (chessTimer == null) {
             this.chessTimer = null;
@@ -37,7 +37,7 @@ public class Game {
         this.chessTimer.start();
     }
 
-    public Game(Board board, Color turn, int halfMoveClock, int fullMoveNumber, ChessTimer chessTimer) {
+    public ChessGame(Board board, Color turn, int halfMoveClock, int fullMoveNumber, ChessTimer chessTimer) {
         this(chessTimer);
         this.board = board;
         this.turn = turn;
@@ -56,8 +56,8 @@ public class Game {
         }
 
         // Fresh Game
-        Game newGame = new Game(null);
-        Board newBoard = newGame.board;
+        ChessGame newChessGame = new ChessGame(null);
+        Board newBoard = newChessGame.board;
 
         // Replay Moves
         for (int i = 0; i <= moveIndex; i++) {
@@ -68,14 +68,14 @@ public class Game {
                 throw new IllegalStateException("Invalid move in move history at index " + i + ": " + move);
             }
 
-            newGame.move(move);
+            newChessGame.move(move);
         }
 
         // Apply new game
-        board = newGame.board;
-        turn = newGame.turn;
-        halfMoveClock = newGame.halfMoveClock;
-        fullMoveNumber = newGame.fullMoveNumber;
+        board = newChessGame.board;
+        turn = newChessGame.turn;
+        halfMoveClock = newChessGame.halfMoveClock;
+        fullMoveNumber = newChessGame.fullMoveNumber;
         moveHistory.setCurrentMoveIndex(moveIndex);
     }
 
@@ -95,8 +95,8 @@ public class Game {
         loadGameStateAt(moveHistory.getSize()-1);
     }
 
-    public Game getDeepCopy() {
-        return new Game(
+    public ChessGame getDeepCopy() {
+        return new ChessGame(
                 this.board.getDeepCopy(),
                 this.turn, this.halfMoveClock,
                 this.fullMoveNumber,

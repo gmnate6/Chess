@@ -1,7 +1,7 @@
 package MoveAlgebraic;
 
 import com.nathanholmberg.chess.engine.ai.RandomAI;
-import com.nathanholmberg.chess.engine.game.Game;
+import com.nathanholmberg.chess.engine.game.ChessGame;
 import com.nathanholmberg.chess.engine.types.Move;
 import com.nathanholmberg.chess.engine.utils.FEN;
 import com.nathanholmberg.chess.engine.utils.MoveUtils;
@@ -23,20 +23,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ToFromAlgebraicTest {
     @RepeatedTest(5)
     public void randomGameTest() {
-        Game game = new Game(null);
+        ChessGame chessGame = new ChessGame(null);
 
         // Play random game
-        while (game.inPlay()) {
-            Move originalMove = new RandomAI().getMove(game);
+        while (chessGame.inPlay()) {
+            Move originalMove = new RandomAI().getMove(chessGame);
 
             // To and From
-            String algebraic = MoveUtils.toAlgebraic(originalMove, game);
-            Move move = MoveUtils.fromAlgebraic(algebraic, game);
+            String algebraic = MoveUtils.toAlgebraic(originalMove, chessGame);
+            Move move = MoveUtils.fromAlgebraic(algebraic, chessGame);
 
-            assertEquals(originalMove, move, FEN.getFEN(game));
+            assertEquals(originalMove, move, FEN.getFEN(chessGame));
 
             // Do move
-            game.move(move);
+            chessGame.move(move);
         }
     }
 }

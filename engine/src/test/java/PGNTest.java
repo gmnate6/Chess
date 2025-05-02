@@ -1,6 +1,6 @@
 import com.nathanholmberg.chess.engine.ai.RandomAI;
 import com.nathanholmberg.chess.engine.exceptions.IllegalNotationException;
-import com.nathanholmberg.chess.engine.game.Game;
+import com.nathanholmberg.chess.engine.game.ChessGame;
 
 import com.nathanholmberg.chess.engine.utils.PGN;
 import org.junit.jupiter.api.RepeatedTest;
@@ -30,19 +30,19 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class PGNTest {
     @RepeatedTest(5)
     public void randomGameTest() {
-        Game game = new Game(null);
+        ChessGame chessGame = new ChessGame(null);
 
         // Play random game
-        while (game.inPlay()) {
-            game.move(new RandomAI().getMove(game));
+        while (chessGame.inPlay()) {
+            chessGame.move(new RandomAI().getMove(chessGame));
         }
 
         // Get pgn
-        String pgn = PGN.getPGN(game);
-        Game gameFromPGN = PGN.getGame(pgn, null);
+        String pgn = PGN.getPGN(chessGame);
+        ChessGame chessGameFromPGN = PGN.getGame(pgn, null);
 
         // Check if pgn reconstructed game using FEN
-        assertEquals(PGN.getPGN(game), PGN.getPGN(gameFromPGN));
+        assertEquals(PGN.getPGN(chessGame), PGN.getPGN(chessGameFromPGN));
     }
 
     @Test

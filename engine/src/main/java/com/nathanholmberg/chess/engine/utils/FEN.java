@@ -3,8 +3,8 @@ package com.nathanholmberg.chess.engine.utils;
 import com.nathanholmberg.chess.engine.enums.Color;
 import com.nathanholmberg.chess.engine.exceptions.IllegalNotationException;
 import com.nathanholmberg.chess.engine.game.Board;
+import com.nathanholmberg.chess.engine.game.ChessGame;
 import com.nathanholmberg.chess.engine.game.ChessTimer;
-import com.nathanholmberg.chess.engine.game.Game;
 import com.nathanholmberg.chess.engine.pieces.Piece;
 import com.nathanholmberg.chess.engine.types.CastlingRights;
 import com.nathanholmberg.chess.engine.types.Position;
@@ -63,7 +63,7 @@ public class FEN {
         return board;
     }
 
-    public static Game getGame(String fen, ChessTimer chessTimer) {
+    public static ChessGame getGame(String fen, ChessTimer chessTimer) {
         Board board;
         Color currentPlayer;
         int halfMoveClock;
@@ -170,10 +170,10 @@ public class FEN {
         }
 
         // Construct and return the FEN object.
-        return new Game(board, currentPlayer, halfMoveClock, fullMoveNumber, chessTimer);
+        return new ChessGame(board, currentPlayer, halfMoveClock, fullMoveNumber, chessTimer);
     }
 
-    public static String getFENBoardAndTurn(Game game) {
+    public static String getFENBoardAndTurn(ChessGame chessGame) {
         StringBuilder fen = new StringBuilder();
 
         // Construct Board
@@ -183,7 +183,7 @@ public class FEN {
             // Loop through files
             for (int file = 0; file < 8; file++) {
                 Position currentPosition = new Position(file, rank);
-                Piece currentPiece = game.board.getPieceAt(currentPosition);
+                Piece currentPiece = chessGame.board.getPieceAt(currentPosition);
 
                 if (currentPiece == null) {
                     // Count Empty Spaces
@@ -212,20 +212,20 @@ public class FEN {
         }
 
         // Construct Current Player
-        fen.append(" ").append(game.getTurn() == Color.WHITE ? "w" : "b");
+        fen.append(" ").append(chessGame.getTurn() == Color.WHITE ? "w" : "b");
         return fen.toString();
     }
 
-    public static String getFEN(Game game) {
+    public static String getFEN(ChessGame chessGame) {
         StringBuilder fen = new StringBuilder();
 
         // Construct Board
-        fen.append(getFENBoardAndTurn(game));
+        fen.append(getFENBoardAndTurn(chessGame));
 
         // Construct Castling Rights
         fen.append(" ");
 
-        CastlingRights castlingRights = game.board.getCastlingRights();
+        CastlingRights castlingRights = chessGame.board.getCastlingRights();
         if (castlingRights.isWhiteKingSide()) { fen.append("K"); }
         if (castlingRights.isWhiteQueenSide()) { fen.append("Q"); }
         if (castlingRights.isBlackKingSide()) { fen.append("k"); }
@@ -235,7 +235,7 @@ public class FEN {
         if (castlingRights.isNone()) { fen.append("-"); }
 
         // Construct En Passant Position
-        Position enPassantPosition = game.board.getEnPassantPosition();
+        Position enPassantPosition = chessGame.board.getEnPassantPosition();
         fen.append(" ");
         if (enPassantPosition == null) {
             fen.append("-");
@@ -244,10 +244,10 @@ public class FEN {
         }
 
         // Construct Half Move Clock
-        fen.append(" ").append(game.getHalfMoveClock());
+        fen.append(" ").append(chessGame.getHalfMoveClock());
 
         // Construct Full Move Number
-        fen.append(" ").append(game.getFullMoveNumber());
+        fen.append(" ").append(chessGame.getFullMoveNumber());
 
         // Return
         return fen.toString();

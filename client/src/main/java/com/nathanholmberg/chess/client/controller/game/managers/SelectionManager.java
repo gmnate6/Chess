@@ -2,7 +2,7 @@ package com.nathanholmberg.chess.client.controller.game.managers;
 
 import com.nathanholmberg.chess.client.view.game.BoardPanel;
 import com.nathanholmberg.chess.engine.enums.Color;
-import com.nathanholmberg.chess.engine.game.Game;
+import com.nathanholmberg.chess.engine.game.ChessGame;
 import com.nathanholmberg.chess.engine.pieces.Piece;
 import com.nathanholmberg.chess.engine.types.Move;
 import com.nathanholmberg.chess.engine.types.Position;
@@ -11,22 +11,22 @@ import java.util.List;
 
 public class SelectionManager {
     private final BoardPanel boardPanel;
-    private final Game game;
+    private final ChessGame chessGame;
     private Color color;
 
     private Position selectedPosition = null;
     private Position markedPosition = null;
     private boolean pieceSelected = false;
 
-    public SelectionManager(BoardPanel boardPanel, Game game, Color color) {
+    public SelectionManager(BoardPanel boardPanel, ChessGame chessGame, Color color) {
         this.boardPanel = boardPanel;
-        this.game = game;
+        this.chessGame = chessGame;
         this.color = color;
     }
 
     public boolean canSelectPosition(Position position) {
         if (position == null) return false;
-        Piece piece = game.board.getPieceAt(position);
+        Piece piece = chessGame.board.getPieceAt(position);
         if (piece == null)
             return false;
         if (piece.getColor() == color)
@@ -37,7 +37,7 @@ public class SelectionManager {
         // If an opponent’s piece is clicked while a piece is already selected,
         // allow selection only if the move between them is illegal.
         Move move = new Move(selectedPosition, position, 'Q');
-        return !game.isMoveLegal(move);
+        return !chessGame.isMoveLegal(move);
     }
 
     public void select(Position position) {
@@ -48,8 +48,8 @@ public class SelectionManager {
         selectedPosition = position;
         boardPanel.setHighlight(position, true);
 
-        if (game.getTurn() == color) {
-            List<Position> legalMoves = game.getLegalMoves(position);
+        if (chessGame.getTurn() == color) {
+            List<Position> legalMoves = chessGame.getLegalMoves(position);
             for (Position pos : legalMoves) {
                 boardPanel.setHint(pos, true);
             }

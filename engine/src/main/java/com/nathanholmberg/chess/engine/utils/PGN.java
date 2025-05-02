@@ -2,49 +2,49 @@ package com.nathanholmberg.chess.engine.utils;
 
 import com.nathanholmberg.chess.engine.enums.Color;
 import com.nathanholmberg.chess.engine.exceptions.IllegalNotationException;
+import com.nathanholmberg.chess.engine.game.ChessGame;
 import com.nathanholmberg.chess.engine.game.ChessTimer;
-import com.nathanholmberg.chess.engine.game.Game;
 import com.nathanholmberg.chess.engine.types.Move;
 
 import java.util.List;
 
 public class PGN {
-    public static String getPGN(Game game) {
+    public static String getPGN(ChessGame chessGame) {
         StringBuilder pgn = new StringBuilder();
 
         // Dummy Game
-        Game dummyGame = new Game(null);
+        ChessGame dummyChessGame = new ChessGame(null);
 
         // Loop Through Moves History
-        List<Move> moves = game.getMoveHistory().getMoves();
+        List<Move> moves = chessGame.getMoveHistory().getMoves();
         for (Move move : moves) {
             // Add Move Count
-            if (dummyGame.getTurn() == Color.WHITE) {
-                pgn.append(dummyGame.getFullMoveNumber()).append(". ");
+            if (dummyChessGame.getTurn() == Color.WHITE) {
+                pgn.append(dummyChessGame.getFullMoveNumber()).append(". ");
             }
 
             // Move should be legal
-            assert (dummyGame.isMoveLegal(move));
+            assert (dummyChessGame.isMoveLegal(move));
 
             // Add Algebraic Notation
-            pgn.append(MoveUtils.toAlgebraic(move, dummyGame));
+            pgn.append(MoveUtils.toAlgebraic(move, dummyChessGame));
             pgn.append(" ");
 
             // Make Move
-            dummyGame.move(move);
+            dummyChessGame.move(move);
         }
 
         // Add Result
-        if (!game.getResult().isOnGoing()){
-            pgn.append(game.getResult().getScore());
+        if (!chessGame.getResult().isOnGoing()){
+            pgn.append(chessGame.getResult().getScore());
         }
 
         // Return PGN
         return pgn.toString().trim();
     }
 
-    public static Game getGame(String pgn, ChessTimer chessTimer) {
-        Game game = new Game(chessTimer);
+    public static ChessGame getGame(String pgn, ChessTimer chessTimer) {
+        ChessGame chessGame = new ChessGame(chessTimer);
 
         // Early Throw
         if (pgn == null || pgn.isEmpty()) {
@@ -63,12 +63,12 @@ public class PGN {
             }
 
             try {
-                Move move = MoveUtils.fromAlgebraic(moveNotation, game);
-                game.move(move);
+                Move move = MoveUtils.fromAlgebraic(moveNotation, chessGame);
+                chessGame.move(move);
             } catch (Exception e) {
                 throw new IllegalNotationException(
                         "Illegal PGN Notation: '" + pgn + "'" +
-                        "\nException occurred on move: " + game.getFullMoveNumber() + ". " + moveNotation +
+                        "\nException occurred on move: " + chessGame.getFullMoveNumber() + ". " + moveNotation +
                         "\n" + e.getMessage());
             }
         }
@@ -81,23 +81,23 @@ public class PGN {
         );
 
         // If notation says it's over, it's over
-        if (notationSaysGameOver && game.inPlay()) {
+        if (notationSaysGameOver && chessGame.inPlay()) {
             if (gameResult.equals("1-0")) {
-                game.resign(Color.BLACK);
+                chessGame.resign(Color.BLACK);
             } else if (gameResult.equals("0-1")) {
-                game.resign(Color.WHITE);
+                chessGame.resign(Color.WHITE);
             } else {
-                game.drawAgreement();
+                chessGame.drawAgreement();
             }
-            game.removeTimer();
+            chessGame.removeTimer();
         }
 
         // If game says it's over, but notation does not
-        if (!notationSaysGameOver && !game.inPlay()) {
+        if (!notationSaysGameOver && !chessGame.inPlay()) {
             throw new IllegalNotationException("Illegal PGN Notation: '" + pgn + "'. Game result does not match notation.");
         }
 
         // Return
-        return game;
+        return chessGame;
     }
 }

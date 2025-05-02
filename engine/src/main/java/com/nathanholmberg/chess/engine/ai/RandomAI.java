@@ -1,6 +1,6 @@
 package com.nathanholmberg.chess.engine.ai;
 
-import com.nathanholmberg.chess.engine.game.Game;
+import com.nathanholmberg.chess.engine.game.ChessGame;
 import com.nathanholmberg.chess.engine.types.Move;
 import com.nathanholmberg.chess.engine.types.Position;
 import com.nathanholmberg.chess.engine.utils.MoveUtils;
@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Random;
 
 public class RandomAI implements ChessAI{
-    public Move getMove(Game game) {
+    public Move getMove(ChessGame chessGame) {
         // Random instance
         Random random = new Random();
 
         // Get Initial Positions for Current Player
-        List<Position> initialPositionList = game.board.getPiecePositionsByColor(game.getTurn());
+        List<Position> initialPositionList = chessGame.board.getPiecePositionsByColor(chessGame.getTurn());
 
         while (!initialPositionList.isEmpty()) {
             // Select Random Initial Position
@@ -22,13 +22,13 @@ public class RandomAI implements ChessAI{
             Position initialPosition = initialPositionList.get(randomInitialIndex);
 
             // Get Legal Moves for Initial Position
-            List<Position> finalPositionList = game.getLegalMoves(initialPosition);
+            List<Position> finalPositionList = chessGame.getLegalMoves(initialPosition);
 
             // If there are legal moves, pick one and return
             if (!finalPositionList.isEmpty()) {
                 Position finalPosition = finalPositionList.get(random.nextInt(finalPositionList.size()));
                 Move move = new Move(initialPosition, finalPosition, '\0');
-                if (MoveUtils.causesPromotion(move, game)) {
+                if (MoveUtils.causesPromotion(move, chessGame)) {
                     move = new Move(initialPosition, finalPosition, 'Q');
                 }
                 return move;
