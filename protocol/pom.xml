@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.nathanholmberg</groupId>
+        <groupId>com.nathanholmberg.chess</groupId>
         <artifactId>chess</artifactId>
         <version>1.0</version>
         <relativePath>../pom.xml</relativePath>

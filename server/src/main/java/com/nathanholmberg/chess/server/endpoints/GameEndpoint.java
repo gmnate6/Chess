@@ -1,6 +1,7 @@
 package com.nathanholmberg.chess.server.endpoints;
 
 import com.nathanholmberg.chess.engine.enums.Color;
+import com.nathanholmberg.chess.protocol.constants.WebSocketEndpoints;
 import com.nathanholmberg.chess.protocol.exceptions.ProtocolException;
 import com.nathanholmberg.chess.protocol.messages.Message;
 import com.nathanholmberg.chess.protocol.messages.client.MoveMessage;
@@ -19,8 +20,7 @@ import jakarta.websocket.server.ServerEndpoint;
 
 import java.io.IOException;
 
-// const gameSocket = new WebSocket(`ws://your-server/game/${gameId}?color=${color}`);
-@ServerEndpoint("/game/{gameId}/{color}")
+@ServerEndpoint(WebSocketEndpoints.GAME)
 public class GameEndpoint {
     private static final GameManager gameManager = GameManager.getInstance();
     private Session session;
@@ -29,6 +29,7 @@ public class GameEndpoint {
 
     @OnOpen
     public void onOpen(Session session, @PathParam("gameId") String gameId, @PathParam("color") String color) {
+        System.out.println("Joined Game: " + session.getId());
         this.session = session;
 
         // Get Color
@@ -90,6 +91,11 @@ public class GameEndpoint {
         if (game != null) {
             game.handlePlayerDisconnect(color);
         }
+    }
+
+    @OnError
+    public void onError(Session session, Throwable throwable) {
+        throwable.printStackTrace();
     }
 
     private void sendIllegalMoveError(String message) {
