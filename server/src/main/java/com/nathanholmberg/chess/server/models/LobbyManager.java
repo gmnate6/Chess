@@ -1,12 +1,12 @@
 package com.nathanholmberg.chess.server.models;
 
+import com.nathanholmberg.chess.protocol.messages.server.GameReadyMessage;
+import com.nathanholmberg.chess.protocol.serialization.MessageSerializer;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.nathanholmberg.chess.protocol.messages.server.JoinedGameMessage;
-import com.nathanholmberg.chess.protocol.serialization.MessageSerializer;
 import jakarta.websocket.CloseReason;
 import jakarta.websocket.Session;
-
 import java.io.IOException;
 import java.util.Queue;
 import java.util.UUID;
@@ -84,6 +84,7 @@ public class LobbyManager {
     }
 
     private void createGame(Session player1, Session player2) {
+        System.out.println("Creating game between " + player1.getId() + " and " + player2.getId());
         // Randomly assign colors
         boolean player1IsWhite = Math.random() < 0.5;
         Session whitePlayer = player1IsWhite ? player1 : player2;
@@ -97,7 +98,7 @@ public class LobbyManager {
         gameManager.addGame(gameId, game);
 
         // Notify players
-        JoinedGameMessage message = new JoinedGameMessage(gameId);
+        GameReadyMessage message = new GameReadyMessage(gameId);
         whitePlayer.getAsyncRemote().sendText(MessageSerializer.serialize(message));
         blackPlayer.getAsyncRemote().sendText(MessageSerializer.serialize(message));
     }

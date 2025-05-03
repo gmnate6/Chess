@@ -1,6 +1,8 @@
 package com.nathanholmberg.chess.client.model.websocket;
 
 import com.nathanholmberg.chess.client.model.SettingsManager;
+import com.nathanholmberg.chess.protocol.messages.Message;
+import com.nathanholmberg.chess.protocol.serialization.MessageSerializer;
 import jakarta.websocket.*;
 import java.net.URI;
 
@@ -44,6 +46,9 @@ public abstract class WebSocketManager {
         }
 
         session.getAsyncRemote().sendText(message);
+    }
+    public void sendMessage(Message message) {
+        sendMessage(MessageSerializer.serialize(message));
     }
 
     public void close() {

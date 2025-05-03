@@ -2,6 +2,7 @@ package com.nathanholmberg.chess.client.controller.menu;
 
 import com.nathanholmberg.chess.client.controller.BaseController;
 import com.nathanholmberg.chess.client.controller.MainController;
+import com.nathanholmberg.chess.client.model.websocket.LobbyWebSocketManager;
 import com.nathanholmberg.chess.client.view.components.button.CustomButton;
 import com.nathanholmberg.chess.client.view.menu.LobbyPanel;
 
@@ -9,6 +10,7 @@ import javax.swing.*;
 
 public class LobbyController implements BaseController {
     private final LobbyPanel lobbyPanel;
+    private final LobbyWebSocketManager lobbyWebSocketManager;
 
     public LobbyController() {
         lobbyPanel = new LobbyPanel();
@@ -17,6 +19,18 @@ public class LobbyController implements BaseController {
         lobbyPanel.backButton.addActionListener(
                 e -> MainController.switchTo(new TitleController())
         );
+
+        // Connect to Lobby
+        lobbyWebSocketManager = new LobbyWebSocketManager();
+        connectToLobby();
+    }
+
+    public void connectToLobby() {
+        try {
+            lobbyWebSocketManager.connect();
+        } catch (Exception e) {
+            System.err.println("Failed to connect to the lobby: " + e.getMessage());
+        }
     }
 
     @Override

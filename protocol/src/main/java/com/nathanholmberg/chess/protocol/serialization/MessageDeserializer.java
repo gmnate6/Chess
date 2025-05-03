@@ -30,7 +30,7 @@ public class MessageDeserializer {
             case "GameStateMessage"         -> gson.fromJson(json, GameStateMessage.class);
             case "GameStartMessage"         -> gson.fromJson(json, GameStartMessage.class);
             case "IllegalMoveMessage"       -> gson.fromJson(json, IllegalMoveMessage.class);
-            case "JoinedGameMessage"        -> gson.fromJson(json, JoinedGameMessage.class);
+            case "GameReadyMessage"        -> gson.fromJson(json, GameReadyMessage.class);
             case "JoinedMatchmakingMessage" -> gson.fromJson(json, JoinedMatchmakingMessage.class);
             case "MoveAcceptedMessage"      -> gson.fromJson(json, MoveAcceptedMessage.class);
 
