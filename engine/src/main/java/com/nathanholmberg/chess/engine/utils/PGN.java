@@ -13,7 +13,7 @@ public class PGN {
         StringBuilder pgn = new StringBuilder();
 
         // Dummy Game
-        ChessGame dummyChessGame = new ChessGame(null);
+        ChessGame dummyChessGame = new ChessGame();
 
         // Loop Through Moves History
         List<Move> moves = chessGame.getMoveHistory().getMoves();
@@ -43,8 +43,8 @@ public class PGN {
         return pgn.toString().trim();
     }
 
-    public static ChessGame getGame(String pgn, ChessTimer chessTimer) {
-        ChessGame chessGame = new ChessGame(chessTimer);
+    public static ChessGame getGame(String pgn) {
+        ChessGame chessGame = new ChessGame();
 
         // Early Throw
         if (pgn == null || pgn.isEmpty()) {
@@ -83,13 +83,12 @@ public class PGN {
         // If notation says it's over, it's over
         if (notationSaysGameOver && chessGame.inPlay()) {
             if (gameResult.equals("1-0")) {
-                chessGame.resign(Color.BLACK);
+                chessGame.winByResign(Color.WHITE);
             } else if (gameResult.equals("0-1")) {
-                chessGame.resign(Color.WHITE);
+                chessGame.winByResign(Color.BLACK);
             } else {
                 chessGame.drawAgreement();
             }
-            chessGame.removeTimer();
         }
 
         // If game says it's over, but notation does not

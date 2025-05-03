@@ -13,9 +13,18 @@ public class BotGameController extends AbstractGameController {
 
     public BotGameController(Color color, ChessAI ai) {
         super(color, null);
-        this.ai = ai;
 
-        // Update top banner to show AI info.
+        this.ai = ai;
+        configureBotGameSettings();
+
+        // If the bot is meant to move first, initiate the bot move.
+        if (color == Color.BLACK) {
+            playBotMove();
+        }
+    }
+
+    private void configureBotGameSettings() {
+        // Update top banner to show AI
         if (ai instanceof StockfishAI) {
             gamePanel.setTopAvatar("engine");
         } else {
@@ -23,13 +32,7 @@ public class BotGameController extends AbstractGameController {
         }
         gamePanel.setTopUsername(ai.toString());
 
-        // Disable Draw
         gamePanel.drawButton.setEnabled(false);
-
-        // If the bot is meant to move first, initiate the bot move.
-        if (color == Color.BLACK) {
-            playBotMove();
-        }
     }
 
     @Override

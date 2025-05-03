@@ -16,38 +16,30 @@ import java.util.List;
 import java.util.HashMap;
 
 public class ChessGame {
-    public Board board = new Board();
-    private Color turn = Color.WHITE;
-    private int halfMoveClock = 0;
-    private int fullMoveNumber = 1;
-    private ChessTimer chessTimer;
-    private GameResult result = GameResult.ON_GOING;
-    private final HashMap<String, Integer> boardHistory = new HashMap<>();
-    private final MoveHistory moveHistory = new MoveHistory();
+    public Board board;
+    private Color turn;
+    private int halfMoveClock;
+    private int fullMoveNumber;
+    private GameResult result;
+    private final HashMap<String, Integer> boardHistory;
+    private final MoveHistory moveHistory;
 
-    public ChessGame(ChessTimer chessTimer) {
-        // Disabled Timer
-        if (chessTimer == null) {
-            this.chessTimer = null;
-            return;
-        }
-
-        // Set and Start Timer
-        this.chessTimer = chessTimer;
-        this.chessTimer.start();
+    public ChessGame() {
+        board = new Board();
+        turn = Color.WHITE;
+        halfMoveClock = 0;
+        fullMoveNumber = 1;
+        result = GameResult.ON_GOING;
+        boardHistory = new HashMap<>();
+        moveHistory = new MoveHistory();
     }
 
-    public ChessGame(Board board, Color turn, int halfMoveClock, int fullMoveNumber, ChessTimer chessTimer) {
-        this(chessTimer);
+    public ChessGame(Board board, Color turn, int halfMoveClock, int fullMoveNumber) {
+        this();
         this.board = board;
         this.turn = turn;
         this.halfMoveClock = halfMoveClock;
         this.fullMoveNumber = fullMoveNumber;
-
-        // Update Timer.turn if needed
-        if (chessTimer != null && this.turn != this.chessTimer.getTurn()) {
-            this.chessTimer.setTurn(this.turn);
-        }
     }
 
     public void loadGameStateAt(int moveIndex) {
@@ -56,7 +48,7 @@ public class ChessGame {
         }
 
         // Fresh Game
-        ChessGame newChessGame = new ChessGame(null);
+        ChessGame newChessGame = new ChessGame();
         Board newBoard = newChessGame.board;
 
         // Replay Moves
@@ -98,9 +90,9 @@ public class ChessGame {
     public ChessGame getDeepCopy() {
         return new ChessGame(
                 this.board.getDeepCopy(),
-                this.turn, this.halfMoveClock,
-                this.fullMoveNumber,
-                (this.chessTimer == null ? null : this.chessTimer.getDeepCopy())
+                this.turn,
+                this.halfMoveClock,
+                this.fullMoveNumber
         );
     }
 
@@ -110,24 +102,10 @@ public class ChessGame {
     public int getFullMoveNumber() { return fullMoveNumber; }
     public GameResult getResult() { return result; }
     public boolean inPlay() { return result == GameResult.ON_GOING;}
-    public ChessTimer getTimer() { return chessTimer; }
     public MoveHistory getMoveHistory() { return moveHistory; }
 
-    public void removeTimer() {
-        this.chessTimer = null;
-    }
-
     private void switchTurn() {
-        // Switch Game Turn
         this.turn = this.turn.inverse();
-
-        // Switch Timer Turn
-        if (this.chessTimer != null) {
-            this.chessTimer.switchTurn();
-            if (this.turn != chessTimer.getTurn()) {
-                throw new IllegalStateException("Timer.turn did not equal Game.turn");
-            }
-        }
     }
 
     public List<Position> getLegalMoves(Position initialPosition) {
@@ -259,59 +237,44 @@ public class ChessGame {
     private void checkWinConditions() {
         // Checkmated
         if (isCheckmate()) {
-            result = (turn == Color.WHITE ? GameResult.BLACK_CHECKMATE : GameResult.WHITE_CHECKMATE);
-            stopTimer();
+            result = (turn == Color.WHITE ? GameResult.BLACK_WON_BY_CHECKMATE : GameResult.WHITE_WON_BY_CHECKMATE);
             return;
         }
 
         // Stalemate
         if (isStalemate()) {
             result = GameResult.STALEMATE;
-            stopTimer();
             return;
         }
 
         // 50 Move Rule
         if (this.halfMoveClock >= 100) {
             result = GameResult.FIFTY_MOVE_RULE;
-            stopTimer();
             return;
         }
 
         // Threefold Repetition
         if (!boardHistory.isEmpty() && boardHistory.get(FEN.getFENBoardAndTurn(this)) >= 3) {
             result = GameResult.THREEFOLD_REPETITION;
-            stopTimer();
-            return;
-        }
-
-        // Timer
-        if (this.chessTimer != null){
-            if (this.chessTimer.isOutOfTime(Color.WHITE)) {
-                result = GameResult.BLACK_WON_ON_TIME;
-                stopTimer();
-                return;
-            }
-            if (this.chessTimer.isOutOfTime(Color.BLACK)) {
-                result = GameResult.WHITE_WON_ON_TIME;
-                stopTimer();
-            }
         }
     }
 
-    public void stopTimer() {
-        if (chessTimer == null) { return; }
-        chessTimer.stop();
-    }
-
-    public void resign(Color color) {
-        this.result = (color == Color.WHITE ? GameResult.BLACK_RESIGN : GameResult.WHITE_RESIGN);
-        stopTimer();
+    public void winByResign(Color color) {
+        this.result = (color == Color.WHITE ? GameResult.WHITE_WON_BY_RESIGN : GameResult.BLACK_WON_BY_RESIGN);
     }
 
     public void drawAgreement() {
         this.result = GameResult.DRAW_AGREEMENT;
-        stopTimer();
+    }
+
+    public void winOnTime(Color winner) {
+        if (winner == Color.WHITE) {
+            this.result = GameResult.WHITE_WON_ON_TIME;
+        } else if (winner == Color.BLACK) {
+            this.result = GameResult.BLACK_WON_ON_TIME;
+        } else {
+            throw new IllegalArgumentException("Invalid winner color: " + winner);
+        }
     }
 
     public void move(Move move) {
@@ -381,8 +344,6 @@ public class ChessGame {
         return board.toString() +
                 "\nEn Passant: " + board.getEnPassantPosition() +
                 "\nGame Result: " + getResult() +
-                "\nCurrent Turn: " + getTurn() +
-                (this.chessTimer == null ?
-                        "" : "\nWhite Time: " + chessTimer.getFormatedTimeLeft(Color.WHITE) + "\nBlack Time: " + chessTimer.getFormatedTimeLeft(Color.BLACK));
+                "\nCurrent Turn: " + getTurn();
     }
 }

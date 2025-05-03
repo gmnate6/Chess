@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class FENTest {
     @RepeatedTest(5)
     public void randomGameTest() {
-        ChessGame chessGame = new ChessGame(null);
+        ChessGame chessGame = new ChessGame();
 
         // Play random game
         while (chessGame.inPlay()) {
@@ -39,7 +39,7 @@ public class FENTest {
 
             // To and From
             String expectedFEN = FEN.getFEN(chessGame);
-            String actualFEN = FEN.getFEN(FEN.getGame(expectedFEN, null));
+            String actualFEN = FEN.getFEN(FEN.getGame(expectedFEN));
 
             assertEquals(expectedFEN, actualFEN);
 
@@ -50,55 +50,55 @@ public class FENTest {
 
     @Test
     public void getFENTest() {
-        ChessGame chessGame = new ChessGame(null);
+        ChessGame chessGame = new ChessGame();
         assertEquals("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", FEN.getFEN(chessGame));
     }
 
     @Test
     public void getGameTest() {
-        FEN.getGame("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", null);
+        FEN.getGame("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     }
 
     @Test
     public void illegalFENTest() {
         // Empty
         assertThrows(IllegalNotationException.class, () ->
-                FEN.getGame("", null));
+                FEN.getGame(""));
         // Null
         assertThrows(IllegalNotationException.class, () ->
-                FEN.getGame(null, null));
+                FEN.getGame(null));
         // Missing king
         assertThrows(IllegalNotationException.class, () ->
-                FEN.getGame("8/8/2k5/8/8/8/8/8 w KQkq - 0 1", null));
+                FEN.getGame("8/8/2k5/8/8/8/8/8 w KQkq - 0 1"));
         // King left in check
         assertThrows(IllegalNotationException.class, () ->
-                FEN.getGame("8/8/2K5/8/8/8/2k2R2/8 w KQkq - 0 1", null));
+                FEN.getGame("8/8/2K5/8/8/8/2k2R2/8 w KQkq - 0 1"));
         // Missing field
         assertThrows(IllegalNotationException.class, () ->
-                FEN.getGame("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq 0 2", null));
+                FEN.getGame("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq 0 2"));
         // Empty string field
         assertThrows(IllegalNotationException.class, () ->
-                FEN.getGame("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR  KQkq 0 2", null));
+                FEN.getGame("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR  KQkq 0 2"));
         // Extra blank square
         assertThrows(IllegalNotationException.class, () ->
-                FEN.getGame("rnbqkbnr/pppppppp/9/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 2", null));
+                FEN.getGame("rnbqkbnr/pppppppp/9/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 2"));
         // Extra piece (pawn)
         assertThrows(IllegalNotationException.class, () ->
-                FEN.getGame("rnbqkbnr/ppppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 2", null));
+                FEN.getGame("rnbqkbnr/ppppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 2"));
         // Pawn left on first or eight rank
         assertThrows(IllegalNotationException.class, () ->
-                FEN.getGame("pnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 2", null));
+                FEN.getGame("pnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 2"));
         // One less piece (pawn)
         assertThrows(IllegalNotationException.class, () ->
-                FEN.getGame("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPP/RNBQKBNR w KQkq - 0 2", null));
+                FEN.getGame("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPP/RNBQKBNR w KQkq - 0 2"));
         // Current turn not 'w' nor 'b'
         assertThrows(IllegalNotationException.class, () ->
-                FEN.getGame("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR f KQkq - 0 2", null));
+                FEN.getGame("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR f KQkq - 0 2"));
         // Negative half move counter
         assertThrows(IllegalNotationException.class, () ->
-                FEN.getGame("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - -1 2", null));
+                FEN.getGame("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - -1 2"));
         // Negative full move number
         assertThrows(IllegalNotationException.class, () ->
-                FEN.getGame("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 -5", null));
+                FEN.getGame("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 -5"));
     }
 }

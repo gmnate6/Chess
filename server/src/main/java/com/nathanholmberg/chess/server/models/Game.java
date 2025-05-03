@@ -42,7 +42,7 @@ public class Game {
     }
 
     private void startGame() {
-        chessGame = new ChessGame(new ChessTimer(600_000, 0));
+        chessGame = new ChessGame();
 
         GameStartMessage message = new GameStartMessage();
         broadcastMessage(message);
@@ -62,12 +62,7 @@ public class Game {
             throw new IllegalStateException("Black player already removed.");
         }
 
-        if (color == Color.WHITE) {
-            chessGame.resign(Color.BLACK);
-        } else {
-            chessGame.resign(Color.WHITE);
-        }
-
+        chessGame.winByResign(color.inverse());
         endGame();
     }
 

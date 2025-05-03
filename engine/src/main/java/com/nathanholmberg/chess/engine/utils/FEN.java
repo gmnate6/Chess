@@ -63,7 +63,7 @@ public class FEN {
         return board;
     }
 
-    public static ChessGame getGame(String fen, ChessTimer chessTimer) {
+    public static ChessGame getGame(String fen) {
         Board board;
         Color currentPlayer;
         int halfMoveClock;
@@ -170,7 +170,7 @@ public class FEN {
         }
 
         // Construct and return the FEN object.
-        return new ChessGame(board, currentPlayer, halfMoveClock, fullMoveNumber, chessTimer);
+        return new ChessGame(board, currentPlayer, halfMoveClock, fullMoveNumber);
     }
 
     public static String getFENBoardAndTurn(ChessGame chessGame) {

@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ToFromAlgebraicTest {
     @RepeatedTest(5)
     public void randomGameTest() {
-        ChessGame chessGame = new ChessGame(null);
+        ChessGame chessGame = new ChessGame();
 
         // Play random game
         while (chessGame.inPlay()) {

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class PGNTest {
     @RepeatedTest(5)
     public void randomGameTest() {
-        ChessGame chessGame = new ChessGame(null);
+        ChessGame chessGame = new ChessGame();
 
         // Play random game
         while (chessGame.inPlay()) {
@@ -39,7 +39,7 @@ public class PGNTest {
 
         // Get pgn
         String pgn = PGN.getPGN(chessGame);
-        ChessGame chessGameFromPGN = PGN.getGame(pgn, null);
+        ChessGame chessGameFromPGN = PGN.getGame(pgn);
 
         // Check if pgn reconstructed game using FEN
         assertEquals(PGN.getPGN(chessGame), PGN.getPGN(chessGameFromPGN));
@@ -54,17 +54,17 @@ public class PGNTest {
                 22. Ra7 Ne4 23. g4 Bg6 24. Qb2 Rb8 25. Nc3 Ndf6 26. Bb5 Qc7 27. Nxe4 Nxe4 28.
                 Ne5 Qc8 29. Qb1 Ng3 30. Nxg6 Ne2+ 31. Kg2 fxg6 32. Qxg6+ Kh8 33. Qxh6+ Kg8 34.
                 Qxg5+ Kf7 35. Qh5+ Ke7 36. Bxe2 Qc6 37. Qg5+ Kd7 38. h4 Rd8 39. h5 Qc7 40. h6
-                Qb8 41. Ra1 1-0""", null);
+                Qb8 41. Ra1 1-0""");
     }
 
     @Test
     public void illegalPGNTest() {
         // Empty
         assertThrows(IllegalNotationException.class, () ->
-                PGN.getGame("", null));
+                PGN.getGame(""));
         // Null
         assertThrows(IllegalNotationException.class, () ->
-                PGN.getGame(null, null));
+                PGN.getGame(null));
         // Missing result and moves cause checkmate
         assertThrows(IllegalNotationException.class, () ->
                 PGN.getGame("""
@@ -78,6 +78,6 @@ public class PGNTest {
                         47. Rf6+ Kg7 48. Ra6 Rh2 49. Rxa7+ Kf8 50. Ra5 Kf7 51. Rxb5 Rxa2 52. Rb7+ Ke6
                         53. Rb6+ Kf7 54. Rf6+ Kg7 55. Kf4 Rf2+ 56. Ke5 Re2+ 57. Kd6 Rd2+ 58. Kc6 Ra2 59.
                         b5 Ra5 60. b6 Ra6 61. Kc7 Kh7 62. b7 Rxf6 63. gxf6 g5 64. b8=Q g4 65. Kd7 g3 66.
-                        Qxg3 Kh6 67. f7 Kh7 68. f8=R Kh6 69. Rg8 Kh5 70. Rg5+ Kh6 71. Rg8 Kh7 72. Qg7#""", null));
+                        Qxg3 Kh6 67. f7 Kh7 68. f8=R Kh6 69. Rg8 Kh5 70. Rg5+ Kh6 71. Rg8 Kh7 72. Qg7#"""));
     }
 }

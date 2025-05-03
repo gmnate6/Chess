@@ -30,7 +30,9 @@ import java.util.concurrent.ExecutionException;
 public abstract class AbstractGameController implements BaseController {
     // Core objects
     protected ChessGame chessGame;
+    protected ChessTimer chessTimer;
     protected Color color;
+    private boolean inPlay = false;
 
     // View elements
     public final GamePanel gamePanel;
@@ -44,7 +46,8 @@ public abstract class AbstractGameController implements BaseController {
     protected HistoryManager historyManager;
 
     public AbstractGameController(Color color, ChessTimer chessTimer) {
-        this.chessGame = new ChessGame(chessTimer);
+        this.chessGame = new ChessGame();
+        this.chessTimer = chessTimer;
         this.color = color;
 
         // Setup View
@@ -53,16 +56,13 @@ public abstract class AbstractGameController implements BaseController {
         boardPanel.setPerspective(color);
         boardPanel.loadPieces(chessGame);
 
-        AssetManager.playSound("game-start");
-
         // Setup Bottom Banner
         gamePanel.setBottomAvatar(SettingsManager.getAvatar());
         gamePanel.setBottomUsername(SettingsManager.getUsername());
 
         // Timer Manager (encapsulates Swing timer logic)
-        gamePanel.setTimerEnabled(chessGame.getTimer() != null);
-        timerManager = new TimerManager(chessGame, gamePanel, color);
-        timerManager.start();
+        gamePanel.setTimerEnabled(chessTimer != null);
+        timerManager = new TimerManager(chessTimer, gamePanel, color);
 
         // Initialize helper classes for move processing and selection management
         moveProcessor = new MoveProcessor(chessGame, boardPanel, color);
@@ -76,6 +76,22 @@ public abstract class AbstractGameController implements BaseController {
         updateEnableNavigationButtons();
     }
 
+    public void start() {
+        AssetManager.playSound("game-start");
+        chessTimer.start();
+        timerManager.start();
+    }
+
+    public boolean inPlay() {
+        return inPlay;
+    }
+
+    public void stop() {
+        inPlay = false;
+        chessTimer.stop();
+        timerManager.stop();
+    }
+
     @Override
     public void dispose() {
         // Remove Mouse Listeners
@@ -85,7 +101,7 @@ public abstract class AbstractGameController implements BaseController {
             }
         }
 
-        // Stop Timer
+        // Stop Timer Manager
         timerManager.stop();
     }
 
@@ -212,17 +228,13 @@ public abstract class AbstractGameController implements BaseController {
         }
     }
 
-    public boolean inPlay() {
-        return chessGame.inPlay();
-    }
-
     protected void setColor(Color color) {
         this.color = color;
         selectionManager.setColor(color);
     }
 
     protected void setPerspective(Color color) {
-        if (chessGame.getTimer() != null && chessGame.getTimer().isActive()) {
+        if (chessTimer != null && chessTimer.isActive()) {
             System.err.println("Cannot change perspective while timer is active.");
             return;
         }
@@ -318,7 +330,7 @@ public abstract class AbstractGameController implements BaseController {
             throw new IllegalStateException("This method must not be called on the Event Dispatch Thread (EDT)!");
         }
 
-        if (!chessGame.inPlay()) {
+        if (!inPlay()) {
             return;
         }
 
@@ -382,6 +394,11 @@ public abstract class AbstractGameController implements BaseController {
         // Execute Move
         moveProcessor.executeMove(move);
 
+        // Update Timer
+        if (chessTimer != null) {
+            chessTimer.switchTurn();
+        }
+
         // Update Navigation Buttons
         updateEnableNavigationButtons();
 
@@ -392,7 +409,7 @@ public abstract class AbstractGameController implements BaseController {
     }
 
     protected void resign() {
-        chessGame.resign(color);
+        chessGame.winByResign(color.inverse());
         endGame();
     }
 
