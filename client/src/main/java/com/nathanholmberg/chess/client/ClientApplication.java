@@ -27,10 +27,10 @@ public class ClientApplication {
 
                 @Override
                 protected void done() {
-                    // Dispose of the splash screen.
+                    // Dispose of the splash screen
                     splash.dispose();
 
-                    // Start application.
+                    // Start application
                     MainFrame mainFrame = new MainFrame();
                     mainFrame.setLocationRelativeTo(null);
                     new MainController(mainFrame);

@@ -1,7 +1,7 @@
 package com.nathanholmberg.chess.client.view.menu;
 
 import com.nathanholmberg.chess.client.model.assets.AssetManager;
-import com.nathanholmberg.chess.client.model.server.endpoint.PingEndpoint;
+import com.nathanholmberg.chess.client.model.websocket.PingWebSocketManager;
 import com.nathanholmberg.chess.client.view.components.panels.TranslucentPanel;
 
 import javax.swing.*;
@@ -16,7 +16,7 @@ public class ServerStatusPanel extends TranslucentPanel {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JLabel titleLabel = new JLabel("Server Status:");
+        JLabel titleLabel = new JLabel("Click to Ping Server:");
         titleLabel.setOpaque(false);
         titleLabel.setFont(AssetManager.getFont("chess_font", 16));
         titleLabel.setForeground(AssetManager.getThemeColor("text"));
@@ -46,7 +46,7 @@ public class ServerStatusPanel extends TranslucentPanel {
         new SwingWorker<Boolean, Void>() {
             @Override
             protected Boolean doInBackground() {
-                return PingEndpoint.ping();
+                return PingWebSocketManager.ping();
             }
 
             @Override

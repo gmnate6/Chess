@@ -22,7 +22,6 @@ public class TitlePanel extends AbstractMenuPanel {
 
         // Online Button
         onlineButton = new TransparentButton("Play Online");
-        onlineButton.setEnabled(false);
         contentPanel.add(onlineButton);
 
         // Bot Button

@@ -80,6 +80,7 @@ public class SettingsPanel extends AbstractMenuPanel {
 
         // ServerURL Field
         serverURLField = new TranslucentTextField();
+        serverURLField.setEnabled(false);
         serverURLField.setAlignmentX(CENTER_ALIGNMENT);
         contentPanel.add(serverURLField);
 

@@ -3,6 +3,7 @@ package com.nathanholmberg.chess.client.controller.menu;
 import com.nathanholmberg.chess.client.controller.BaseController;
 import com.nathanholmberg.chess.client.controller.MainController;
 import com.nathanholmberg.chess.client.controller.game.SoloGameController;
+import com.nathanholmberg.chess.client.model.websocket.PingWebSocketManager;
 import com.nathanholmberg.chess.client.view.components.button.CustomButton;
 import com.nathanholmberg.chess.client.view.menu.TitlePanel;
 
@@ -13,6 +14,15 @@ public class TitleController implements BaseController {
 
     public TitleController() {
         titlePanel = new TitlePanel();
+
+        // Online Button Listener
+        titlePanel.onlineButton.addActionListener(e -> {
+            if (!PingWebSocketManager.ping()) {
+                JOptionPane.showMessageDialog(null, "Server is offline");
+                return;
+            }
+            MainController.switchTo(new LobbyController());
+        });
 
         // Bot Button Listener
         titlePanel.botButton.addActionListener(

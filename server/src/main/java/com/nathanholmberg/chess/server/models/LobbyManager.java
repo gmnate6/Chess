@@ -2,12 +2,12 @@ package com.nathanholmberg.chess.server.models;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.nathanholmberg.chess.engine.enums.Color;
+import com.nathanholmberg.chess.protocol.messages.server.JoinedGameMessage;
+import com.nathanholmberg.chess.protocol.serialization.MessageSerializer;
 import jakarta.websocket.CloseReason;
 import jakarta.websocket.Session;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -83,7 +83,7 @@ public class LobbyManager {
         }
     }
 
-    private void createGame(Session player1, Session player2) throws IOException {
+    private void createGame(Session player1, Session player2) {
         // Randomly assign colors
         boolean player1IsWhite = Math.random() < 0.5;
         Session whitePlayer = player1IsWhite ? player1 : player2;
@@ -97,29 +97,9 @@ public class LobbyManager {
         gameManager.addGame(gameId, game);
 
         // Notify players
-        notifyGameStart(whitePlayer, blackPlayer, gameId);
-    }
-
-    private void notifyGameStart(Session whitePlayer, Session blackPlayer, String gameId) {
-        // Message for white player
-        Map<String, String> whiteMessage = Map.of(
-                "type", "GAME_STARTED",
-                "gameId", gameId,
-                "color", Color.WHITE.toString().toLowerCase(),
-                "sessionId", whitePlayer.getId()
-        );
-
-        // Message for black player
-        Map<String, String> blackMessage = Map.of(
-                "type", "GAME_STARTED",
-                "gameId", gameId,
-                "color", Color.BLACK.toString().toLowerCase(),
-                "sessionId", blackPlayer.getId()
-        );
-
-        // Send messages to players
-        whitePlayer.getAsyncRemote().sendText(GSON.toJson(whiteMessage));
-        blackPlayer.getAsyncRemote().sendText(GSON.toJson(blackMessage));
+        JoinedGameMessage message = new JoinedGameMessage(gameId);
+        whitePlayer.getAsyncRemote().sendText(MessageSerializer.serialize(message));
+        blackPlayer.getAsyncRemote().sendText(MessageSerializer.serialize(message));
     }
 
     public int getQueueSize() {

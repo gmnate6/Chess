@@ -5,6 +5,7 @@ import com.nathanholmberg.chess.protocol.constants.WebSocketEndpoints;
 import com.nathanholmberg.chess.protocol.exceptions.ProtocolException;
 import com.nathanholmberg.chess.protocol.messages.Message;
 import com.nathanholmberg.chess.protocol.messages.client.MoveMessage;
+import com.nathanholmberg.chess.protocol.messages.client.ResignMessage;
 import com.nathanholmberg.chess.protocol.messages.server.IllegalMoveMessage;
 import com.nathanholmberg.chess.protocol.messages.server.MoveAcceptedMessage;
 import com.nathanholmberg.chess.protocol.serialization.MessageDeserializer;
@@ -76,6 +77,9 @@ public class GameEndpoint {
                 game.makeMove(moveMessage.getMove());
                 MoveAcceptedMessage moveAcceptedMessage = new MoveAcceptedMessage();
                 session.getAsyncRemote().sendText(MessageSerializer.serialize(moveAcceptedMessage));
+            } else if (messageObj instanceof ResignMessage) {
+                game.handlePlayerDisconnect(color);
+                session.close();
             } else {
                 throw new Exception();
             }
