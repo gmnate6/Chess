@@ -1,7 +1,7 @@
 package com.nathanholmberg.chess.server.endpoints;
 
 import com.nathanholmberg.chess.protocol.constants.WebSocketEndpoints;
-import com.nathanholmberg.chess.protocol.messages.server.JoinedMatchmakingMessage;
+import com.nathanholmberg.chess.protocol.messages.lobby.server.JoinedMatchmakingMessage;
 import com.nathanholmberg.chess.server.models.LobbyManager;
 import com.nathanholmberg.chess.protocol.serialization.MessageSerializer;
 

@@ -2,24 +2,29 @@ package com.nathanholmberg.chess.server.models;
 
 import com.nathanholmberg.chess.engine.enums.Color;
 import com.nathanholmberg.chess.engine.game.ChessGame;
-import com.nathanholmberg.chess.engine.game.ChessTimer;
 import com.nathanholmberg.chess.engine.types.Move;
 import com.nathanholmberg.chess.engine.utils.MoveUtils;
 import com.nathanholmberg.chess.protocol.messages.Message;
-import com.nathanholmberg.chess.protocol.messages.server.GameEndMessage;
-import com.nathanholmberg.chess.protocol.messages.server.GameStartMessage;
+import com.nathanholmberg.chess.protocol.messages.game.ClientInfoMessage;
+import com.nathanholmberg.chess.protocol.messages.game.server.GameEndMessage;
+import com.nathanholmberg.chess.protocol.messages.game.server.GameStartMessage;
 import com.nathanholmberg.chess.protocol.serialization.MessageSerializer;
 
 import jakarta.websocket.Session;
 
-public class Game {
+public class ServerGame {
     private final String gameId;
     private ChessGame chessGame;
 
     private Session whitePlayer;
-    private Session blackPlayer;
+    private String whitePlayerUsername = "guest";
+    private String whitePlayerProfile = "default";
 
-    public Game(String gameId) {
+    private Session blackPlayer;
+    private String blackPlayerUsername = "guest";
+    private String blackPlayerProfile = "default";
+
+    public ServerGame(String gameId) {
         this.gameId = gameId;
     }
 
@@ -44,12 +49,16 @@ public class Game {
     private void startGame() {
         chessGame = new ChessGame();
 
+        // Notify players about others info
+        // TODO: Send player info to each other
+
+        // Notify players that the game has started
         GameStartMessage message = new GameStartMessage();
         broadcastMessage(message);
     }
 
     public void endGame() {
-        GameEndMessage message = new GameEndMessage(chessGame.getResult().toString());
+        GameEndMessage message = new GameEndMessage(chessGame.getResult());
         broadcastMessage(message);
 
         GameManager.getInstance().removeGame(gameId);
@@ -64,6 +73,22 @@ public class Game {
 
         chessGame.winByResign(color.inverse());
         endGame();
+    }
+
+    public void setClientInfo(Color color, String username, String avatar) {
+        Message message = new ClientInfoMessage(username, avatar);
+
+        if (color == Color.WHITE) {
+            this.whitePlayerUsername = username;
+            this.whitePlayerProfile = avatar;
+
+            blackPlayer.getAsyncRemote().sendText(MessageSerializer.serialize(message));
+        } else if (color == Color.BLACK) {
+            this.blackPlayerUsername = username;
+            this.blackPlayerProfile = avatar;
+
+            whitePlayer.getAsyncRemote().sendText(MessageSerializer.serialize(message));
+        }
     }
 
     private void broadcastMessage(Message message) {

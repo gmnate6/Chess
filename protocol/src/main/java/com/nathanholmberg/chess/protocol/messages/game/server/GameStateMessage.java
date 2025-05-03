@@ -1,4 +1,4 @@
-package com.nathanholmberg.chess.protocol.messages.server;
+package com.nathanholmberg.chess.protocol.messages.game.server;
 
 public class GameStateMessage extends ClockUpdateMessage {
     private final String pgn;

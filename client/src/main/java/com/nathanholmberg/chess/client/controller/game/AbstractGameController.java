@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutionException;
 
 public abstract class AbstractGameController implements BaseController {
     // Core objects
-    protected ChessGame chessGame;
+    protected final ChessGame chessGame;
     protected ChessTimer chessTimer;
     protected Color color;
     private boolean inPlay = false;
@@ -39,11 +39,11 @@ public abstract class AbstractGameController implements BaseController {
     public final BoardPanel boardPanel;
 
     // Helper classes
-    protected TimerManager timerManager;
-    protected MoveProcessor moveProcessor;
-    protected SelectionManager selectionManager;
-    protected BoardMouseListener boardMouseListener;
-    protected HistoryManager historyManager;
+    protected final TimerManager timerManager;
+    protected final MoveProcessor moveProcessor;
+    protected final SelectionManager selectionManager;
+    protected final BoardMouseListener boardMouseListener;
+    protected final HistoryManager historyManager;
 
     public AbstractGameController(Color color, ChessTimer chessTimer) {
         this.chessGame = new ChessGame();
@@ -67,6 +67,7 @@ public abstract class AbstractGameController implements BaseController {
         // Initialize helper classes for move processing and selection management
         moveProcessor = new MoveProcessor(chessGame, boardPanel, color);
         selectionManager = new SelectionManager(boardPanel, chessGame, color);
+        boardMouseListener = new BoardMouseListener(this);
         historyManager = new HistoryManager(this, gamePanel.historyPanel);
 
         // Setup Listeners
@@ -112,7 +113,6 @@ public abstract class AbstractGameController implements BaseController {
 
     private void setListeners() {
         // Use dedicated BoardMouseListener for board events
-        boardMouseListener = new BoardMouseListener(this);
         boardPanel.addMouseListener(boardMouseListener);
 
         gamePanel.resignButton.addActionListener(e -> {

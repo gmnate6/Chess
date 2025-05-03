@@ -1,4 +1,4 @@
-package com.nathanholmberg.chess.protocol.messages.server;
+package com.nathanholmberg.chess.protocol.messages.lobby.server;
 
 import com.nathanholmberg.chess.protocol.messages.Message;
 

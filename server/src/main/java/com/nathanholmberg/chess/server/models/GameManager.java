@@ -5,18 +5,18 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class GameManager {
     private static final GameManager instance = new GameManager();
-    private final Map<String, Game> activeGames = new ConcurrentHashMap<>();
+    private final Map<String, ServerGame> activeGames = new ConcurrentHashMap<>();
 
     private GameManager() {}
     public static GameManager getInstance() {
         return instance;
     }
 
-    public void addGame(String gameId, Game game) {
-        activeGames.put(gameId, game);
+    public void addGame(String gameId, ServerGame serverGame) {
+        activeGames.put(gameId, serverGame);
     }
 
-    public Game getGame(String gameId) {
+    public ServerGame getGame(String gameId) {
         return activeGames.get(gameId);
     }
 

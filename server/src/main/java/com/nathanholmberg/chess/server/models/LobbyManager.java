@@ -1,7 +1,7 @@
 package com.nathanholmberg.chess.server.models;
 
 import com.nathanholmberg.chess.engine.enums.Color;
-import com.nathanholmberg.chess.protocol.messages.server.GameReadyMessage;
+import com.nathanholmberg.chess.protocol.messages.lobby.server.GameReadyMessage;
 import com.nathanholmberg.chess.protocol.serialization.MessageSerializer;
 
 import com.google.gson.Gson;
@@ -85,18 +85,18 @@ public class LobbyManager {
     }
 
     private void createGame(Session player1, Session player2) {
-        System.out.println("Creating game between " + player1.getId() + " and " + player2.getId());
+        System.out.println("Creating serverGame between " + player1.getId() + " and " + player2.getId());
         // Randomly assign colors
         boolean player1IsWhite = Math.random() < 0.5;
         Session whitePlayer = player1IsWhite ? player1 : player2;
         Session blackPlayer = player1IsWhite ? player2 : player1;
 
-        // Create game
+        // Create serverGame
         String gameId = UUID.randomUUID().toString();
 
-        // Create and store game instance
-        Game game = new Game(gameId);
-        gameManager.addGame(gameId, game);
+        // Create and store serverGame instance
+        ServerGame serverGame = new ServerGame(gameId);
+        gameManager.addGame(gameId, serverGame);
 
         // Notify players
         GameReadyMessage message;
