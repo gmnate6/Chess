@@ -5,6 +5,7 @@ import com.nathanholmberg.chess.client.controller.MainController;
 import com.nathanholmberg.chess.client.model.websocket.LobbyWebSocketManager;
 import com.nathanholmberg.chess.client.view.components.button.CustomButton;
 import com.nathanholmberg.chess.client.view.menu.LobbyPanel;
+import com.nathanholmberg.chess.engine.enums.Color;
 
 import javax.swing.*;
 
@@ -23,6 +24,11 @@ public class LobbyController implements BaseController {
         // Connect to Lobby
         lobbyWebSocketManager = new LobbyWebSocketManager();
         connectToLobby();
+
+        // Handle Game Ready Message
+        lobbyWebSocketManager.setGameReadyListener((String gameId, Color color) -> {
+            System.out.println("Game is ready!");
+        });
     }
 
     public void connectToLobby() {

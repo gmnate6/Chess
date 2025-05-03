@@ -20,7 +20,6 @@ public class MainController {
 
     public static void switchTo(BaseController controller) {
         if (instance.activeController != null) {
-
             // Play Transition Sound
             if (!(controller instanceof AbstractGameController)) {
                 AssetManager.playSound("menu-click");

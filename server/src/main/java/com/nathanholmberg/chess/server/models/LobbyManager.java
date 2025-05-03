@@ -1,5 +1,6 @@
 package com.nathanholmberg.chess.server.models;
 
+import com.nathanholmberg.chess.engine.enums.Color;
 import com.nathanholmberg.chess.protocol.messages.server.GameReadyMessage;
 import com.nathanholmberg.chess.protocol.serialization.MessageSerializer;
 
@@ -98,8 +99,10 @@ public class LobbyManager {
         gameManager.addGame(gameId, game);
 
         // Notify players
-        GameReadyMessage message = new GameReadyMessage(gameId);
+        GameReadyMessage message;
+        message = new GameReadyMessage(gameId, Color.WHITE.toString());
         whitePlayer.getAsyncRemote().sendText(MessageSerializer.serialize(message));
+        message = new GameReadyMessage(gameId, Color.BLACK.toString());
         blackPlayer.getAsyncRemote().sendText(MessageSerializer.serialize(message));
     }
 
