@@ -6,6 +6,7 @@ import com.nathanholmberg.chess.protocol.constants.WebSocketEndpoints;
 import com.nathanholmberg.chess.protocol.messages.Message;
 import com.nathanholmberg.chess.protocol.messages.game.ClientInfoMessage;
 import com.nathanholmberg.chess.protocol.messages.game.MoveMessage;
+import com.nathanholmberg.chess.protocol.messages.game.client.ResignMessage;
 import com.nathanholmberg.chess.protocol.messages.game.server.GameStartMessage;
 import com.nathanholmberg.chess.protocol.messages.game.server.IllegalMoveMessage;
 import com.nathanholmberg.chess.protocol.serialization.MessageDeserializer;
@@ -20,7 +21,7 @@ public class GameWebSocketManager extends WebSocketManager {
 
     public interface GameMessageListener {
         void onClientInfoMessage(String username, String avatar);
-        void onGameStartMessage();
+        void onGameStartMessage(long initialTime, long increment);
         void onMoveMessage(String move);
         void onIllegalMoveMessage(String reason);
     }
@@ -31,7 +32,6 @@ public class GameWebSocketManager extends WebSocketManager {
 
     @Override
     protected void onConnected() {
-        System.out.println("yay..");
     }
 
     @Override
@@ -46,8 +46,8 @@ public class GameWebSocketManager extends WebSocketManager {
             return;
         }
 
-        if (messageObj instanceof GameStartMessage) {
-            gameMessageListener.onGameStartMessage();
+        if (messageObj instanceof GameStartMessage gameStartMessage) {
+            gameMessageListener.onGameStartMessage(gameStartMessage.getInitialTime(), gameStartMessage.getIncrement());
             return;
         }
 
@@ -77,5 +77,15 @@ public class GameWebSocketManager extends WebSocketManager {
     protected void onError(Throwable throwable) {
         System.out.println("Error in GameWebSocketManager: " + throwable.getMessage());
         throwable.printStackTrace();
+    }
+
+    public void sendMoveMessage(String move) {
+        Message message = new MoveMessage(move);
+        sendMessage(message);
+    }
+
+    public void sendResignMessage() {
+        Message message = new ResignMessage();
+        sendMessage(message);
     }
 }

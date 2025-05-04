@@ -32,7 +32,7 @@ public class ServerApplication {
             System.out.println();
             System.in.read(); // Wait for Enter to stop
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Main Error: " + e.getMessage() + "\n" + e.getLocalizedMessage());
         } finally {
             server.stop();
         }

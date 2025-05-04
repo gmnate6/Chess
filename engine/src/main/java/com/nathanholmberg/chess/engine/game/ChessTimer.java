@@ -2,33 +2,23 @@ package com.nathanholmberg.chess.engine.game;
 
 import com.nathanholmberg.chess.engine.enums.Color;
 
+// Note: Time is measured in milliseconds
 public class ChessTimer {
-    private long whiteTime; // In milliseconds
+    private long initialTime;
+    private long increment;
+
+    private long whiteTime;
     private long blackTime;
     private long lastMoveTimestamp;
     private Color turn;
-    private final long increment; // Time increment per move (if applicable)
     private boolean active = false;
 
     public ChessTimer(long initialTime, long increment) {
+        this.initialTime = initialTime;
         this.whiteTime = initialTime;
         this.blackTime = initialTime;
         this.increment = increment;
         this.turn = Color.WHITE;
-    }
-
-    public ChessTimer(long whiteTime, long blackTime, long increment, Color turn) {
-        this.whiteTime = whiteTime;
-        this.blackTime = blackTime;
-        this.increment = increment;
-        this.turn = turn;
-    }
-
-    public ChessTimer getDeepCopy() {
-        ChessTimer copy = new ChessTimer(whiteTime, blackTime, increment, turn);
-        copy.lastMoveTimestamp = lastMoveTimestamp;
-        copy.active = active;
-        return copy;
     }
 
     public void start() {
@@ -77,19 +67,46 @@ public class ChessTimer {
         turn = turn.inverse();
     }
 
-    // Getters
     public boolean isOutOfTime(Color player) {
         return (player == Color.WHITE ? whiteTime : blackTime) <= 0;
     }
+
     public long getTimeLeft(Color player) {
         updateTimeStamp();
         return player == Color.WHITE ? whiteTime : blackTime;
     }
-    public Color getTurn() { return turn; }
-    public boolean isActive() { return active; }
 
-    // Setters
-    public void setTurn(Color currentTurn) { this.turn = currentTurn; }
+    public Color getTurn() {
+        return turn;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public long getInitialTime() {
+        return initialTime;
+    }
+
+    public long getIncrement() {
+        return increment;
+    }
+
+    public void setIncrement(long increment) {
+        this.increment = increment;
+    }
+
+    public void setInitialTime(long initialTime) {
+        this.initialTime = initialTime;
+    }
+
+    public void setWhiteTime(long whiteTime) {
+        this.whiteTime = whiteTime;
+    }
+
+    public void setBlackTime(long blackTime) {
+        this.blackTime = blackTime;
+    }
 
     @Override
     public String toString() {

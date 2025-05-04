@@ -2,11 +2,8 @@ package com.nathanholmberg.chess.server.endpoints;
 
 import com.nathanholmberg.chess.protocol.constants.WebSocketEndpoints;
 
+import jakarta.websocket.*;
 import jakarta.websocket.server.ServerEndpoint;
-import jakarta.websocket.OnOpen;
-import jakarta.websocket.OnError;
-import jakarta.websocket.OnMessage;
-import jakarta.websocket.Session;
 
 @ServerEndpoint(WebSocketEndpoints.PING)
 public class PingEndpoint {
@@ -14,15 +11,18 @@ public class PingEndpoint {
     @OnOpen
     public void onOpen(Session session) {
         System.out.println("PING: " + session.getId());
-    }
-
-    @OnMessage
-    public String onMessage(String message, Session session) {
-        return "pong";
+        try {
+            session.close(new CloseReason(
+                    CloseReason.CloseCodes.NORMAL_CLOSURE,
+                    "Ping Pong"
+            ));
+        } catch (Exception e) {
+            System.err.println("Ping Error: " + e.getMessage() + "\n" + e.getLocalizedMessage());
+        }
     }
 
     @OnError
     public void onError(Session session, Throwable throwable) {
-        throwable.printStackTrace();
+        System.err.println("Ping Error: " + throwable.getMessage() + "\n" + throwable.getLocalizedMessage());
     }
 }

@@ -21,11 +21,6 @@ public class LobbyEndpoint {
         session.getAsyncRemote().sendText(MessageSerializer.serialize(message));
     }
 
-    @OnMessage
-    public String onMessage(String message, Session session) {
-        return "Do not message lobby endpoint.";
-    }
-
     @OnClose
     public void onClose(Session session) {
         lobbyManager.removeFromQueue(session);
@@ -33,6 +28,6 @@ public class LobbyEndpoint {
 
     @OnError
     public void onError(Session session, Throwable throwable) {
-        throwable.printStackTrace();
+        System.err.println("Lobby Error: " + throwable.getMessage() + "\n" + throwable.getLocalizedMessage());
     }
 }

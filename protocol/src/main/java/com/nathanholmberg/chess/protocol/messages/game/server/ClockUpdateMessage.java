@@ -3,19 +3,19 @@ package com.nathanholmberg.chess.protocol.messages.game.server;
 import com.nathanholmberg.chess.protocol.messages.Message;
 
 public class ClockUpdateMessage extends Message {
-    private final int whiteTime;
-    private final int blackTime;
+    private final long whiteTime;
+    private final long blackTime;
 
     public ClockUpdateMessage(int whiteTime, int blackTime) {
         this.whiteTime = whiteTime;
         this.blackTime = blackTime;
     }
 
-    public int getWhiteTime() {
+    public long getWhiteTime() {
         return whiteTime;
     }
 
-    public int getBlackTime() {
+    public long getBlackTime() {
         return blackTime;
     }
 }

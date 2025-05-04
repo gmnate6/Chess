@@ -42,7 +42,7 @@ public class LobbyManager {
                     Thread.currentThread().interrupt();
                     break;
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    System.err.println("LobbyManager Error: " + e.getMessage() + "\n" + e.getLocalizedMessage());
                 }
             }
         });
@@ -74,7 +74,7 @@ public class LobbyManager {
             try {
                 createGame(player1, player2);
             } catch (Exception e) {
-                e.printStackTrace();
+                System.err.println("LobbyManager Error: " + e.getMessage() + "\n" + e.getLocalizedMessage());
                 playerQueue.offer(player1);
                 playerQueue.offer(player2);
             }
@@ -82,7 +82,6 @@ public class LobbyManager {
     }
 
     private void createGame(Session player1, Session player2) {
-        System.out.println("Creating serverGame between " + player1.getId() + " and " + player2.getId());
         // Randomly assign colors
         boolean player1IsWhite = Math.random() < 0.5;
         Session whitePlayer = player1IsWhite ? player1 : player2;
@@ -111,7 +110,7 @@ public class LobbyManager {
                     "Game started"
             ));
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("LobbyManager Error: " + e.getMessage() + "\n" + e.getLocalizedMessage());
         }
     }
 
@@ -127,7 +126,7 @@ public class LobbyManager {
                         "Server shutting down"
                 ));
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("LobbyManager Error: " + e.getMessage() + "\n" + e.getLocalizedMessage());
             }
         }
         playerQueue.clear();

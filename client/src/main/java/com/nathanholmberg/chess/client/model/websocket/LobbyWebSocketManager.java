@@ -1,6 +1,7 @@
 package com.nathanholmberg.chess.client.model.websocket;
 
 import com.nathanholmberg.chess.engine.enums.Color;
+import com.nathanholmberg.chess.engine.game.ChessTimer;
 import com.nathanholmberg.chess.protocol.constants.WebSocketEndpoints;
 import com.nathanholmberg.chess.protocol.messages.Message;
 import com.nathanholmberg.chess.protocol.messages.lobby.server.GameReadyMessage;

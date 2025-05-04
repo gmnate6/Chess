@@ -2,20 +2,18 @@ package com.nathanholmberg.chess.client.controller.game;
 
 import com.nathanholmberg.chess.client.model.websocket.GameWebSocketManager;
 import com.nathanholmberg.chess.engine.enums.Color;
+import com.nathanholmberg.chess.engine.game.ChessTimer;
 import com.nathanholmberg.chess.engine.types.Move;
 import com.nathanholmberg.chess.engine.utils.MoveUtils;
-import com.nathanholmberg.chess.protocol.messages.Message;
-import com.nathanholmberg.chess.protocol.messages.game.MoveMessage;
 
 public class OnlineGameController extends AbstractGameController {
     GameWebSocketManager gameWebSocketManager;
 
-    public OnlineGameController(String gameId, Color color) {
-        super(color, null);
+    public OnlineGameController(Color color, String gameId) {
+        super(color, new ChessTimer(600_000, 0));
         configureOnlineGameSettings();
 
         gameWebSocketManager = new GameWebSocketManager(gameId, color);
-        gameWebSocketManager.connect();
 
         // Handle Game Ready Message
         gameWebSocketManager.setGameMessageListener(new GameWebSocketManager.GameMessageListener() {
@@ -26,13 +24,17 @@ public class OnlineGameController extends AbstractGameController {
             }
 
             @Override
-            public void onGameStartMessage() {
+            public void onGameStartMessage(long initialTime, long increment) {
+                chessTimer.setInitialTime(initialTime);
+                chessTimer.setIncrement(increment);
+                chessTimer.setWhiteTime(initialTime);
+                chessTimer.setBlackTime(initialTime);
+
                 start();
             }
 
             @Override
             public void onMoveMessage(String move) {
-                System.out.println("Client received move from server: " + move);
                 try {
                     Move moveObj = MoveUtils.fromAlgebraic(move, chessGame);
                     processServerMove(moveObj);
@@ -46,16 +48,24 @@ public class OnlineGameController extends AbstractGameController {
                 System.out.println("Illegal move received from server: " + reason);
             }
         });
+
+        gameWebSocketManager.connect();
     }
 
     private void configureOnlineGameSettings() {
-        gamePanel.drawButton.setEnabled(false); // TODO: FOR NOW
+        gamePanel.drawButton.setEnabled(false);
         gamePanel.rematchButton.setEnabled(false);
+    }
+
+    @Override
+    protected void resign() {
+        super.resign();
+        gameWebSocketManager.sendResignMessage();
     }
 
     private void processServerMove(Move move) {
         if (!chessGame.isMoveLegal(move)) {
-            onIllegalServerMove(move.toString());
+            onIllegalServerMove(MoveUtils.toAlgebraic(move, chessGame));
             return;
         }
         executeMove(move);
@@ -63,16 +73,14 @@ public class OnlineGameController extends AbstractGameController {
     }
 
     private void onIllegalServerMove(String move) {
-        System.out.println("Illegal move received from server: " + move);
+        System.err.println("Illegal move received from server: " + move);
     }
 
     @Override
     public void executeMove(Move move) {
         if (chessGame.getTurn() == color) {
-            Message message = new MoveMessage(MoveUtils.toAlgebraic(move, chessGame));
-            gameWebSocketManager.sendMessage(message);
+            gameWebSocketManager.sendMoveMessage(MoveUtils.toAlgebraic(move, chessGame));
         }
-
         super.executeMove(move);
     }
 }

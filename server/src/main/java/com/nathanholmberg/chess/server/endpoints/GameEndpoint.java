@@ -77,7 +77,6 @@ public class GameEndpoint {
 
             // Move Message
             if (messageObj instanceof MoveMessage moveMessage) {
-                System.out.println("Move Received: \n" + message);
                 if (serverGame.getTurn() != color) {
                     sendIllegalMoveError("Not your turn");
                     return;
@@ -114,7 +113,7 @@ public class GameEndpoint {
         } catch (ProtocolException | JsonSyntaxException e) {
             closeWithError(session, "Invalid message format: " + message);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Game Error: " + e.getMessage() + "\n" + e.getLocalizedMessage());
         }
     }
 
@@ -127,7 +126,7 @@ public class GameEndpoint {
 
     @OnError
     public void onError(Session session, Throwable throwable) {
-        throwable.printStackTrace();
+        System.err.println("Game Error: " + throwable.getMessage() + "\n" + throwable.getLocalizedMessage());
     }
 
     private void sendIllegalMoveError(String reason) {
@@ -140,7 +139,7 @@ public class GameEndpoint {
         try {
             session.getAsyncRemote().sendText(MessageSerializer.serialize(message));
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Game Error: " + e.getMessage() + "\n" + e.getLocalizedMessage());
         }
     }
 
@@ -152,7 +151,7 @@ public class GameEndpoint {
                     message
             ));
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Game Error: " + e.getMessage() + "\n" + e.getLocalizedMessage());
         }
     }
 }
