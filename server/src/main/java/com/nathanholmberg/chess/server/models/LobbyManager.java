@@ -4,8 +4,6 @@ import com.nathanholmberg.chess.engine.enums.Color;
 import com.nathanholmberg.chess.protocol.messages.lobby.server.GameReadyMessage;
 import com.nathanholmberg.chess.protocol.serialization.MessageSerializer;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import jakarta.websocket.CloseReason;
 import jakarta.websocket.Session;
 import java.io.IOException;
@@ -17,7 +15,6 @@ public class LobbyManager {
     private static final LobbyManager instance = new LobbyManager();
     private final Queue<Session> playerQueue = new ConcurrentLinkedQueue<>();
     private final GameManager gameManager = GameManager.getInstance();
-    private static final Gson GSON = new GsonBuilder().create();
 
     private LobbyManager() {
         startMatchmakingThread();
@@ -51,7 +48,6 @@ public class LobbyManager {
         });
         matchmakingThread.setDaemon(true);
         matchmakingThread.start();
-
     }
 
     private void matchPlayers() {
@@ -74,6 +70,7 @@ public class LobbyManager {
                 return;
             }
 
+            // Create game
             try {
                 createGame(player1, player2);
             } catch (Exception e) {
@@ -91,19 +88,31 @@ public class LobbyManager {
         Session whitePlayer = player1IsWhite ? player1 : player2;
         Session blackPlayer = player1IsWhite ? player2 : player1;
 
-        // Create serverGame
+        // Create ServerGame
         String gameId = UUID.randomUUID().toString();
-
-        // Create and store serverGame instance
         ServerGame serverGame = new ServerGame(gameId);
         gameManager.addGame(gameId, serverGame);
 
         // Notify players
         GameReadyMessage message;
-        message = new GameReadyMessage(gameId, Color.WHITE.toString());
+        message = new GameReadyMessage(gameId, Color.WHITE);
         whitePlayer.getAsyncRemote().sendText(MessageSerializer.serialize(message));
-        message = new GameReadyMessage(gameId, Color.BLACK.toString());
+        message = new GameReadyMessage(gameId, Color.BLACK);
         blackPlayer.getAsyncRemote().sendText(MessageSerializer.serialize(message));
+
+        // Close the sessions
+        try {
+            player1.close(new CloseReason(
+                    CloseReason.CloseCodes.NORMAL_CLOSURE,
+                    "Game started"
+            ));
+            player2.close(new CloseReason(
+                    CloseReason.CloseCodes.NORMAL_CLOSURE,
+                    "Game started"
+            ));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public int getQueueSize() {

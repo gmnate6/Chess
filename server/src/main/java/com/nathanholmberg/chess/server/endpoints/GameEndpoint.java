@@ -5,8 +5,8 @@ import com.nathanholmberg.chess.protocol.constants.WebSocketEndpoints;
 import com.nathanholmberg.chess.protocol.exceptions.ProtocolException;
 import com.nathanholmberg.chess.protocol.messages.Message;
 import com.nathanholmberg.chess.protocol.messages.game.ClientInfoMessage;
-import com.nathanholmberg.chess.protocol.messages.game.client.MoveMessage;
-import com.nathanholmberg.chess.protocol.messages.game.client.ResignMessage;
+import com.nathanholmberg.chess.protocol.messages.game.MoveMessage;
+import com.nathanholmberg.chess.protocol.messages.game.client.*;
 import com.nathanholmberg.chess.protocol.messages.game.server.IllegalMoveMessage;
 import com.nathanholmberg.chess.protocol.serialization.MessageDeserializer;
 import com.nathanholmberg.chess.protocol.serialization.MessageSerializer;
@@ -65,8 +65,19 @@ public class GameEndpoint {
         try {
             Message messageObj = MessageDeserializer.deserialize(message);
 
+            // Accept Draw Message
+            if (messageObj instanceof AcceptDrawMessage acceptDrawMessage) {
+                return;
+            }
+
+            // Decline Draw Message
+            if (messageObj instanceof DeclineDrawMessage declineDrawMessage) {
+                return;
+            }
+
             // Move Message
             if (messageObj instanceof MoveMessage moveMessage) {
+                System.out.println("Move Received: \n" + message);
                 if (serverGame.getTurn() != color) {
                     sendIllegalMoveError("Not your turn");
                     return;
@@ -81,9 +92,8 @@ public class GameEndpoint {
                 return;
             }
 
-            // Client Info Message
-            if (messageObj instanceof ClientInfoMessage clientInfoMessage) {
-                serverGame.setClientInfo(color, clientInfoMessage.getUsername(), clientInfoMessage.getAvatar());
+            // Offer Draw Message
+            if (messageObj instanceof OfferDrawMessage offerDrawMessage) {
                 return;
             }
 
@@ -93,6 +103,13 @@ public class GameEndpoint {
                 session.close();
                 return;
             }
+
+            // Client Info Message
+            if (messageObj instanceof ClientInfoMessage clientInfoMessage) {
+                serverGame.setClientInfo(color, clientInfoMessage.getUsername(), clientInfoMessage.getAvatar());
+                return;
+            }
+
             System.out.println("Message type not implemented yet: " + messageObj.getType());
         } catch (ProtocolException | JsonSyntaxException e) {
             closeWithError(session, "Invalid message format: " + message);
@@ -113,17 +130,22 @@ public class GameEndpoint {
         throwable.printStackTrace();
     }
 
-    private void sendIllegalMoveError(String message) {
+    private void sendIllegalMoveError(String reason) {
+        System.out.println("Illegal move: " + reason);
+        IllegalMoveMessage message = new IllegalMoveMessage(reason);
+        sendMessage(message);
+    }
+
+    private void sendMessage(Message message) {
         try {
-            IllegalMoveMessage illegalMoveMessage = new IllegalMoveMessage(message);
-            session.getAsyncRemote().sendText(MessageSerializer.serialize(illegalMoveMessage));
+            session.getAsyncRemote().sendText(MessageSerializer.serialize(message));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private void closeWithError(Session session, String message) {
-        System.err.println("Closing session due to error: " + message);
+        System.err.println("Closing game session due to error: " + message);
         try {
             session.close(new CloseReason(
                     CloseReason.CloseCodes.VIOLATED_POLICY,

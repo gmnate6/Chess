@@ -78,19 +78,13 @@ public abstract class AbstractGameController implements BaseController {
     }
 
     public void start() {
+        inPlay = true;
         AssetManager.playSound("game-start");
-        chessTimer.start();
+
+        if (chessTimer != null) {
+            chessTimer.start();
+        }
         timerManager.start();
-    }
-
-    public boolean inPlay() {
-        return inPlay;
-    }
-
-    public void stop() {
-        inPlay = false;
-        chessTimer.stop();
-        timerManager.stop();
     }
 
     @Override
@@ -247,6 +241,12 @@ public abstract class AbstractGameController implements BaseController {
             throw new IllegalArgumentException("Error: Position is null.");
         }
 
+        // Cancel Pre Move
+        if (moveProcessor.hasPreMove()) {
+            moveProcessor.clearPreMove();
+            return;
+        }
+
         // First check if a selection can be made.
         if (selectionManager.canSelectPosition(position)) {
             if (!position.equals(selectionManager.getSelectedPosition())) {
@@ -330,7 +330,11 @@ public abstract class AbstractGameController implements BaseController {
             throw new IllegalStateException("This method must not be called on the Event Dispatch Thread (EDT)!");
         }
 
-        if (!inPlay()) {
+        if (!chessGame.inPlay()) {
+            return;
+        }
+
+        if (move == null) {
             return;
         }
 
@@ -419,8 +423,14 @@ public abstract class AbstractGameController implements BaseController {
             return;
         }
 
+        inPlay = false;
         moveProcessor.playEndSound();
+
         timerManager.stop();
+        if (chessTimer != null) {
+            chessTimer.stop();
+        }
+
         gamePanel.showPostGameActionPanel();
     }
 }

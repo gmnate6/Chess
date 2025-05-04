@@ -4,8 +4,10 @@ import com.nathanholmberg.chess.engine.enums.Color;
 import com.nathanholmberg.chess.protocol.constants.WebSocketEndpoints;
 
 import com.nathanholmberg.chess.protocol.messages.Message;
-import com.nathanholmberg.chess.protocol.messages.game.client.MoveMessage;
+import com.nathanholmberg.chess.protocol.messages.game.ClientInfoMessage;
+import com.nathanholmberg.chess.protocol.messages.game.MoveMessage;
 import com.nathanholmberg.chess.protocol.messages.game.server.GameStartMessage;
+import com.nathanholmberg.chess.protocol.messages.game.server.IllegalMoveMessage;
 import com.nathanholmberg.chess.protocol.serialization.MessageDeserializer;
 import jakarta.websocket.CloseReason;
 
@@ -20,6 +22,7 @@ public class GameWebSocketManager extends WebSocketManager {
         void onClientInfoMessage(String username, String avatar);
         void onGameStartMessage();
         void onMoveMessage(String move);
+        void onIllegalMoveMessage(String reason);
     }
 
     public void setGameMessageListener(GameMessageListener listener) {
@@ -28,13 +31,23 @@ public class GameWebSocketManager extends WebSocketManager {
 
     @Override
     protected void onConnected() {
+        System.out.println("yay..");
     }
 
     @Override
     protected void onMessageReceived(String message) {
         Message messageObj = MessageDeserializer.deserialize(message);
 
+        if (messageObj instanceof ClientInfoMessage clientInfoMessage) {
+            gameMessageListener.onClientInfoMessage(
+                    clientInfoMessage.getUsername(),
+                    clientInfoMessage.getAvatar()
+            );
+            return;
+        }
+
         if (messageObj instanceof GameStartMessage) {
+            gameMessageListener.onGameStartMessage();
             return;
         }
 
@@ -45,14 +58,24 @@ public class GameWebSocketManager extends WebSocketManager {
             return;
         }
 
+        if (messageObj instanceof IllegalMoveMessage illegalMoveMessage) {
+            gameMessageListener.onIllegalMoveMessage(
+                    illegalMoveMessage.getReason()
+            );
+            return;
+        }
+
         System.out.println("Unknown message type: " + messageObj.getType());
     }
 
     @Override
     protected void onDisconnected(CloseReason reason) {
+        System.out.println("Disconnected from Game WebSocket: " + reason.getReasonPhrase());
     }
 
     @Override
     protected void onError(Throwable throwable) {
+        System.out.println("Error in GameWebSocketManager: " + throwable.getMessage());
+        throwable.printStackTrace();
     }
 }

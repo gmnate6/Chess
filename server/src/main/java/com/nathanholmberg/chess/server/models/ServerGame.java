@@ -6,11 +6,15 @@ import com.nathanholmberg.chess.engine.types.Move;
 import com.nathanholmberg.chess.engine.utils.MoveUtils;
 import com.nathanholmberg.chess.protocol.messages.Message;
 import com.nathanholmberg.chess.protocol.messages.game.ClientInfoMessage;
+import com.nathanholmberg.chess.protocol.messages.game.MoveMessage;
+import com.nathanholmberg.chess.protocol.messages.game.server.ClockUpdateMessage;
 import com.nathanholmberg.chess.protocol.messages.game.server.GameEndMessage;
 import com.nathanholmberg.chess.protocol.messages.game.server.GameStartMessage;
 import com.nathanholmberg.chess.protocol.serialization.MessageSerializer;
 
 import jakarta.websocket.Session;
+
+import java.io.IOException;
 
 public class ServerGame {
     private final String gameId;
@@ -48,18 +52,34 @@ public class ServerGame {
 
     private void startGame() {
         chessGame = new ChessGame();
+        Message message;
 
         // Notify players about others info
-        // TODO: Send player info to each other
+        message = new ClientInfoMessage(blackPlayerUsername, blackPlayerProfile);
+        whitePlayer.getAsyncRemote().sendText(MessageSerializer.serialize(message));
+        message = new ClientInfoMessage(whitePlayerUsername, whitePlayerProfile);
+        blackPlayer.getAsyncRemote().sendText(MessageSerializer.serialize(message));
 
         // Notify players that the game has started
-        GameStartMessage message = new GameStartMessage();
+        message = new GameStartMessage();
         broadcastMessage(message);
     }
 
     public void endGame() {
         GameEndMessage message = new GameEndMessage(chessGame.getResult());
         broadcastMessage(message);
+
+        // Close sessions
+        try {
+            if (whitePlayer != null) {
+                whitePlayer.close();
+            }
+            if (blackPlayer != null) {
+                blackPlayer.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         GameManager.getInstance().removeGame(gameId);
     }
@@ -117,5 +137,17 @@ public class ServerGame {
     public void makeMove(String move) {
         Move moveObj = MoveUtils.fromAlgebraic(move, chessGame);
         chessGame.move(moveObj);
+
+        // Update other player
+        Message message = new MoveMessage(move);
+        if (getTurn() == Color.WHITE) {
+            whitePlayer.getAsyncRemote().sendText(MessageSerializer.serialize(message));
+        } else if (getTurn() == Color.BLACK) {
+            blackPlayer.getAsyncRemote().sendText(MessageSerializer.serialize(message));
+        }
+
+        if (!chessGame.inPlay()) {
+            endGame();
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.nathanholmberg.chess.protocol.serialization;
 import com.nathanholmberg.chess.protocol.exceptions.ProtocolException;
 import com.nathanholmberg.chess.protocol.messages.Message;
 import com.nathanholmberg.chess.protocol.messages.game.ClientInfoMessage;
+import com.nathanholmberg.chess.protocol.messages.game.MoveMessage;
 import com.nathanholmberg.chess.protocol.messages.game.client.*;
 import com.nathanholmberg.chess.protocol.messages.game.server.*;
 import com.nathanholmberg.chess.protocol.messages.lobby.server.*;
@@ -25,11 +26,11 @@ public class MessageDeserializer {
 
             // Game
             case "ClientInfoMessage"        -> gson.fromJson(json, ClientInfoMessage.class);
+            case "MoveMessage"              -> gson.fromJson(json, MoveMessage.class);
 
             // Game (Client)
             case "AcceptDrawMessage"        -> gson.fromJson(json, AcceptDrawMessage.class);
             case "DeclineDrawMessage"       -> gson.fromJson(json, DeclineDrawMessage.class);
-            case "MoveMessage"              -> gson.fromJson(json, MoveMessage.class);
             case "OfferDrawMessage"         -> gson.fromJson(json, OfferDrawMessage.class);
             case "ResignMessage"            -> gson.fromJson(json, ResignMessage.class);
 

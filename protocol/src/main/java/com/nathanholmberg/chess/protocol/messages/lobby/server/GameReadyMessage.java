@@ -1,12 +1,13 @@
 package com.nathanholmberg.chess.protocol.messages.lobby.server;
 
+import com.nathanholmberg.chess.engine.enums.Color;
 import com.nathanholmberg.chess.protocol.messages.Message;
 
 public class GameReadyMessage extends Message {
     private final String gameId;
-    private final String color;
+    private final Color color;
 
-    public GameReadyMessage(String gameId, String color) {
+    public GameReadyMessage(String gameId, Color color) {
         this.gameId = gameId;
         this.color = color;
     }
@@ -15,7 +16,7 @@ public class GameReadyMessage extends Message {
         return gameId;
     }
 
-    public String getColor() {
+    public Color getColor() {
         return color;
     }
 }

@@ -12,6 +12,7 @@ public abstract class WebSocketManager {
 
     public WebSocketManager(String endpointPath) {
         this.endpointURI = URI.create(SettingsManager.getServerURL() + endpointPath);
+        System.out.println(SettingsManager.getServerURL() + endpointPath);
     }
 
     public void connect() {
@@ -40,15 +41,12 @@ public abstract class WebSocketManager {
         }
     }
 
-    public void sendMessage(String message) {
+    public void sendMessage(Message message) {
         if (session == null || !session.isOpen()) {
             throw new IllegalStateException("WebSocket session is not initialized.");
         }
 
-        session.getAsyncRemote().sendText(message);
-    }
-    public void sendMessage(Message message) {
-        sendMessage(MessageSerializer.serialize(message));
+        session.getAsyncRemote().sendText(MessageSerializer.serialize(message));
     }
 
     public void close() {

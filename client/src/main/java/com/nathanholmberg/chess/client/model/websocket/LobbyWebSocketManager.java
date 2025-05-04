@@ -26,7 +26,6 @@ public class LobbyWebSocketManager extends WebSocketManager {
 
     @Override
     protected void onConnected() {
-        System.out.println("Joined lobby.");
     }
 
     @Override
@@ -40,7 +39,7 @@ public class LobbyWebSocketManager extends WebSocketManager {
         if (messageObj instanceof GameReadyMessage gameReadyMessage) {
             gameReadyListener.onGameReady(
                     gameReadyMessage.getGameId(),
-                    Color.fromString(gameReadyMessage.getColor())
+                    gameReadyMessage.getColor()
             );
             return;
         }

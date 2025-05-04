@@ -24,21 +24,12 @@ public class LobbyController implements BaseController {
 
         // Connect to Lobby
         lobbyWebSocketManager = new LobbyWebSocketManager();
-        connectToLobby();
+        lobbyWebSocketManager.connect();
 
         // Handle Game Ready Message
         lobbyWebSocketManager.setGameReadyListener((String gameId, Color color) -> {
             MainController.switchTo(new OnlineGameController(gameId, color));
-            System.out.println("Game is ready!");
         });
-    }
-
-    public void connectToLobby() {
-        try {
-            lobbyWebSocketManager.connect();
-        } catch (Exception e) {
-            System.err.println("Failed to connect to the lobby: " + e.getMessage());
-        }
     }
 
     @Override
