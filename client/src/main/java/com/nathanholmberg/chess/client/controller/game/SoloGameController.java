@@ -6,7 +6,7 @@ import com.nathanholmberg.chess.engine.types.Move;
 
 public class SoloGameController extends AbstractGameController {
     public SoloGameController() {
-        super(Color.WHITE, null);
+        super(Color.WHITE);
         start();
         configureSoloGameSettings();
     }

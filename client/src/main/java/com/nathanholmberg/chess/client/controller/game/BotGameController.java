@@ -12,7 +12,7 @@ public class BotGameController extends AbstractGameController {
     private final ChessAI ai;
 
     public BotGameController(Color color, ChessAI ai) {
-        super(color, null);
+        super(color);
         start();
 
         this.ai = ai;

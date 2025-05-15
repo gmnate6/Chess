@@ -11,7 +11,21 @@ public class ChessTimer {
     private long blackTime;
     private long lastMoveTimestamp;
     private Color turn;
-    private boolean active = false;
+
+    private boolean isActive = false;
+    private Thread timerThread;
+
+    private Listener listener;
+    public interface Listener {
+        void onTimerStarted(ChessTimer timer);
+        void onTimerUpdate(ChessTimer timer);
+        void onTimeUp(Color player);
+        void onTimerStopped(ChessTimer timer);
+    }
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
+    }
 
     public ChessTimer(long initialTime, long increment) {
         this.initialTime = initialTime;
@@ -22,27 +36,48 @@ public class ChessTimer {
     }
 
     public void start() {
-        if (active) { return; }
+        if (isActive) { return; }
+
         this.lastMoveTimestamp = System.currentTimeMillis();
-        active = true;
+        isActive = true;
+
+        // Start Timer Thread
+        timerThread = new Thread(() -> {
+            while (isActive) {
+                try {
+                    updateTimeStamp();
+                    checkForTimeout();
+
+                    if (listener != null ) {
+                        listener.onTimerUpdate(this);
+                    }
+
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        });
+        timerThread.setDaemon(true);
+        timerThread.start();
+
+        if (listener != null ) {
+            listener.onTimerStarted(this);
+        }
     }
 
     public void stop() {
-        // Last Update
         updateTimeStamp();
-        active = false;
+        isActive = false;
+        timerThread.interrupt();
+
+        if (listener != null ) {
+            listener.onTimerStopped(this);
+        }
     }
 
-    public String getFormatedTimeLeft(Color player) {
-        long timeInMillis = getTimeLeft(player);
-        long minutes = timeInMillis / 60000; // 60,000 milliseconds in a minute
-        long seconds = (timeInMillis % 60000) / 1000; // Remainder of seconds after minutes
-
-        return String.format("%02d:%02d", minutes, seconds); // Format as MM:SS
-    }
-
-    private void updateTimeStamp() {
-        if (!active) { return; }
+    private synchronized void updateTimeStamp() {
+        if (!isActive) { return; }
 
         // Calc
         long now = System.currentTimeMillis();
@@ -50,21 +85,46 @@ public class ChessTimer {
 
         // Update Time Stamp
         if (turn == Color.WHITE) {
-            whiteTime = Math.max(0, whiteTime - elapsed + increment);
+            whiteTime = Math.max(0, whiteTime - elapsed);
         } else {
-            blackTime = Math.max(0, blackTime - elapsed + increment);
+            blackTime = Math.max(0, blackTime - elapsed);
         }
         lastMoveTimestamp = now;
     }
 
     public void switchTurn() {
-        if (!active) { return; }
+        if (!isActive) { return; }
 
-        // Update Time Stamp
         updateTimeStamp();
+        checkForTimeout();
 
-        // Switch Turn
+        // Timer might have been stopped if a timeout occurred
+        if (!isActive) {
+            return; // Stop further processing
+        }
+
+        // Add Time Increment
+        if (turn == Color.WHITE) {
+            whiteTime += increment;
+        } else {
+            blackTime += increment;
+        }
+
         turn = turn.inverse();
+    }
+
+    private void checkForTimeout() {
+        Color result = null;
+        if (isOutOfTime(Color.WHITE)) {
+            result = Color.WHITE;
+        } else if (isOutOfTime(Color.BLACK)) {
+            result = Color.BLACK;
+        }
+
+        if (result != null && listener != null ) {
+            listener.onTimeUp(result);
+            stop();
+        }
     }
 
     public boolean isOutOfTime(Color player) {
@@ -76,12 +136,20 @@ public class ChessTimer {
         return player == Color.WHITE ? whiteTime : blackTime;
     }
 
+    public String getFormatedTimeLeft(Color player) {
+        long timeInMillis = getTimeLeft(player);
+        long minutes = timeInMillis / 60000; // 60,000 milliseconds in a minute
+        long seconds = (timeInMillis % 60000) / 1000; // Remainder of seconds after minutes
+
+        return String.format("%02d:%02d", minutes, seconds); // Format as MM:SS
+    }
+
     public Color getTurn() {
         return turn;
     }
 
     public boolean isActive() {
-        return active;
+        return isActive;
     }
 
     public long getInitialTime() {
@@ -92,18 +160,22 @@ public class ChessTimer {
         return increment;
     }
 
+    // TODO: REMOVE
     public void setIncrement(long increment) {
         this.increment = increment;
     }
 
+    // TODO: REMOVE
     public void setInitialTime(long initialTime) {
         this.initialTime = initialTime;
     }
 
+    // TODO: REMOVE
     public void setWhiteTime(long whiteTime) {
         this.whiteTime = whiteTime;
     }
 
+    // TODO: REMOVE
     public void setBlackTime(long blackTime) {
         this.blackTime = blackTime;
     }

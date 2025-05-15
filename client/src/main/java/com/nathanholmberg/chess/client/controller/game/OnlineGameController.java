@@ -10,7 +10,7 @@ public class OnlineGameController extends AbstractGameController {
     GameWebSocketManager gameWebSocketManager;
 
     public OnlineGameController(Color color, String gameId) {
-        super(color, new ChessTimer(600_000, 0));
+        super(color);
         configureOnlineGameSettings();
 
         gameWebSocketManager = new GameWebSocketManager(gameId, color);
@@ -25,11 +25,7 @@ public class OnlineGameController extends AbstractGameController {
 
             @Override
             public void onGameStartMessage(long initialTime, long increment) {
-                chessTimer.setInitialTime(initialTime);
-                chessTimer.setIncrement(increment);
-                chessTimer.setWhiteTime(initialTime);
-                chessTimer.setBlackTime(initialTime);
-
+                addTimer(new ChessTimer(initialTime, increment));
                 start();
             }
 

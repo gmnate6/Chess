@@ -6,7 +6,6 @@ import com.nathanholmberg.chess.client.controller.game.listeners.BoardMouseListe
 import com.nathanholmberg.chess.client.controller.game.managers.HistoryManager;
 import com.nathanholmberg.chess.client.controller.game.managers.MoveProcessor;
 import com.nathanholmberg.chess.client.controller.game.managers.SelectionManager;
-import com.nathanholmberg.chess.client.controller.game.managers.TimerManager;
 import com.nathanholmberg.chess.client.controller.menu.TitleController;
 import com.nathanholmberg.chess.client.model.SettingsManager;
 import com.nathanholmberg.chess.client.model.assets.AssetManager;
@@ -32,22 +31,19 @@ public abstract class AbstractGameController implements BaseController {
     protected final ChessGame chessGame;
     protected ChessTimer chessTimer;
     protected Color color;
-    private boolean inPlay = false;
 
     // View elements
     public final GamePanel gamePanel;
     public final BoardPanel boardPanel;
 
     // Helper classes
-    protected final TimerManager timerManager;
     protected final MoveProcessor moveProcessor;
     protected final SelectionManager selectionManager;
     protected final BoardMouseListener boardMouseListener;
     protected final HistoryManager historyManager;
 
-    public AbstractGameController(Color color, ChessTimer chessTimer) {
+    public AbstractGameController(Color color) {
         this.chessGame = new ChessGame();
-        this.chessTimer = chessTimer;
         this.color = color;
 
         // Setup View
@@ -60,9 +56,8 @@ public abstract class AbstractGameController implements BaseController {
         gamePanel.setBottomAvatar(SettingsManager.getAvatar());
         gamePanel.setBottomUsername(SettingsManager.getUsername());
 
-        // Timer Manager (encapsulates Swing timer logic)
-        gamePanel.setTimerEnabled(chessTimer != null);
-        timerManager = new TimerManager(chessTimer, gamePanel, color);
+        // Disable Timer Panel by Default
+        gamePanel.setTimerEnabled(false);
 
         // Initialize helper classes for move processing and selection management
         moveProcessor = new MoveProcessor(chessGame, boardPanel, color);
@@ -77,14 +72,41 @@ public abstract class AbstractGameController implements BaseController {
         updateEnableNavigationButtons();
     }
 
+    public void addTimer(ChessTimer chessTimer) {
+        if (chessTimer == null) { return; }
+
+        this.chessTimer = chessTimer;
+        gamePanel.setTimerEnabled(true);
+
+        chessTimer.setListener(new ChessTimer.Listener() {
+            @Override
+            public void onTimerStarted(ChessTimer timer) {
+
+            }
+
+            @Override
+            public void onTimerUpdate(ChessTimer timer) {
+
+            }
+
+            @Override
+            public void onTimeUp(Color player) {
+
+            }
+
+            @Override
+            public void onTimerStopped(ChessTimer timer) {
+
+            }
+        });
+    }
+
     public void start() {
-        inPlay = true;
         AssetManager.playSound("game-start");
 
         if (chessTimer != null) {
             chessTimer.start();
         }
-        timerManager.start();
     }
 
     @Override
@@ -96,8 +118,10 @@ public abstract class AbstractGameController implements BaseController {
             }
         }
 
-        // Stop Timer Manager
-        timerManager.stop();
+        // Stop Chess Timer Tread
+        if (chessTimer != null) {
+            chessTimer.stop();
+        }
     }
 
     @Override
@@ -368,7 +392,7 @@ public abstract class AbstractGameController implements BaseController {
                 selectedPiece = 'Q';
             }
 
-            // Re add  Board Mouse Listener
+            // Readd  Board Mouse Listener
             boardPanel.addMouseListener(boardMouseListener);
 
             // Apply promotion piece
@@ -423,10 +447,8 @@ public abstract class AbstractGameController implements BaseController {
             return;
         }
 
-        inPlay = false;
         moveProcessor.playEndSound();
 
-        timerManager.stop();
         if (chessTimer != null) {
             chessTimer.stop();
         }
