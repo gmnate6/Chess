@@ -3,7 +3,6 @@ package com.nathanholmberg.chess.engine.utils;
 import com.nathanholmberg.chess.engine.enums.Color;
 import com.nathanholmberg.chess.engine.exceptions.IllegalNotationException;
 import com.nathanholmberg.chess.engine.game.ChessGame;
-import com.nathanholmberg.chess.engine.game.ChessTimer;
 import com.nathanholmberg.chess.engine.types.Move;
 
 import java.util.List;

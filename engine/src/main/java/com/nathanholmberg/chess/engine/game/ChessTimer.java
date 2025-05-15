@@ -4,8 +4,8 @@ import com.nathanholmberg.chess.engine.enums.Color;
 
 // Note: Time is measured in milliseconds
 public class ChessTimer {
-    private long initialTime;
-    private long increment;
+    private final long initialTime;
+    private final long increment;
 
     private long whiteTime;
     private long blackTime;
@@ -92,6 +92,20 @@ public class ChessTimer {
         lastMoveTimestamp = now;
     }
 
+    private void checkForTimeout() {
+        Color result = null;
+        if (isOutOfTime(Color.WHITE)) {
+            result = Color.WHITE;
+        } else if (isOutOfTime(Color.BLACK)) {
+            result = Color.BLACK;
+        }
+
+        if (result != null && listener != null ) {
+            listener.onTimeUp(result);
+            stop();
+        }
+    }
+
     public void switchTurn() {
         if (!isActive) { return; }
 
@@ -113,18 +127,20 @@ public class ChessTimer {
         turn = turn.inverse();
     }
 
-    private void checkForTimeout() {
-        Color result = null;
-        if (isOutOfTime(Color.WHITE)) {
-            result = Color.WHITE;
-        } else if (isOutOfTime(Color.BLACK)) {
-            result = Color.BLACK;
-        }
+    public Color getTurn() {
+        return turn;
+    }
 
-        if (result != null && listener != null ) {
-            listener.onTimeUp(result);
-            stop();
-        }
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public long getInitialTime() {
+        return initialTime;
+    }
+
+    public long getIncrement() {
+        return increment;
     }
 
     public boolean isOutOfTime(Color player) {
@@ -142,46 +158,5 @@ public class ChessTimer {
         long seconds = (timeInMillis % 60000) / 1000; // Remainder of seconds after minutes
 
         return String.format("%02d:%02d", minutes, seconds); // Format as MM:SS
-    }
-
-    public Color getTurn() {
-        return turn;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public long getInitialTime() {
-        return initialTime;
-    }
-
-    public long getIncrement() {
-        return increment;
-    }
-
-    // TODO: REMOVE
-    public void setIncrement(long increment) {
-        this.increment = increment;
-    }
-
-    // TODO: REMOVE
-    public void setInitialTime(long initialTime) {
-        this.initialTime = initialTime;
-    }
-
-    // TODO: REMOVE
-    public void setWhiteTime(long whiteTime) {
-        this.whiteTime = whiteTime;
-    }
-
-    // TODO: REMOVE
-    public void setBlackTime(long blackTime) {
-        this.blackTime = blackTime;
-    }
-
-    @Override
-    public String toString() {
-        return "White Time: " + getFormatedTimeLeft(Color.WHITE) + "\nBlack Time: " + getFormatedTimeLeft(Color.BLACK);
     }
 }

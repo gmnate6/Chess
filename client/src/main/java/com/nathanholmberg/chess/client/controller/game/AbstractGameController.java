@@ -86,12 +86,14 @@ public abstract class AbstractGameController implements BaseController {
 
             @Override
             public void onTimerUpdate(ChessTimer timer) {
-
+                gamePanel.topBannerPanel.timerLabel.setText(timer.getFormatedTimeLeft(color.inverse()));
+                gamePanel.bottomBannerPanel.timerLabel.setText(timer.getFormatedTimeLeft(color));
             }
 
             @Override
             public void onTimeUp(Color player) {
-
+                chessGame.winOnTime(player.inverse());
+                endGame();
             }
 
             @Override

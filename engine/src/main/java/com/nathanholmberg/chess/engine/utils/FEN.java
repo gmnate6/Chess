@@ -4,7 +4,6 @@ import com.nathanholmberg.chess.engine.enums.Color;
 import com.nathanholmberg.chess.engine.exceptions.IllegalNotationException;
 import com.nathanholmberg.chess.engine.game.Board;
 import com.nathanholmberg.chess.engine.game.ChessGame;
-import com.nathanholmberg.chess.engine.game.ChessTimer;
 import com.nathanholmberg.chess.engine.pieces.Piece;
 import com.nathanholmberg.chess.engine.types.CastlingRights;
 import com.nathanholmberg.chess.engine.types.Position;

@@ -20,7 +20,6 @@ public class ServerGame {
     private final String gameId;
     private ChessGame chessGame;
     private ChessTimer chessTimer;
-    private Thread timerThread;
 
     private Session whitePlayer;
     private String whitePlayerUsername = "guest";
@@ -54,10 +53,35 @@ public class ServerGame {
 
     private void startGame() {
         chessGame = new ChessGame();
-        chessTimer = new ChessTimer(6_000, 0);
-        Message message;
+
+        // Chess Timer
+        chessTimer = new ChessTimer(600_000, 10000);
+        chessTimer.setListener(new ChessTimer.Listener() {
+            @Override
+            public void onTimerStarted(ChessTimer timer) {
+
+            }
+
+            @Override
+            public void onTimerUpdate(ChessTimer timer) {
+
+            }
+
+            @Override
+            public void onTimeUp(Color player) {
+                chessGame.winOnTime(player.inverse());
+                endGame();
+            }
+
+            @Override
+            public void onTimerStopped(ChessTimer timer) {
+
+            }
+        });
+        chessTimer.start();
 
         // Notify players about others info
+        Message message;
         message = new ClientInfoMessage(blackPlayerUsername, blackPlayerProfile);
         whitePlayer.getAsyncRemote().sendText(MessageSerializer.serialize(message));
         message = new ClientInfoMessage(whitePlayerUsername, whitePlayerProfile);
@@ -69,32 +93,6 @@ public class ServerGame {
                 chessTimer.getIncrement()
         );
         broadcastMessage(message);
-
-        // Timer Tread
-        timerThread = new Thread(() -> {
-            while (true) {
-                try {
-                    if (chessTimer.isOutOfTime(Color.WHITE)) {
-                        chessGame.winOnTime(Color.WHITE);
-                        endGame();
-                        break;
-                    }
-                    if (chessTimer.isOutOfTime(Color.BLACK)) {
-                        chessGame.winOnTime(Color.WHITE);
-                        endGame();
-                        break;
-                    }
-                    Thread.sleep(1);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    break;
-                } catch (Exception e) {
-                    System.err.println("ServerGame Error: " + e.getMessage() + "\n" + e.getLocalizedMessage());
-                }
-            }
-        });
-        timerThread.setDaemon(true);
-        timerThread.start();
     }
 
     public void endGame() {
@@ -113,7 +111,7 @@ public class ServerGame {
             System.err.println("ServerGame Error: " + e.getMessage() + "\n" + e.getLocalizedMessage());
         }
 
-        timerThread.interrupt();
+        chessTimer.stop();
         GameManager.getInstance().removeGame(gameId);
     }
 

@@ -24,6 +24,7 @@ public class LobbyEndpoint {
     @OnClose
     public void onClose(Session session) {
         lobbyManager.removeFromQueue(session);
+        System.out.println("Left Lobby: " + session.getId());
     }
 
     @OnError

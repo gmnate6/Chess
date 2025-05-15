@@ -12,7 +12,6 @@ public abstract class WebSocketManager {
 
     public WebSocketManager(String endpointPath) {
         this.endpointURI = URI.create(SettingsManager.getServerURL() + endpointPath);
-        System.out.println(SettingsManager.getServerURL() + endpointPath);
     }
 
     public void connect() {

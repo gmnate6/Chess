@@ -28,9 +28,4 @@ public class PingWebSocketManager extends WebSocketManager {
         pingWebSocketManager.close();
         return result;
     }
-
-    public static void main(String[] args) {
-        boolean isLive = ping();
-        System.out.println("Ping result: " + (isLive ? "Live" : "Not Live"));
-    }
 }
