@@ -79,6 +79,11 @@ public class GameWebSocketManager extends WebSocketManager {
         throwable.printStackTrace();
     }
 
+    public void sendClientInfoMessage(String username, String avatar) {
+        Message message = new ClientInfoMessage(username, avatar);
+        sendMessage(message);
+    }
+
     public void sendMoveMessage(String move) {
         Message message = new MoveMessage(move);
         sendMessage(message);

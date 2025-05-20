@@ -1,5 +1,6 @@
 package com.nathanholmberg.chess.client.controller.game;
 
+import com.nathanholmberg.chess.client.model.SettingsManager;
 import com.nathanholmberg.chess.client.model.websocket.GameWebSocketManager;
 import com.nathanholmberg.chess.engine.enums.Color;
 import com.nathanholmberg.chess.engine.game.ChessTimer;
@@ -46,6 +47,7 @@ public class OnlineGameController extends AbstractGameController {
         });
 
         gameWebSocketManager.connect();
+        gameWebSocketManager.sendClientInfoMessage(SettingsManager.getUsername(), SettingsManager.getAvatar());
     }
 
     private void configureOnlineGameSettings() {

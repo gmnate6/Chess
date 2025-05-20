@@ -41,7 +41,7 @@ public abstract class WebSocketManager {
     }
 
     public void sendMessage(Message message) {
-        if (session == null || !session.isOpen()) {
+        if (!isConnected()) {
             throw new IllegalStateException("WebSocket session is not initialized.");
         }
 
