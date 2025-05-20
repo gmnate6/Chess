@@ -155,6 +155,9 @@ public class  Board {
         pieceToMove = getPieceAt(initialPosition);
         setPieceAt(initialPosition, null);
         setPieceAt(finalPosition, pieceToMove);
+
+        // Update Castling Rights
+        castlingRights.correctRights(this);
     }
 
     // Getters

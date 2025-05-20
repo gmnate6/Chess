@@ -32,7 +32,7 @@ public class FENTest {
     public void randomGameTest() {
         ChessGame chessGame = new ChessGame();
 
-        // Play random game
+        // Play a random game
         while (chessGame.inPlay()) {
             RandomAI randomAI = new RandomAI();
             Move move = randomAI.getMove(chessGame);

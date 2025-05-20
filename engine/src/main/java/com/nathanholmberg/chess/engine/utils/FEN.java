@@ -114,7 +114,7 @@ public class FEN {
         castlingRights.setBlackKingSide(castlingRightsFEN.contains("k"));
 
         // Verify Castling Rights
-        castlingRights.verifyRights(board);
+        castlingRights.correctRights(board);
 
         // Add Castling Rights to Board
         board.setCastlingRights(castlingRights);
