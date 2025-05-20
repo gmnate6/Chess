@@ -87,10 +87,10 @@ public class LobbyManager {
         Session whitePlayer = player1IsWhite ? player1 : player2;
         Session blackPlayer = player1IsWhite ? player2 : player1;
 
-        // Create ServerGame
+        // Create GameServer
         String gameId = UUID.randomUUID().toString();
-        ServerGame serverGame = new ServerGame(gameId);
-        gameManager.addGame(gameId, serverGame);
+        GameServer gameServer = new GameServer(gameId);
+        gameManager.addGame(gameId, gameServer);
 
         // Notify players
         GameReadyMessage message;

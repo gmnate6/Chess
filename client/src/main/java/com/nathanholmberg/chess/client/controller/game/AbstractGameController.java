@@ -30,6 +30,7 @@ public abstract class AbstractGameController implements BaseController {
     // Core objects
     protected final ChessGame chessGame;
     protected ChessTimer chessTimer;
+    protected long lastUpdatedTime;
     protected Color color;
 
     // View elements
@@ -81,13 +82,19 @@ public abstract class AbstractGameController implements BaseController {
         chessTimer.setListener(new ChessTimer.Listener() {
             @Override
             public void onTimerStarted(ChessTimer timer) {
-
+                lastUpdatedTime = timer.getInitialTime();
             }
 
             @Override
             public void onTimerUpdate(ChessTimer timer) {
                 gamePanel.topBannerPanel.timerLabel.setText(timer.getFormatedTimeLeft(color.inverse()));
                 gamePanel.bottomBannerPanel.timerLabel.setText(timer.getFormatedTimeLeft(color));
+
+                long tenSeconds = 10000;
+                if (lastUpdatedTime > tenSeconds && timer.getTimeLeft(color) <= tenSeconds) {
+                    AssetManager.playSound("ten-seconds");
+                }
+                lastUpdatedTime = timer.getTimeLeft(color);
             }
 
             @Override

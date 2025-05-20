@@ -10,7 +10,7 @@ import com.nathanholmberg.chess.protocol.messages.game.client.*;
 import com.nathanholmberg.chess.protocol.messages.game.server.IllegalMoveMessage;
 import com.nathanholmberg.chess.protocol.serialization.MessageDeserializer;
 import com.nathanholmberg.chess.protocol.serialization.MessageSerializer;
-import com.nathanholmberg.chess.server.models.ServerGame;
+import com.nathanholmberg.chess.server.models.GameServer;
 import com.nathanholmberg.chess.server.models.GameManager;
 
 import com.google.gson.JsonSyntaxException;
@@ -23,12 +23,12 @@ import java.io.IOException;
 public class GameEndpoint {
     private static final GameManager gameManager = GameManager.getInstance();
     private Session session;
-    private ServerGame serverGame;
+    private GameServer gameServer;
     private Color color;
 
     @OnOpen
     public void onOpen(Session session, @PathParam("gameId") String gameId, @PathParam("color") String color) {
-        System.out.println("Joined ServerGame: " + session.getId());
+        System.out.println("Joined GameServer: " + session.getId());
         this.session = session;
 
         // Get Color
@@ -39,16 +39,16 @@ public class GameEndpoint {
             return;
         }
 
-        // Validate serverGame exists
-        this.serverGame = gameManager.getGame(gameId);
-        if (serverGame == null) {
-            closeWithError(session, "ServerGame not found");
+        // Validate gameServer exists
+        this.gameServer = gameManager.getGame(gameId);
+        if (gameServer == null) {
+            closeWithError(session, "GameServer not found");
             return;
         }
 
-        // Create and add player to serverGame
+        // Create and add player to gameServer
         try {
-            serverGame.addPlayer(session, this.color);
+            gameServer.addPlayer(session, this.color);
         } catch (Exception e) {
             closeWithError(session, e.getMessage());
         }
@@ -56,8 +56,8 @@ public class GameEndpoint {
 
     @OnMessage
     public void onMessage(Session session, String message) {
-        if (serverGame == null || color == null) {
-            closeWithError(session, "ServerGame not properly initialized");
+        if (gameServer == null || color == null) {
+            closeWithError(session, "GameServer not properly initialized");
             return;
         }
 
@@ -77,17 +77,17 @@ public class GameEndpoint {
 
             // Move Message
             if (messageObj instanceof MoveMessage moveMessage) {
-                if (serverGame.getTurn() != color) {
+                if (gameServer.getTurn() != color) {
                     sendIllegalMoveError("Not your turn");
                     return;
                 }
 
-                if (!serverGame.isMoveLegal(moveMessage.getMove())) {
+                if (!gameServer.isMoveLegal(moveMessage.getMove())) {
                     sendIllegalMoveError("Invalid move");
                     return;
                 }
 
-                serverGame.makeMove(moveMessage.getMove());
+                gameServer.makeMove(moveMessage.getMove());
                 return;
             }
 
@@ -98,14 +98,14 @@ public class GameEndpoint {
 
             // Resign Message
             if (messageObj instanceof ResignMessage) {
-                serverGame.handlePlayerDisconnect(color);
+                gameServer.handlePlayerDisconnect(color);
                 session.close();
                 return;
             }
 
             // Client Info Message
             if (messageObj instanceof ClientInfoMessage clientInfoMessage) {
-                serverGame.setClientInfo(color, clientInfoMessage.getUsername(), clientInfoMessage.getAvatar());
+                gameServer.setClientInfo(color, clientInfoMessage.getUsername(), clientInfoMessage.getAvatar());
                 return;
             }
 
@@ -119,8 +119,8 @@ public class GameEndpoint {
 
     @OnClose
     public void onClose(Session session, CloseReason reason) {
-        if (serverGame != null) {
-            serverGame.handlePlayerDisconnect(color);
+        if (gameServer != null) {
+            gameServer.handlePlayerDisconnect(color);
         }
     }
 

@@ -16,7 +16,7 @@ import jakarta.websocket.Session;
 
 import java.io.IOException;
 
-public class ServerGame {
+public class GameServer {
     private final String gameId;
     private ChessGame chessGame;
     private ChessTimer chessTimer;
@@ -29,7 +29,7 @@ public class ServerGame {
     private String blackPlayerUsername = "guest";
     private String blackPlayerProfile = "default";
 
-    public ServerGame(String gameId) {
+    public GameServer(String gameId) {
         this.gameId = gameId;
     }
 
@@ -108,7 +108,7 @@ public class ServerGame {
                 blackPlayer.close();
             }
         } catch (IOException e) {
-            System.err.println("ServerGame Error: " + e.getMessage() + "\n" + e.getLocalizedMessage());
+            System.err.println("GameServer Error: " + e.getMessage() + "\n" + e.getLocalizedMessage());
         }
 
         chessTimer.stop();
