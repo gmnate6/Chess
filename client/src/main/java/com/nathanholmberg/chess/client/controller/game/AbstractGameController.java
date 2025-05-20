@@ -90,7 +90,7 @@ public abstract class AbstractGameController implements BaseController {
                 gamePanel.topBannerPanel.timerLabel.setText(timer.getFormatedTimeLeft(color.inverse()));
                 gamePanel.bottomBannerPanel.timerLabel.setText(timer.getFormatedTimeLeft(color));
 
-                long tenSeconds = 10000;
+                long tenSeconds = 11000; // Actually 11 seconds, so it triggers when it says 10 seconds
                 if (lastUpdatedTime > tenSeconds && timer.getTimeLeft(color) <= tenSeconds) {
                     AssetManager.playSound("ten-seconds");
                 }
