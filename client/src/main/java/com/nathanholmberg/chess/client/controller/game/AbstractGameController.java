@@ -14,7 +14,6 @@ import com.nathanholmberg.chess.client.view.game.GamePanel;
 import com.nathanholmberg.chess.client.view.components.ConfirmDialog;
 import com.nathanholmberg.chess.engine.enums.Color;
 import com.nathanholmberg.chess.engine.game.ChessGame;
-import com.nathanholmberg.chess.engine.game.ChessTimer;
 import com.nathanholmberg.chess.engine.pieces.Piece;
 import com.nathanholmberg.chess.engine.types.Move;
 import com.nathanholmberg.chess.engine.types.Position;
@@ -29,7 +28,6 @@ import java.util.concurrent.ExecutionException;
 public abstract class AbstractGameController implements BaseController {
     // Core objects
     protected ChessGame chessGame;
-    protected ChessTimer chessTimer;
     protected long lastUpdatedTime;
     protected Color color;
     protected boolean inPlay;
@@ -74,49 +72,9 @@ public abstract class AbstractGameController implements BaseController {
         updateEnableNavigationButtons();
     }
 
-    public void addTimer(ChessTimer chessTimer) {
-        if (chessTimer == null) { return; }
-
-        this.chessTimer = chessTimer;
-        gamePanel.setTimerEnabled(true);
-
-        chessTimer.setListener(new ChessTimer.Listener() {
-            @Override
-            public void onTimerStarted(ChessTimer timer) {
-                lastUpdatedTime = timer.getInitialTime();
-            }
-
-            @Override
-            public void onTimerUpdate(ChessTimer timer) {
-                gamePanel.topBannerPanel.timerLabel.setText(timer.getFormatedTimeLeft(color.inverse()));
-                gamePanel.bottomBannerPanel.timerLabel.setText(timer.getFormatedTimeLeft(color));
-
-                long tenSeconds = 11000; // Actually 11 seconds, so it triggers when it says 10 seconds
-                if (lastUpdatedTime > tenSeconds && timer.getTimeLeft(color) <= tenSeconds) {
-                    AssetManager.playSound("ten-seconds");
-                }
-                lastUpdatedTime = timer.getTimeLeft(color);
-            }
-
-            @Override
-            public void onTimeUp(Color player) {
-
-            }
-
-            @Override
-            public void onTimerStopped(ChessTimer timer) {
-
-            }
-        });
-    }
-
     public void start() {
         AssetManager.playSound("game-start");
         inPlay = true;
-
-        if (chessTimer != null) {
-            chessTimer.start();
-        }
     }
 
     @Override
@@ -126,11 +84,6 @@ public abstract class AbstractGameController implements BaseController {
             for (MouseListener listener : component.getMouseListeners()) {
                 component.removeMouseListener(listener);
             }
-        }
-
-        // Stop Chess Timer Tread
-        if (chessTimer != null) {
-            chessTimer.stop();
         }
     }
 
@@ -262,10 +215,6 @@ public abstract class AbstractGameController implements BaseController {
     }
 
     protected void setPerspective(Color color) {
-        if (chessTimer != null && chessTimer.isActive()) {
-            System.err.println("Cannot change perspective while timer is active.");
-            return;
-        }
         boardPanel.setPerspective(color);
         boardPanel.loadPieces(chessGame);
     }
@@ -423,7 +372,7 @@ public abstract class AbstractGameController implements BaseController {
 
     protected void executeMove(Move move) {
         if (!chessGame.inPlay()) {
-            return;
+            throw new IllegalStateException("Cannot execute move while game is not in play.");
         }
 
         // Update History
@@ -431,11 +380,6 @@ public abstract class AbstractGameController implements BaseController {
 
         // Execute Move
         moveProcessor.executeMove(move);
-
-        // Update Timer
-        if (chessTimer != null) {
-            chessTimer.switchTurn();
-        }
 
         // Update Navigation Buttons
         updateEnableNavigationButtons();
@@ -459,11 +403,6 @@ public abstract class AbstractGameController implements BaseController {
         inPlay = false;
 
         moveProcessor.playEndSound();
-
-        if (chessTimer != null) {
-            chessTimer.stop();
-        }
-
         gamePanel.showPostGameActionPanel();
     }
 }
