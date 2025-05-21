@@ -2,13 +2,14 @@ package com.nathanholmberg.chess.client.model.websocket;
 
 import com.nathanholmberg.chess.engine.enums.Color;
 import com.nathanholmberg.chess.engine.enums.GameResult;
+import com.nathanholmberg.chess.protocol.MessageSerializer;
 import com.nathanholmberg.chess.protocol.constants.WebSocketEndpoints;
 import com.nathanholmberg.chess.protocol.messages.Message;
 import com.nathanholmberg.chess.protocol.messages.game.ClientInfoMessage;
 import com.nathanholmberg.chess.protocol.messages.game.MoveMessage;
+import com.nathanholmberg.chess.protocol.messages.game.client.RequestGameStateMessage;
 import com.nathanholmberg.chess.protocol.messages.game.client.ResignMessage;
 import com.nathanholmberg.chess.protocol.messages.game.server.*;
-import com.nathanholmberg.chess.protocol.serialization.MessageDeserializer;
 
 import jakarta.websocket.CloseReason;
 
@@ -23,7 +24,7 @@ public class GameWebSocketManager extends WebSocketManager {
         void onClientInfoMessage(String username, String avatar);
         void onGameStartMessage(long initialTime, long increment);
         void onMoveMessage(String move);
-        void onIllegalMoveMessage(String reason);
+        void onIllegalMoveMessage(String move);
         void onDrawOfferedMessage();
         void onGameEndMessage(GameResult result);
         void onClockUpdateMessage(long whiteTime, long blackTime);
@@ -40,7 +41,9 @@ public class GameWebSocketManager extends WebSocketManager {
 
     @Override
     protected void onMessageReceived(String message) {
-        Message messageObj = MessageDeserializer.deserialize(message);
+        Message messageObj = MessageSerializer.deserialize(message);
+
+        // TODO: Consider using an interface from the protocol so the client is forced to implement every message
 
         if (messageObj instanceof ClientInfoMessage clientInfoMessage) {
             gameMessageListener.onClientInfoMessage(
@@ -64,7 +67,7 @@ public class GameWebSocketManager extends WebSocketManager {
 
         if (messageObj instanceof IllegalMoveMessage illegalMoveMessage) {
             gameMessageListener.onIllegalMoveMessage(
-                    illegalMoveMessage.getReason()
+                    illegalMoveMessage.getMove()
             );
             return;
         }
@@ -81,17 +84,23 @@ public class GameWebSocketManager extends WebSocketManager {
             return;
         }
 
+        if (messageObj instanceof GameStateMessage gameStateMessage) {
+            gameMessageListener.onGameStateMessage(
+                    gameStateMessage.getPGN()
+            );
+            gameMessageListener.onClockUpdateMessage(
+                    gameStateMessage.getWhiteTime(),
+                    gameStateMessage.getBlackTime()
+            );
+            return;
+        }
+
         if (messageObj instanceof ClockUpdateMessage clockUpdateMessage) {
             gameMessageListener.onClockUpdateMessage(
                     clockUpdateMessage.getWhiteTime(),
                     clockUpdateMessage.getBlackTime()
             );
-        }
-
-        if (messageObj instanceof GameStateMessage gameStateMessage) {
-            gameMessageListener.onGameStateMessage(
-                    gameStateMessage.getPGN()
-            );
+            return;
         }
 
         System.err.println("Unknown message type: " + messageObj.getType());
@@ -102,12 +111,6 @@ public class GameWebSocketManager extends WebSocketManager {
 
     }
 
-    @Override
-    protected void onError(Throwable throwable) {
-        System.out.println("Error in GameWebSocketManager: " + throwable.getMessage());
-        throwable.printStackTrace();
-    }
-
     public void sendClientInfoMessage(String username, String avatar) {
         Message message = new ClientInfoMessage(username, avatar);
         sendMessage(message);
@@ -115,6 +118,11 @@ public class GameWebSocketManager extends WebSocketManager {
 
     public void sendMoveMessage(String move) {
         Message message = new MoveMessage(move);
+        sendMessage(message);
+    }
+
+    public void sendRequestGameStateMessage() {
+        Message message = new RequestGameStateMessage();
         sendMessage(message);
     }
 

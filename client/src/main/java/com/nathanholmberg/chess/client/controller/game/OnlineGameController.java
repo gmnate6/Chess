@@ -45,8 +45,8 @@ public class OnlineGameController extends AbstractGameController {
             }
 
             @Override
-            public void onIllegalMoveMessage(String reason) {
-                System.out.println("Illegal move received from server: " + reason);
+            public void onIllegalMoveMessage(String move) {
+                System.err.println("Server determined '" + move + "' was illegal");
             }
 
             @Override
@@ -180,6 +180,7 @@ public class OnlineGameController extends AbstractGameController {
 
     private void onIllegalServerMove(String move) {
         System.err.println("Illegal move received from server: " + move);
+        gameWebSocketManager.sendRequestGameStateMessage();
     }
 
     @Override

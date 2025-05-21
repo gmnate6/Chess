@@ -1,18 +1,23 @@
-package com.nathanholmberg.chess.protocol.serialization;
+package com.nathanholmberg.chess.protocol;
 
+import com.google.gson.*;
 import com.nathanholmberg.chess.protocol.exceptions.ProtocolException;
 import com.nathanholmberg.chess.protocol.messages.Message;
 import com.nathanholmberg.chess.protocol.messages.game.ClientInfoMessage;
 import com.nathanholmberg.chess.protocol.messages.game.MoveMessage;
 import com.nathanholmberg.chess.protocol.messages.game.client.*;
 import com.nathanholmberg.chess.protocol.messages.game.server.*;
-import com.nathanholmberg.chess.protocol.messages.lobby.server.*;
+import com.nathanholmberg.chess.protocol.messages.lobby.server.GameReadyMessage;
+import com.nathanholmberg.chess.protocol.messages.lobby.server.JoinedMatchmakingMessage;
 
-import com.google.gson.*;
-
-public class MessageDeserializer {
+public class MessageSerializer {
     private static final Gson gson = new GsonBuilder()
+            .serializeNulls()
             .create();
+
+    public static String serialize(Message message) {
+        return gson.toJson(message);
+    }
 
     public static Message deserialize(String json) throws ProtocolException, JsonSyntaxException {
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
@@ -32,6 +37,7 @@ public class MessageDeserializer {
             case "AcceptDrawMessage"        -> gson.fromJson(json, AcceptDrawMessage.class);
             case "DeclineDrawMessage"       -> gson.fromJson(json, DeclineDrawMessage.class);
             case "OfferDrawMessage"         -> gson.fromJson(json, OfferDrawMessage.class);
+            case "RequestGameStateMessage"  -> gson.fromJson(json, RequestGameStateMessage.class);
             case "ResignMessage"            -> gson.fromJson(json, ResignMessage.class);
 
             // Game (Server)

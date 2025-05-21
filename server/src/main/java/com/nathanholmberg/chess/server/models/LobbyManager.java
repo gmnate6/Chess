@@ -2,7 +2,7 @@ package com.nathanholmberg.chess.server.models;
 
 import com.nathanholmberg.chess.engine.enums.Color;
 import com.nathanholmberg.chess.protocol.messages.lobby.server.GameReadyMessage;
-import com.nathanholmberg.chess.protocol.serialization.MessageSerializer;
+import com.nathanholmberg.chess.protocol.MessageSerializer;
 
 import jakarta.websocket.CloseReason;
 import jakarta.websocket.Session;

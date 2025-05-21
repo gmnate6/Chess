@@ -3,7 +3,7 @@ package com.nathanholmberg.chess.server.endpoints;
 import com.nathanholmberg.chess.protocol.constants.WebSocketEndpoints;
 import com.nathanholmberg.chess.protocol.messages.lobby.server.JoinedMatchmakingMessage;
 import com.nathanholmberg.chess.server.models.LobbyManager;
-import com.nathanholmberg.chess.protocol.serialization.MessageSerializer;
+import com.nathanholmberg.chess.protocol.MessageSerializer;
 
 import jakarta.websocket.*;
 import jakarta.websocket.server.ServerEndpoint;
@@ -29,6 +29,6 @@ public class LobbyEndpoint {
 
     @OnError
     public void onError(Session session, Throwable throwable) {
-        System.err.println("Lobby Error: " + throwable.getMessage() + "\n" + throwable.getLocalizedMessage());
+        System.err.println("Lobby Error from " + session.getId() +  ": " + throwable.getMessage() + "\n" + throwable.getLocalizedMessage());
     }
 }

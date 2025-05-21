@@ -193,7 +193,7 @@ public abstract class AbstractGameController implements BaseController {
 
         historyManager.selectMove(chessGame.getMoveHistory().getCurrentMoveIndex());
 
-        // Play move sound for last move in history if available
+        // Play move sound for the last move in history if available
         int step = chessGame.getMoveHistory().getCurrentMoveIndex();
         if (step >= 0) {
             Move move = chessGame.getMoveHistory().getLastMove();
@@ -230,7 +230,7 @@ public abstract class AbstractGameController implements BaseController {
             return;
         }
 
-        // First check if a selection can be made.
+        // First check if a selection can be made
         if (selectionManager.canSelectPosition(position)) {
             if (!position.equals(selectionManager.getSelectedPosition())) {
                 selectionManager.deselect();
@@ -343,7 +343,7 @@ public abstract class AbstractGameController implements BaseController {
             // Remove Board Mouse Listener
             boardPanel.removeMouseListener(boardMouseListener);
 
-            // Get promotion piece
+            // Get the promotion piece
             char selectedPiece;
             try {
                 selectedPiece = future.get();

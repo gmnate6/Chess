@@ -23,6 +23,6 @@ public class PingEndpoint {
 
     @OnError
     public void onError(Session session, Throwable throwable) {
-        System.err.println("Ping Error: " + throwable.getMessage() + "\n" + throwable.getLocalizedMessage());
+        System.err.println("Ping Error from " + session.getId() +  ": " + throwable.getMessage() + "\n" + throwable.getLocalizedMessage());
     }
 }

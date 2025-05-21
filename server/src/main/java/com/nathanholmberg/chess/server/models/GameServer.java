@@ -6,11 +6,13 @@ import com.nathanholmberg.chess.engine.game.ChessGame;
 import com.nathanholmberg.chess.engine.game.ChessTimer;
 import com.nathanholmberg.chess.engine.types.Move;
 import com.nathanholmberg.chess.engine.utils.MoveUtils;
+import com.nathanholmberg.chess.engine.utils.PGN;
 import com.nathanholmberg.chess.protocol.messages.Message;
 import com.nathanholmberg.chess.protocol.messages.game.ClientInfoMessage;
 import com.nathanholmberg.chess.protocol.messages.game.MoveMessage;
 import com.nathanholmberg.chess.protocol.messages.game.server.GameEndMessage;
 import com.nathanholmberg.chess.protocol.messages.game.server.GameStartMessage;
+import com.nathanholmberg.chess.protocol.messages.game.server.GameStateMessage;
 import com.nathanholmberg.chess.protocol.messages.game.server.IllegalMoveMessage;
 
 public class GameServer {
@@ -90,6 +92,18 @@ public class GameServer {
             return whitePlayer;
         }
         return blackPlayer;
+    }
+
+    public void sendGameState(Color player) {
+        Message message = new GameStateMessage(
+                PGN.getPGN(chessGame),
+                chessTimer.getTimeLeft(Color.WHITE),
+                chessTimer.getTimeLeft(Color.BLACK));
+        if (player == Color.WHITE) {
+            whitePlayer.sendMessage(message);
+            return;
+        }
+        blackPlayer.sendMessage(message);
     }
 
     public void setClientInfo(Color color, String username, String avatar) {

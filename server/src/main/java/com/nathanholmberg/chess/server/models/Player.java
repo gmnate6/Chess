@@ -1,7 +1,7 @@
 package com.nathanholmberg.chess.server.models;
 
 import com.nathanholmberg.chess.protocol.messages.Message;
-import com.nathanholmberg.chess.protocol.serialization.MessageSerializer;
+import com.nathanholmberg.chess.protocol.MessageSerializer;
 import jakarta.websocket.Session;
 
 public class Player {

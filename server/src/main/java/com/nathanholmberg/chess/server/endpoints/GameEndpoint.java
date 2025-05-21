@@ -1,12 +1,12 @@
 package com.nathanholmberg.chess.server.endpoints;
 
 import com.nathanholmberg.chess.engine.enums.Color;
+import com.nathanholmberg.chess.protocol.MessageSerializer;
 import com.nathanholmberg.chess.protocol.constants.WebSocketEndpoints;
 import com.nathanholmberg.chess.protocol.messages.Message;
 import com.nathanholmberg.chess.protocol.messages.game.ClientInfoMessage;
 import com.nathanholmberg.chess.protocol.messages.game.MoveMessage;
 import com.nathanholmberg.chess.protocol.messages.game.client.*;
-import com.nathanholmberg.chess.protocol.serialization.MessageDeserializer;
 import com.nathanholmberg.chess.server.models.GameServer;
 import com.nathanholmberg.chess.server.models.GameManager;
 import com.nathanholmberg.chess.server.models.Player;
@@ -59,24 +59,24 @@ public class GameEndpoint {
         // Handle Message
         Message messageObj;
         try {
-            messageObj = MessageDeserializer.deserialize(message);
+            messageObj = MessageSerializer.deserialize(message);
         } catch (Exception e) {
             closeWithError(session, "Invalid message format: " + message);
             return;
         }
 
         // Accept Draw Message
-        if (messageObj instanceof AcceptDrawMessage acceptDrawMessage) {
+        if (messageObj instanceof AcceptDrawMessage) {
             return;
         }
 
         // Decline Draw Message
-        if (messageObj instanceof DeclineDrawMessage declineDrawMessage) {
+        if (messageObj instanceof DeclineDrawMessage) {
             return;
         }
 
         // Offer Draw Message
-        if (messageObj instanceof OfferDrawMessage offerDrawMessage) {
+        if (messageObj instanceof OfferDrawMessage) {
             return;
         }
 
@@ -99,12 +99,17 @@ public class GameEndpoint {
             return;
         }
 
+        // Request Game State Message
+        if (messageObj instanceof RequestGameStateMessage) {
+            gameServer.sendGameState(color);
+        }
+
         System.err.println("Message type not implemented yet: " + messageObj.getType());
     }
 
     @OnClose
     public void onClose(Session session, CloseReason reason) {
-        System.out.println("Left GameServer: " + session.getId());
+        System.out.println("Left GameServer: " + session.getId() + " - " + reason.getReasonPhrase());
         if (gameServer != null) {
             gameServer.resignPlayer(color);
         }

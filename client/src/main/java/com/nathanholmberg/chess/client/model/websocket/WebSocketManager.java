@@ -2,7 +2,7 @@ package com.nathanholmberg.chess.client.model.websocket;
 
 import com.nathanholmberg.chess.client.model.SettingsManager;
 import com.nathanholmberg.chess.protocol.messages.Message;
-import com.nathanholmberg.chess.protocol.serialization.MessageSerializer;
+import com.nathanholmberg.chess.protocol.MessageSerializer;
 import jakarta.websocket.*;
 import java.net.URI;
 
@@ -68,5 +68,8 @@ public abstract class WebSocketManager {
 
     protected abstract void onDisconnected(CloseReason reason);
 
-    protected abstract void onError(Throwable throwable);
+    protected void onError(Throwable throwable) {
+        System.err.println("Error in " + getClass().getName() + ": " + throwable.getMessage());
+        throwable.printStackTrace();
+    }
 }

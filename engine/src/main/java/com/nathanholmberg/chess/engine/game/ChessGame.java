@@ -113,7 +113,7 @@ public class ChessGame {
     public List<Position> getLegalMoves(Position initialPosition) {
         List<Position> positions = new ArrayList<>();
 
-        // Get piece to move
+        // Get the piece to move
         Piece pieceToMove = board.getPieceAt(initialPosition);
 
         // If null
@@ -173,7 +173,7 @@ public class ChessGame {
      * - The move corresponds to a non-null piece at the starting position.
      * - The game is up to date.
      * - The piece belongs to the current player.
-     * - The move is valid according to the piece's movement rules and the game state.
+     * - The move is valid, according to the piece's movement rules and the game state.
      * - The move does not leave the king in check.
      *
      * @param move The move to validate.
@@ -182,7 +182,7 @@ public class ChessGame {
     public boolean isMoveLegal(Move move) {
         Piece pieceToMove = board.getPieceAt(move.initialPosition());
 
-        // Cannot move after game
+        // Cannot move after the game
         if (getResult() != GameResult.ON_GOING) {
             return false;
         }
@@ -197,7 +197,7 @@ public class ChessGame {
             return false;
         }
 
-        // Cannot move wrong color
+        // Cannot move the wrong color piece
         if (pieceToMove.getColor() != turn) {
             return false;
         }

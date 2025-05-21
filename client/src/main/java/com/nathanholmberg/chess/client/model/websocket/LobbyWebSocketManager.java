@@ -1,11 +1,11 @@
 package com.nathanholmberg.chess.client.model.websocket;
 
 import com.nathanholmberg.chess.engine.enums.Color;
+import com.nathanholmberg.chess.protocol.MessageSerializer;
 import com.nathanholmberg.chess.protocol.constants.WebSocketEndpoints;
 import com.nathanholmberg.chess.protocol.messages.Message;
 import com.nathanholmberg.chess.protocol.messages.lobby.server.GameReadyMessage;
 import com.nathanholmberg.chess.protocol.messages.lobby.server.JoinedMatchmakingMessage;
-import com.nathanholmberg.chess.protocol.serialization.MessageDeserializer;
 
 import jakarta.websocket.CloseReason;
 
@@ -30,7 +30,7 @@ public class LobbyWebSocketManager extends WebSocketManager {
 
     @Override
     protected void onMessageReceived(String message) {
-        Message messageObj = MessageDeserializer.deserialize(message);
+        Message messageObj = MessageSerializer.deserialize(message);
 
         if (messageObj instanceof JoinedMatchmakingMessage) {
             return;
