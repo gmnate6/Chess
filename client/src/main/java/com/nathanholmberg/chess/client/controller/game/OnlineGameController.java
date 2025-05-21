@@ -164,7 +164,9 @@ public class OnlineGameController extends AbstractGameController {
     @Override
     protected void resign() {
         super.resign();
-        gameWebSocketManager.sendResignMessage();
+        if (gameWebSocketManager.isConnected()) {
+            gameWebSocketManager.sendResignMessage();
+        }
     }
 
     private void processServerMove(Move move) {
@@ -195,6 +197,7 @@ public class OnlineGameController extends AbstractGameController {
 
     @Override
     protected void endGame() {
+        super.endGame();
         if (chessTimer != null) {
             chessTimer.stop();
         }

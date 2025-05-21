@@ -30,7 +30,6 @@ public class GameEndpoint {
     public void onOpen(Session session, @PathParam("gameId") String gameId, @PathParam("color") String color) {
         System.out.println("Joined GameServer: " + session.getId());
         this.session = session;
-        session.setMaxIdleTimeout(30000);
 
         // Get Color
         try {
