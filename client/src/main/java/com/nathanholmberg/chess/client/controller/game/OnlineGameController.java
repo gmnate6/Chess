@@ -3,9 +3,11 @@ package com.nathanholmberg.chess.client.controller.game;
 import com.nathanholmberg.chess.client.model.SettingsManager;
 import com.nathanholmberg.chess.client.model.websocket.GameWebSocketManager;
 import com.nathanholmberg.chess.engine.enums.Color;
+import com.nathanholmberg.chess.engine.enums.GameResult;
 import com.nathanholmberg.chess.engine.game.ChessTimer;
 import com.nathanholmberg.chess.engine.types.Move;
 import com.nathanholmberg.chess.engine.utils.MoveUtils;
+import com.nathanholmberg.chess.engine.utils.PGN;
 
 public class OnlineGameController extends AbstractGameController {
     GameWebSocketManager gameWebSocketManager;
@@ -43,6 +45,47 @@ public class OnlineGameController extends AbstractGameController {
             @Override
             public void onIllegalMoveMessage(String reason) {
                 System.out.println("Illegal move received from server: " + reason);
+            }
+
+            @Override
+            public void onDrawOfferedMessage() {
+                // TODO
+            }
+
+            @Override
+            public void onGameEndMessage(GameResult result) {
+                if (result == chessGame.getResult()) {
+                    return;
+                }
+                chessGame.setResult(result);
+
+                if (inPlay) {
+                    endGame();
+                }
+            }
+
+            @Override
+            public void onClockUpdateMessage(long whiteTime, long blackTime) {
+                chessTimer.setWhiteTime(whiteTime);
+                chessTimer.setBlackTime(blackTime);
+            }
+
+            @Override
+            public void onGameStateMessage(String pgn) {
+                if (pgn.equals(PGN.getPGN(chessGame))) {
+                    return;
+                }
+
+                // Update Game State
+                try {
+                    chessGame = PGN.getGame(pgn);
+                    if (chessTimer.getTurn() != chessGame.getTurn()) {
+                        chessTimer.switchTurn();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.err.println("Game State Message Received: " + pgn);
+                }
             }
         });
 

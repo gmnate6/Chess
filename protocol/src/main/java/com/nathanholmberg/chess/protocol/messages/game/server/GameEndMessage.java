@@ -8,6 +8,9 @@ public class GameEndMessage extends Message {
 
     public GameEndMessage(GameResult result) {
         this.result = result;
+        if (result == GameResult.ON_GOING) {
+            throw new IllegalArgumentException("Game result must not be ON_GOING");
+        }
     }
 
     public GameResult getResult() {

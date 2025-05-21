@@ -28,10 +28,11 @@ import java.util.concurrent.ExecutionException;
 
 public abstract class AbstractGameController implements BaseController {
     // Core objects
-    protected final ChessGame chessGame;
+    protected ChessGame chessGame;
     protected ChessTimer chessTimer;
     protected long lastUpdatedTime;
     protected Color color;
+    protected boolean inPlay;
 
     // View elements
     public final GamePanel gamePanel;
@@ -99,8 +100,7 @@ public abstract class AbstractGameController implements BaseController {
 
             @Override
             public void onTimeUp(Color player) {
-                chessGame.winOnTime(player.inverse());
-                endGame();
+
             }
 
             @Override
@@ -112,6 +112,7 @@ public abstract class AbstractGameController implements BaseController {
 
     public void start() {
         AssetManager.playSound("game-start");
+        inPlay = true;
 
         if (chessTimer != null) {
             chessTimer.start();
@@ -455,6 +456,7 @@ public abstract class AbstractGameController implements BaseController {
             System.err.println("Called endGame while game is still in play.");
             return;
         }
+        inPlay = false;
 
         moveProcessor.playEndSound();
 

@@ -152,6 +152,16 @@ public class ChessTimer {
         return player == Color.WHITE ? whiteTime : blackTime;
     }
 
+    public long setWhiteTime(long whiteTime) {
+        this.whiteTime = whiteTime;
+        return this.whiteTime;
+    }
+
+    public long setBlackTime(long blackTime) {
+        this.blackTime = blackTime;
+        return this.blackTime;
+    }
+
     public String getFormatedTimeLeft(Color player) {
         long timeInMillis = getTimeLeft(player);
         long minutes = timeInMillis / 60000; // 60,000 milliseconds in a minute

@@ -1,15 +1,15 @@
 package com.nathanholmberg.chess.client.model.websocket;
 
 import com.nathanholmberg.chess.engine.enums.Color;
+import com.nathanholmberg.chess.engine.enums.GameResult;
 import com.nathanholmberg.chess.protocol.constants.WebSocketEndpoints;
-
 import com.nathanholmberg.chess.protocol.messages.Message;
 import com.nathanholmberg.chess.protocol.messages.game.ClientInfoMessage;
 import com.nathanholmberg.chess.protocol.messages.game.MoveMessage;
 import com.nathanholmberg.chess.protocol.messages.game.client.ResignMessage;
-import com.nathanholmberg.chess.protocol.messages.game.server.GameStartMessage;
-import com.nathanholmberg.chess.protocol.messages.game.server.IllegalMoveMessage;
+import com.nathanholmberg.chess.protocol.messages.game.server.*;
 import com.nathanholmberg.chess.protocol.serialization.MessageDeserializer;
+
 import jakarta.websocket.CloseReason;
 
 public class GameWebSocketManager extends WebSocketManager {
@@ -24,6 +24,10 @@ public class GameWebSocketManager extends WebSocketManager {
         void onGameStartMessage(long initialTime, long increment);
         void onMoveMessage(String move);
         void onIllegalMoveMessage(String reason);
+        void onDrawOfferedMessage();
+        void onGameEndMessage(GameResult result);
+        void onClockUpdateMessage(long whiteTime, long blackTime);
+        void onGameStateMessage(String pgn);
     }
 
     public void setGameMessageListener(GameMessageListener listener) {
@@ -65,12 +69,37 @@ public class GameWebSocketManager extends WebSocketManager {
             return;
         }
 
-        System.out.println("Unknown message type: " + messageObj.getType());
+        if (messageObj instanceof DrawOfferedMessage) {
+            gameMessageListener.onDrawOfferedMessage();
+            return;
+        }
+
+        if (messageObj instanceof GameEndMessage moveMessage) {
+            gameMessageListener.onGameEndMessage(
+                    moveMessage.getResult()
+            );
+            return;
+        }
+
+        if (messageObj instanceof ClockUpdateMessage clockUpdateMessage) {
+            gameMessageListener.onClockUpdateMessage(
+                    clockUpdateMessage.getWhiteTime(),
+                    clockUpdateMessage.getBlackTime()
+            );
+        }
+
+        if (messageObj instanceof GameStateMessage gameStateMessage) {
+            gameMessageListener.onGameStateMessage(
+                    gameStateMessage.getPGN()
+            );
+        }
+
+        System.err.println("Unknown message type: " + messageObj.getType());
     }
 
     @Override
     protected void onDisconnected(CloseReason reason) {
-        System.out.println("Disconnected from Game WebSocket: " + reason.getReasonPhrase());
+
     }
 
     @Override

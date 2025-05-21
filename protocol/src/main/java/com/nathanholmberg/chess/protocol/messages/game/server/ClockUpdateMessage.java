@@ -6,7 +6,7 @@ public class ClockUpdateMessage extends Message {
     private final long whiteTime;
     private final long blackTime;
 
-    public ClockUpdateMessage(int whiteTime, int blackTime) {
+    public ClockUpdateMessage(long whiteTime, long blackTime) {
         this.whiteTime = whiteTime;
         this.blackTime = blackTime;
     }

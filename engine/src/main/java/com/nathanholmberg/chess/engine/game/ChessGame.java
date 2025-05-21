@@ -100,9 +100,11 @@ public class ChessGame {
     public Color getTurn() { return turn; }
     public int getHalfMoveClock() { return halfMoveClock; }
     public int getFullMoveNumber() { return fullMoveNumber; }
-    public GameResult getResult() { return result; }
     public boolean inPlay() { return result == GameResult.ON_GOING;}
     public MoveHistory getMoveHistory() { return moveHistory; }
+    public GameResult getResult() { return result; }
+
+    public void setResult(GameResult result) { this.result = result; }
 
     private void switchTurn() {
         this.turn = this.turn.inverse();

@@ -95,16 +95,25 @@ public class GameServer {
         broadcastMessage(message);
     }
 
-    public void endGame() {
+    public synchronized void handlePlayerDisconnect(Color color) {
+        if (!chessGame.inPlay()) {
+            return;
+        }
+
+        chessGame.winByResign(color.inverse());
+        endGame();
+    }
+
+    public synchronized void endGame() {
         GameEndMessage message = new GameEndMessage(chessGame.getResult());
         broadcastMessage(message);
 
         // Close sessions
         try {
-            if (whitePlayer != null) {
+            if (isWhiteConnected()) {
                 whitePlayer.close();
             }
-            if (blackPlayer != null) {
+            if (isBlackConnected()) {
                 blackPlayer.close();
             }
         } catch (IOException e) {
@@ -113,17 +122,6 @@ public class GameServer {
 
         chessTimer.stop();
         GameManager.getInstance().removeGame(gameId);
-    }
-
-    public void handlePlayerDisconnect(Color color) {
-        if (color == Color.WHITE && whitePlayer == null) {
-            throw new IllegalStateException("White player already removed.");
-        } else if (color == Color.BLACK && blackPlayer == null) {
-            throw new IllegalStateException("Black player already removed.");
-        }
-
-        chessGame.winByResign(color.inverse());
-        endGame();
     }
 
     public void setClientInfo(Color color, String username, String avatar) {
@@ -143,16 +141,24 @@ public class GameServer {
     }
 
     private void broadcastMessage(Message message) {
-        if (whitePlayer != null) {
+        if (isWhiteConnected()) {
             whitePlayer.getAsyncRemote().sendText(MessageSerializer.serialize(message));
         }
-        if (blackPlayer != null) {
+        if (isBlackConnected()) {
             blackPlayer.getAsyncRemote().sendText(MessageSerializer.serialize(message));
         }
     }
 
     public Color getTurn() {
         return chessGame.getTurn();
+    }
+
+    public boolean isWhiteConnected() {
+        return whitePlayer != null && whitePlayer.isOpen();
+    }
+
+    public boolean isBlackConnected() {
+        return blackPlayer != null && blackPlayer.isOpen();
     }
 
     public boolean isMoveLegal(String move) {

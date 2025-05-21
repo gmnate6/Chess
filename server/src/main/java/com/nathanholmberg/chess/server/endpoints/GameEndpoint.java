@@ -30,6 +30,7 @@ public class GameEndpoint {
     public void onOpen(Session session, @PathParam("gameId") String gameId, @PathParam("color") String color) {
         System.out.println("Joined GameServer: " + session.getId());
         this.session = session;
+        session.setMaxIdleTimeout(30000);
 
         // Get Color
         try {
@@ -55,70 +56,72 @@ public class GameEndpoint {
     }
 
     @OnMessage
-    public void onMessage(Session session, String message) {
+    public void onMessage(Session session, String message) throws IOException {
         if (gameServer == null || color == null) {
             closeWithError(session, "GameServer not properly initialized");
             return;
         }
 
         // Handle Message
+        Message messageObj;
         try {
-            Message messageObj = MessageDeserializer.deserialize(message);
-
-            // Accept Draw Message
-            if (messageObj instanceof AcceptDrawMessage acceptDrawMessage) {
-                return;
-            }
-
-            // Decline Draw Message
-            if (messageObj instanceof DeclineDrawMessage declineDrawMessage) {
-                return;
-            }
-
-            // Move Message
-            if (messageObj instanceof MoveMessage moveMessage) {
-                if (gameServer.getTurn() != color) {
-                    sendIllegalMoveError("Not your turn");
-                    return;
-                }
-
-                if (!gameServer.isMoveLegal(moveMessage.getMove())) {
-                    sendIllegalMoveError("Invalid move");
-                    return;
-                }
-
-                gameServer.makeMove(moveMessage.getMove());
-                return;
-            }
-
-            // Offer Draw Message
-            if (messageObj instanceof OfferDrawMessage offerDrawMessage) {
-                return;
-            }
-
-            // Resign Message
-            if (messageObj instanceof ResignMessage) {
-                gameServer.handlePlayerDisconnect(color);
-                session.close();
-                return;
-            }
-
-            // Client Info Message
-            if (messageObj instanceof ClientInfoMessage clientInfoMessage) {
-                gameServer.setClientInfo(color, clientInfoMessage.getUsername(), clientInfoMessage.getAvatar());
-                return;
-            }
-
-            System.out.println("Message type not implemented yet: " + messageObj.getType());
+            messageObj = MessageDeserializer.deserialize(message);
         } catch (ProtocolException | JsonSyntaxException e) {
             closeWithError(session, "Invalid message format: " + message);
+            return;
         } catch (Exception e) {
             System.err.println("Game Error: " + e.getMessage() + "\n" + e.getLocalizedMessage());
+            return;
         }
+
+        // Accept Draw Message
+        if (messageObj instanceof AcceptDrawMessage acceptDrawMessage) {
+            return;
+        }
+
+        // Decline Draw Message
+        if (messageObj instanceof DeclineDrawMessage declineDrawMessage) {
+            return;
+        }
+
+        // Move Message
+        if (messageObj instanceof MoveMessage moveMessage) {
+            if (gameServer.getTurn() != color) {
+                sendIllegalMoveError("Not your turn");
+                return;
+            }
+            if (!gameServer.isMoveLegal(moveMessage.getMove())) {
+                sendIllegalMoveError("Invalid move");
+                return;
+            }
+            gameServer.makeMove(moveMessage.getMove());
+            return;
+        }
+
+        // Offer Draw Message
+        if (messageObj instanceof OfferDrawMessage offerDrawMessage) {
+            return;
+        }
+
+        // Resign Message
+        if (messageObj instanceof ResignMessage) {
+            gameServer.handlePlayerDisconnect(color);
+            session.close();
+            return;
+        }
+
+        // Client Info Message
+        if (messageObj instanceof ClientInfoMessage clientInfoMessage) {
+            gameServer.setClientInfo(color, clientInfoMessage.getUsername(), clientInfoMessage.getAvatar());
+            return;
+        }
+
+        System.out.println("Message type not implemented yet: " + messageObj.getType());
     }
 
     @OnClose
     public void onClose(Session session, CloseReason reason) {
+        System.out.println("Left GameServer: " + session.getId());
         if (gameServer != null) {
             gameServer.handlePlayerDisconnect(color);
         }
@@ -127,6 +130,9 @@ public class GameEndpoint {
     @OnError
     public void onError(Session session, Throwable throwable) {
         System.err.println("Game Error: " + throwable.getMessage() + "\n" + throwable.getLocalizedMessage());
+        if (gameServer != null) {
+            closeWithError(session, throwable.getMessage());
+        }
     }
 
     private void sendIllegalMoveError(String reason) {
