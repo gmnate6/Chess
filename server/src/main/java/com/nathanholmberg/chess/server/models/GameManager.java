@@ -8,19 +8,19 @@ public class GameManager {
     private final Map<String, GameServer> activeGames = new ConcurrentHashMap<>();
 
     private GameManager() {}
-    public static GameManager getInstance() {
+    public synchronized static GameManager getInstance() {
         return instance;
     }
 
-    public void addGame(String gameId, GameServer gameServer) {
+    public synchronized void addGame(String gameId, GameServer gameServer) {
         activeGames.put(gameId, gameServer);
     }
 
-    public GameServer getGame(String gameId) {
+    public synchronized GameServer getGame(String gameId) {
         return activeGames.get(gameId);
     }
 
-    public void removeGame(String gameId) {
+    public synchronized void removeGame(String gameId) {
         activeGames.remove(gameId);
     }
 }
