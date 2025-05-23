@@ -1,97 +1,220 @@
-# Chess Protocol Package Overview
-This document provides an overview of the protocol package, explaining how it is organized, how it works with endpoints, and how new messages can be added. It includes descriptions of all key components and outlines the flow of data through the system.
-## Key Architecture Highlights
-1. **Centralized Message Handling**:
-    - The protocol package uses a **message registry** (`MessageRegistry`) to manage and handle messages based on their type, eliminating scattered type checks and manual routing.
-    - Messages are deserialized dynamically and routed to their respective handlers defined in the registry.
+# Protocol Restructuring Guide
 
-2. **Separation of Concerns**:
-    - Messages represent **data** (e.g., what is being sent or received).
-    - The **registry** binds message types to their corresponding handlers, centralizing this logic.
-    - Endpoints simply **delegate processing** to the registry, ensuring clean and maintainable WebSocket endpoints.
+This document explains the newly proposed structure for the protocol package in your project. The solution aims to improve clarity, extensibility, and maintainability by addressing the challenges faced in deserializing, handling, and extending message types in your protocol. Below, you will find an overview of the design, its components, and how everything works together.
 
-3. **Ease of Extensibility**:
-    - Adding a new message is simple and requires minimal changes (explained in the _How to Add New Messages_ section below).
-    - Handlers for messages are registered in one place, ensuring everything is organized.
+---
 
-## Flow of Data Through the Protocol
-1. **Incoming Message**:
-    - An endpoint (e.g., ) receives a raw JSON message from a client. `GameEndpoint`
-    - The JSON is passed to the `MessageRegistry`.
+## 🎯 **Goals**
+1. **Reduce Boilerplate**:
+    - Avoid large `switch` statements or long `instanceof` checks for deserialization and message handling.
+2. **Encapsulate Responsibilities**:
+    - Move message handling logic to well-defined handlers.
+3. **Simplify Adding New Messages**:
+    - Adding a new message type should require minimal updates to the codebase.
+4. **Leverage Polymorphism**:
+    - Replace centralized message logic with decentralized and extensible structures.
 
-2. **Deserialization**:
-    - The `MessageRegistry` parses the JSON string and retrieves the field. `type`
-    - The is used to look up the corresponding class in the registry, and the JSON is deserialized into an instance of that class. `type``Message`
+---
 
-3. **Validation** _(Optional)_:
-    - If the message class overrides the `validate()` method, validation logic is applied at this step to ensure the message is valid.
+## 🗂 **Overview of the New Protocol Structure**
 
-4. **Message Handling**:
-    - Based on the field, a registered **handler** (a `Consumer<Message>`) is invoked for this message. The registry routes the deserialized message to its designated handler. `type`
+### 1. **Message Base Class**
 
-5. **Processing**:
-    - The handler performs the required action based on the message. This could involve updating the server state (e.g., processing a move in the game) or sending a response back to the client.
+The `Message` base class is the parent of all messages. It includes the message `type` and handles the deserialization process via a centralized factory (`MessageFactory`). Each subclass represents a specific type of message (e.g., `MoveMessage`, `ClientInfoMessage`).
 
-## Component Breakdown
-### 1. **Base Message Class**
-- Every message in the protocol extends the abstract class. `Message`
-- The class includes common properties and methods, such as:
-    - A field derived from the message class name. `type`
-    - An optional `validate()` method that can be overridden for custom validation logic.
+#### Key Methods:
+- `getType()`: Returns the message type.
+- `deserialize(String json, Gson gson)`: Uses the `MessageFactory` to resolve the correct subclass and deserialize the message.
 
-`Message`
+```java
+public abstract class Message {
+    private final String type = getClass().getSimpleName();
 
-### 2. **MessageRegistry**
-- The `MessageRegistry` is a static class that centralizes:
-    - **Message Classes**: Maps strings (e.g., ) to their corresponding subclasses for deserialization. `type``"MoveMessage"``Message`
-    - **Handlers**: Maps strings to handler functions (`Consumer<T>`), which define how to process each message type. `type`
+    public String getType() {
+        return type;
+    }
 
-- The registry is responsible for:
-    - Deserializing raw JSON messages into instances. `Message`
-    - Validating and routing messages to their registered handlers.
+    public static void registerMessageType(Class<? extends Message> clazz) {
+        MessageFactory.register(clazz.getSimpleName(), clazz);
+    }
 
-### 3. **Message Registration**
-- During application startup, all supported message types must be registered with the `MessageRegistry` via the `register()` method.
-- The registry binds each to:
-    - The corresponding class for deserialization. `Message`
-    - A handler function for processing the message.
+    public static Message deserialize(String json, Gson gson) throws Exception {
+        return MessageFactory.deserialize(json, gson);
+    }
+}
+```
 
-`type`
 
-### 4. **Handlers**
-- Each message type has a handler function (`Consumer<T>`) registered in the `MessageRegistry`.
-- Handlers define the logic for processing that message type. For example:
-    - A handler could verify the move and update the server-side game state. `MoveMessage`
-    - A handler could end the game for the resigning player. `ResignMessage`
+---
 
-## How the Protocol is Used by Endpoints
-1. **WebSocket Endpoints**:
-    - Endpoints (e.g., ) receive raw JSON messages via the WebSocket. `GameEndpoint`
-    - When an incoming message is received:
-        - The endpoint passes the raw message to the `MessageRegistry` for processing.
-        - The endpoint itself does not need to know the details of the message or its type.
+### 2. **MessageFactory**
 
-2. **Message Deserialization**:
-    - The `MessageRegistry` deserializes the message into its respective subclass using the field in the JSON. `Message``type`
+The `MessageFactory` maps message type strings to their respective Java classes. When deserializing, it dynamically determines which class to instantiate based on the `type` field in the incoming JSON.
 
-3. **Routing and Processing**:
-    - The deserialized message is passed to the handler registered for that specific message type.
-    - The handler performs the required action (e.g., updating the server state, broadcasting updates to other clients, etc.).
+#### Key Methods:
+- `register(String type, Class<? extends Message> clazz)`: Registers a message type.
+- `deserialize(String json, Gson gson)`: Looks up the correct message class and deserializes it.
 
-## How to Add New Messages
-Adding a new message to the protocol package is a three-step process:
-### Step 1: Define the New Message
-- Create a new class that extends . `Message`
-- If the message contains additional data, include fields and getter/setter methods.
-- Optionally override the `validate()` method to implement custom validation logic.
+```java
+public class MessageFactory {
+    private static final Map<String, Class<? extends Message>> registry = new HashMap<>();
 
-Example:
-``` java
-package com.nathanholmberg.chess.protocol.messages.game.client;
+    public static void register(String type, Class<? extends Message> clazz) {
+        registry.put(type, clazz);
+    }
 
-import com.nathanholmberg.chess.protocol.messages.Message;
+    public static Message deserialize(String json, Gson gson) throws ProtocolException {
+        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+        String type = jsonObject.get("type").getAsString();
 
-public class UndoMoveMessage extends Message {
+        Class<? extends Message> clazz = registry.get(type);
+        if (clazz == null) {
+            throw new ProtocolException("Unknown message type: " + type);
+        }
+
+        return gson.fromJson(json, clazz);
+    }
+}
+```
+
+
+---
+
+### 3. **Message Registration (Initialization)**
+
+All message types are registered at application startup using a static initializer. This ensures all supported message types are properly registered before any deserialization occurs.
+
+#### Example: **MessageRegistry.java**
+```java
+public class MessageRegistry {
+    static {
+        registerMessages();
+    }
+
+    private static void registerMessages() {
+        // Game-related messages
+        Message.registerMessageType(ClientInfoMessage.class);
+        Message.registerMessageType(MoveMessage.class);
+
+        // Lobby-related messages
+        Message.registerMessageType(GameReadyMessage.class);
+    }
+
+    // Optional init method to trigger the static block
+    public static void init() {}
+}
+```
+
+
+#### Usage:
+Call `MessageRegistry.init()` at the beginning of your application to ensure all message types are registered.
+
+---
+
+### 4. **Handler Interface**
+
+Handlers define how to process specific actions for each message type. Each endpoint will implement its own handler interface to delegate processing logic.
+
+#### Example: **GameMessageHandler**
+```java
+public interface GameMessageHandler {
+    void handleClientInfoMessage(ClientInfoMessage message);
+    void handleMoveMessage(MoveMessage message);
+    void handleGameReadyMessage(GameReadyMessage message);
+    // Add more methods for any additional message types
+}
+```
+
+
+This interface allows each endpoint to define message-specific behavior without using `if` or `switch`.
+
+---
+
+### 5. **MessageManager**
+
+The `MessageManager` acts as a bridge between the deserialized messages and the handler. It encapsulates the logic of determining which handler method to call based on the message type. This keeps the endpoint clean and free from message-specific logic.
+
+#### Example: **GameMessageManager**
+```java
+public class GameMessageManager {
+    private final GameMessageHandler handler;
+
+    public GameMessageManager(GameMessageHandler handler) {
+        this.handler = handler;
+    }
+
+    public void handleMessage(Message message) {
+        if (message instanceof ClientInfoMessage clientInfoMessage) {
+            handler.handleClientInfoMessage(clientInfoMessage);
+        } else if (message instanceof MoveMessage moveMessage) {
+            handler.handleMoveMessage(moveMessage);
+        } else if (message instanceof GameReadyMessage gameReadyMessage) {
+            handler.handleGameReadyMessage(gameReadyMessage);
+        } else {
+            System.err.println("Unhandled message type: " + message.getType());
+        }
+    }
+}
+```
+
+
+This delegation reduces the complexity of the `onMessage` method in endpoint classes.
+
+---
+
+### 6. **Endpoint Example**
+
+Here’s what the updated endpoint might look like with the refactored protocol structure.
+
+#### Example: **GameEndpoint.java**
+```java
+@OnMessage
+public void onMessage(Session session, String json) throws IOException {
+    if (gameServer == null || color == null) {
+        closeWithError(session, "GameServer not properly initialized");
+        return;
+    }
+
+    // Deserialize the incoming JSON into a Message object
+    Message message;
+    try {
+        message = Message.deserialize(json, new Gson());
+    } catch (Exception e) {
+        closeWithError(session, "Invalid message format: " + json);
+        return;
+    }
+
+    // Pass the deserialized message to the Manager for handling
+    messageManager.handleMessage(message);
+}
+```
+
+
+---
+
+### 7. **Example Process Flow**
+
+Let’s follow how a message gets handled:
+1. A JSON payload is received by the `onMessage` method in the `GameEndpoint`.
+2. The JSON is deserialized into the appropriate `Message` subclass using `Message.deserialize()`.
+3. The deserialized `Message` is passed to the `GameMessageManager`.
+4. The manager checks the message type and calls the corresponding method on the handler interface (e.g., `handleMoveMessage`).
+5. The handler implementation in the endpoint processes the logic.
+
+---
+
+## 🚀 Adding a New Message
+
+Adding a new message type is simple:
+1. Create a new message class that extends `Message`.
+2. Register the new class in the `MessageRegistry`.
+3. Add a new method to the appropriate handler interface (e.g., `GameMessageHandler`).
+4. Implement the new handler method in the endpoint.
+
+#### Example: Adding `DrawRequestMessage`
+1. **Create the Class**:
+```java
+public class DrawRequestMessage extends Message {
     private String reason;
 
     public String getReason() {
@@ -101,61 +224,44 @@ public class UndoMoveMessage extends Message {
     public void setReason(String reason) {
         this.reason = reason;
     }
-
-    @Override
-    public void validate() throws Exception {
-        if (reason == null || reason.isEmpty()) {
-            throw new Exception("Reason cannot be null or empty");
-        }
-    }
 }
 ```
-### Step 2: Register the Message
-- Register the message in the `MessageRegistry` with its corresponding handler.
 
-Example:
-``` java
-MessageRegistry.register("UndoMoveMessage", UndoMoveMessage.class, message -> {
-    System.out.println("Undo Move requested: " + message.getReason());
-    // Add custom handling logic here
-});
+
+2. **Register the Class**:
+```java
+Message.registerMessageType(DrawRequestMessage.class);
 ```
-### Step 3: Handle the Message
-- Define the logic for processing this message in the handler you provided during registration.
 
-## Example Data Flow: UndoMoveMessage
-1. **Client Sends Message**:
-    - Client sends a JSON string:
-``` json
-     {
-       "type": "UndoMoveMessage",
-       "reason": "Misclicked move"
-     }
+
+3. **Add to the Handler**:
+```java
+void handleDrawRequestMessage(DrawRequestMessage message);
 ```
-1. **Endpoint Receives Raw JSON**:
-    - The WebSocket endpoint passes the JSON to the `MessageRegistry` for processing:
-``` java
-     Message message = MessageRegistry.deserialize(rawMessage);
-     MessageRegistry.processMessage(message);
+
+
+4. **Implement in Endpoint**:
+```java
+@Override
+public void handleDrawRequestMessage(DrawRequestMessage message) {
+    gameServer.handleDrawRequest(message.getReason());
+}
 ```
-1. **MessageRegistry Deserializes the JSON**:
-    - The `MessageRegistry` looks up `"UndoMoveMessage"` in its registry, finds the `UndoMoveMessage` class, and deserializes the JSON into an instance of this class.
 
-2. **Validation**:
-    - The `validate()` method of `UndoMoveMessage` is invoked to ensure the data is valid.
 
-3. **Handler is Invoked**:
-    - The registered handler for `UndoMoveMessage` is called, where the server can process the request to undo the last move.
+---
 
-## Benefits of the Reworked Protocol
-1. **Centralized Logic**:
-    - The `MessageRegistry` ensures all message types and handlers are organized in one place.
+## 🙌 Benefits of the Refactored Structure
 
-2. **Extensibility**:
-    - Adding new messages requires minimal effort (define, register, handle). No changes are needed in the WebSocket endpoint.
+1. **Extensibility**:
+    - Adding new messages does not require modifying the `MessageFactory` or writing boilerplate `if` checks.
+2. **Decoupled Logic**:
+    - Each responsibility (serialization, deserialization, message handling) is separated and easier to manage.
+3. **Readability**:
+    - Message-specific processing logic is confined to handlers, simplifying endpoint methods.
+4. **Code Safety**:
+    - The compiler ensures you implement all required handlers for new message types, reducing runtime bugs.
 
-3. **Type Safety**:
-    - Strong typing and compile-time checking ensure that each message is processed correctly and reliably.
+---
 
-4. **Ease of Maintenance**:
-    - Handlers and message types are easy to find and modify as they are centralized in the registry.
+This structure should greatly improve the clarity and maintainability of your protocol! Let me know if you have any other ideas or concerns!
