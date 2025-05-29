@@ -95,10 +95,7 @@ public class GameServer {
     }
 
     public void sendGameState(Color player) {
-        Message message = new GameStateMessage(
-                PGN.getPGN(chessGame),
-                chessTimer.getTimeLeft(Color.WHITE),
-                chessTimer.getTimeLeft(Color.BLACK));
+        Message message = new GameStateMessage(PGN.getPGN(chessGame));
         if (player == Color.WHITE) {
             whitePlayer.sendMessage(message);
             return;

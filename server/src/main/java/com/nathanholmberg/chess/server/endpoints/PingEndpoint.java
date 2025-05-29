@@ -1,11 +1,11 @@
 package com.nathanholmberg.chess.server.endpoints;
 
-import com.nathanholmberg.chess.protocol.constants.WebSocketEndpoints;
+import com.nathanholmberg.chess.protocol.constants.Endpoints;
 
 import jakarta.websocket.*;
 import jakarta.websocket.server.ServerEndpoint;
 
-@ServerEndpoint(WebSocketEndpoints.PING)
+@ServerEndpoint(Endpoints.PING)
 public class PingEndpoint {
 
     @OnOpen

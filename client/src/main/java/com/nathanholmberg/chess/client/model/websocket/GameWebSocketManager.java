@@ -3,23 +3,18 @@ package com.nathanholmberg.chess.client.model.websocket;
 import com.nathanholmberg.chess.engine.enums.Color;
 import com.nathanholmberg.chess.engine.enums.GameResult;
 import com.nathanholmberg.chess.protocol.MessageSerializer;
-import com.nathanholmberg.chess.protocol.constants.WebSocketEndpoints;
+import com.nathanholmberg.chess.protocol.constants.Endpoints;
 import com.nathanholmberg.chess.protocol.messages.Message;
 import com.nathanholmberg.chess.protocol.messages.game.ClientInfoMessage;
 import com.nathanholmberg.chess.protocol.messages.game.MoveMessage;
 import com.nathanholmberg.chess.protocol.messages.game.client.RequestGameStateMessage;
 import com.nathanholmberg.chess.protocol.messages.game.client.ResignMessage;
-import com.nathanholmberg.chess.protocol.messages.game.server.*;
 
+import com.nathanholmberg.chess.protocol.messages.game.server.*;
 import jakarta.websocket.CloseReason;
 
 public class GameWebSocketManager extends WebSocketManager {
     private GameMessageListener gameMessageListener;
-
-    public GameWebSocketManager(String gameId, Color color) {
-        super(WebSocketEndpoints.GAME.replace("{gameId}", gameId).replace("{color}", color.toString()));
-    }
-
     public interface GameMessageListener {
         void onClientInfoMessage(String username, String avatar);
         void onGameStartMessage(long initialTime, long increment);
@@ -33,6 +28,10 @@ public class GameWebSocketManager extends WebSocketManager {
 
     public void setGameMessageListener(GameMessageListener listener) {
         this.gameMessageListener = listener;
+    }
+
+    public GameWebSocketManager(String gameId, Color color) {
+        super(Endpoints.GAME.replace("{gameId}", gameId).replace("{color}", color.toString()));
     }
 
     @Override
@@ -87,10 +86,6 @@ public class GameWebSocketManager extends WebSocketManager {
         if (messageObj instanceof GameStateMessage gameStateMessage) {
             gameMessageListener.onGameStateMessage(
                     gameStateMessage.getPGN()
-            );
-            gameMessageListener.onClockUpdateMessage(
-                    gameStateMessage.getWhiteTime(),
-                    gameStateMessage.getBlackTime()
             );
             return;
         }

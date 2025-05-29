@@ -1,12 +1,12 @@
 package com.nathanholmberg.chess.client.model.websocket;
 
-import com.nathanholmberg.chess.protocol.constants.WebSocketEndpoints;
+import com.nathanholmberg.chess.protocol.constants.Endpoints;
 
 import jakarta.websocket.CloseReason;
 
 public class PingWebSocketManager extends WebSocketManager {
     private PingWebSocketManager() {
-        super(WebSocketEndpoints.PING);
+        super(Endpoints.PING);
     }
 
     @Override

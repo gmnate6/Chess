@@ -2,7 +2,7 @@ package com.nathanholmberg.chess.server.endpoints;
 
 import com.nathanholmberg.chess.engine.enums.Color;
 import com.nathanholmberg.chess.protocol.MessageSerializer;
-import com.nathanholmberg.chess.protocol.constants.WebSocketEndpoints;
+import com.nathanholmberg.chess.protocol.constants.Endpoints;
 import com.nathanholmberg.chess.protocol.messages.Message;
 import com.nathanholmberg.chess.protocol.messages.game.ClientInfoMessage;
 import com.nathanholmberg.chess.protocol.messages.game.MoveMessage;
@@ -16,7 +16,7 @@ import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
 import java.io.IOException;
 
-@ServerEndpoint(WebSocketEndpoints.GAME)
+@ServerEndpoint(Endpoints.GAME)
 public class GameEndpoint {
     private static final GameManager gameManager = GameManager.getInstance();
     private GameServer gameServer;

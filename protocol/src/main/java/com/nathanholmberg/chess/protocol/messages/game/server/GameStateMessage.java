@@ -1,10 +1,11 @@
 package com.nathanholmberg.chess.protocol.messages.game.server;
 
-public class GameStateMessage extends ClockUpdateMessage {
+import com.nathanholmberg.chess.protocol.messages.Message;
+
+public class GameStateMessage extends Message {
     private final String pgn;
 
-    public GameStateMessage(String pgn, long whiteTime, long blackTime) {
-        super(whiteTime, blackTime);
+    public GameStateMessage(String pgn) {
         this.pgn = pgn;
     }
 

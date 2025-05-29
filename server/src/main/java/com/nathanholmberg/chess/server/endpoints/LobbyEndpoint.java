@@ -1,6 +1,6 @@
 package com.nathanholmberg.chess.server.endpoints;
 
-import com.nathanholmberg.chess.protocol.constants.WebSocketEndpoints;
+import com.nathanholmberg.chess.protocol.constants.Endpoints;
 import com.nathanholmberg.chess.protocol.messages.lobby.server.JoinedMatchmakingMessage;
 import com.nathanholmberg.chess.server.models.LobbyManager;
 import com.nathanholmberg.chess.protocol.MessageSerializer;
@@ -8,7 +8,7 @@ import com.nathanholmberg.chess.protocol.MessageSerializer;
 import jakarta.websocket.*;
 import jakarta.websocket.server.ServerEndpoint;
 
-@ServerEndpoint(WebSocketEndpoints.LOBBY)
+@ServerEndpoint(Endpoints.LOBBY)
 public class LobbyEndpoint {
     private static final LobbyManager lobbyManager = LobbyManager.getInstance();
 

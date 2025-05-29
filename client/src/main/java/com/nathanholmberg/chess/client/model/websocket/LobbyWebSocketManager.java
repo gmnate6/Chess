@@ -2,7 +2,7 @@ package com.nathanholmberg.chess.client.model.websocket;
 
 import com.nathanholmberg.chess.engine.enums.Color;
 import com.nathanholmberg.chess.protocol.MessageSerializer;
-import com.nathanholmberg.chess.protocol.constants.WebSocketEndpoints;
+import com.nathanholmberg.chess.protocol.constants.Endpoints;
 import com.nathanholmberg.chess.protocol.messages.Message;
 import com.nathanholmberg.chess.protocol.messages.lobby.server.GameReadyMessage;
 import com.nathanholmberg.chess.protocol.messages.lobby.server.JoinedMatchmakingMessage;
@@ -11,17 +11,16 @@ import jakarta.websocket.CloseReason;
 
 public class LobbyWebSocketManager extends WebSocketManager {
     private GameReadyListener gameReadyListener;
-
-    public LobbyWebSocketManager() {
-        super(WebSocketEndpoints.LOBBY);
-    }
-
     public interface GameReadyListener {
         void onGameReady(String gameId, Color color);
     }
 
     public void setGameReadyListener(GameReadyListener listener) {
         this.gameReadyListener = listener;
+    }
+
+    public LobbyWebSocketManager() {
+        super(Endpoints.LOBBY);
     }
 
     @Override
