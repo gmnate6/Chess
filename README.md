@@ -6,7 +6,7 @@ This repository contains a full-featured Java-based chess application, structure
 
 - **client**: A Swing-based GUI client built with an MVC architecture.
 - **engine**: A custom chessGame package handling all chessGame state and logic, with Stockfish integration and support for exporting to FEN and PGN.
-- **server**: A WebSocket server (GlassFish) currently exposing a ping endpoint; future support for a lobby and matchmaking is planned.
+- **server**: A WebSocket server (GlassFish), hosts lobby and matchmaking between clients.
 
 All core code (excluding third-party dependencies) is original. Assets (images, sounds, fonts) are sourced from Chess.com.
 
@@ -45,9 +45,12 @@ All core code (excluding third-party dependencies) is original. Assets (images, 
     - Export to FEN and PGN formats for chessGame analysis and sharing.
     - Comprehensive unit tests using JUnit Jupiter.
 - **Server**
-    - GlassFish-based WebSocket endpoint (`/ping`) for connectivity checks.
+    - GlassFish-based WebSocket endpints:
+        - /ping
+        - /lobby
+        - /game
     - JSON serialization/deserialization via Gson for client–server communication.
-    - Future support for lobbies, matchmaking, and multi-player chessGame sessions.
+    - Matchmaking implementation.
 
 ## Architecture
 
@@ -161,7 +164,6 @@ Tests for the client and server modules are planned for future releases.
 
 ## Future Work
 
-- Implement online lobby, matchmaking, and chessGame session management in the server.
 - Add unit and integration tests for client and server modules.
 - Expand theme support and UI customization options.
 - Improve engine heuristics and performance tuning.
